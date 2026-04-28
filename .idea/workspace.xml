@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="21d210e0-5662-4369-8640-b21b5d3eeb0c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/ config/AppConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/alert/Alert.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/alert/AlertController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/alert/AlertFileHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/alert/AlertService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/alert/LowStockAlert.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/common/Constants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/common/FileUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/common/IdGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/common/ValidationUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/dashboard/DashboardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/dashboard/DashboardService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/product/ElectronicsProduct.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/product/Product.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/product/ProductController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/product/ProductFileHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/product/ProductService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockin/StockIn.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockin/StockInController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockin/StockInFileHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockin/StockInService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockout/StockOut.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockout/StockOutController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockout/StockOutFileHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/stockout/StockOutService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/supplier/LocalSupplier.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/supplier/Supplier.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/supplier/SupplierController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/supplier/SupplierFileHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/supplier/SupplierService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/AdminUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/StaffUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserFileHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/data/alert.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/data/products.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/data/stockin.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/data/stockout.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/data/suppliers.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/data/users.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/dashboard.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="11" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3CykzziLWuEktHb0bUi2lzn0BX1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "Dev",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/dovin/Downloads/Y1S2 SIMS/Y1S2_WD275_SIMS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\dovin\Downloads\Y1S2 SIMS\Y1S2_WD275_SIMS\src\main\resources\static\css\images" />
+      <recent name="C:\Users\dovin\Downloads\Y1S2 SIMS\Y1S2_WD275_SIMS\src\main\resources\static\css" />
+      <recent name="C:\Users\dovin\Downloads\Y1S2 SIMS\Y1S2_WD275_SIMS\src\main\resources\static" />
+      <recent name="C:\Users\dovin\Downloads\Y1S2 SIMS\Y1S2_WD275_SIMS\src\main\resources" />
+      <recent name="C:\Users\dovin\Downloads\Y1S2 SIMS\Y1S2_WD275_SIMS\src\main\java\com\inventory\sims" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Y1S2_WD275_SIMS" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Y1S2_WD275_SIMS" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <configuration name="SimsApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="sims" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.inventory.sims.SimsApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.32098.37" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.32098.37" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="21d210e0-5662-4369-8640-b21b5d3eeb0c" name="Changes" comment="" />
+      <created>1777365463505</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777365463505</updated>
+      <workItem from="1777365464647" duration="807000" />
+      <workItem from="1777373307110" duration="871000" />
+      <workItem from="1777391456887" duration="5459000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
