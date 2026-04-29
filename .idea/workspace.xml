@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21d210e0-5662-4369-8640-b21b5d3eeb0c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/ config/AppConfig.java" beforeDir="false" />
-    </list>
+    <list default="true" id="21d210e0-5662-4369-8640-b21b5d3eeb0c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -103,7 +99,7 @@
       <workItem from="1777365464647" duration="807000" />
       <workItem from="1777373307110" duration="871000" />
       <workItem from="1777391456887" duration="5459000" />
-      <workItem from="1777448955923" duration="2322000" />
+      <workItem from="1777448955923" duration="2689000" />
     </task>
     <servers />
   </component>
