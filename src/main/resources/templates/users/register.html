@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | SIMS</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #172033;
+            background: #eef2f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .auth-shell {
+            width: min(100%, 1060px);
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            background: #ffffff;
+            border: 1px solid #d9e1ea;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 18px 48px rgba(25, 40, 70, 0.12);
+        }
+
+        .info-panel {
+            background: #12333f;
+            color: #ffffff;
+            padding: 42px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 640px;
+        }
+
+        .brand {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .info-panel h1 {
+            margin: 96px 0 16px;
+            font-size: 34px;
+            line-height: 1.15;
+        }
+
+        .info-panel p {
+            margin: 0;
+            line-height: 1.7;
+            color: #d8e8ec;
+        }
+
+        .role-note {
+            margin-top: 32px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ecfeff;
+        }
+
+        .form-panel {
+            padding: 44px 48px;
+        }
+
+        .form-panel h2 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            color: #111827;
+        }
+
+        .subtitle {
+            margin: 0 0 28px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .alert {
+            display: none;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border-radius: 6px;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            background: #f0fdf4;
+            font-size: 14px;
+        }
+
+        .alert[style],
+        .alert:not(:empty) {
+            display: block;
+        }
+
+        form {
+            display: grid;
+            gap: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        label {
+            display: grid;
+            gap: 8px;
+            font-weight: 700;
+            color: #263548;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 46px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font: inherit;
+            color: #111827;
+            background: #ffffff;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            outline: 3px solid rgba(37, 99, 235, 0.16);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-weight: 400;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .checkbox-label input {
+            width: 16px;
+            height: 16px;
+            min-height: 16px;
+            padding: 0;
+            margin-top: 3px;
+            flex: 0 0 auto;
+        }
+
+        button {
+            min-height: 48px;
+            border: 0;
+            border-radius: 6px;
+            background: #1d4ed8;
+            color: #ffffff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        a {
+            color: #1d4ed8;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .switch-link {
+            margin: 24px 0 0;
+            color: #64748b;
+            text-align: center;
+        }
+
+        @media (max-width: 840px) {
+            body {
+                align-items: stretch;
+                padding: 0;
+            }
+
+            .auth-shell {
+                grid-template-columns: 1fr;
+                width: 100%;
+                min-height: 100vh;
+                border: 0;
+                border-radius: 0;
+            }
+
+            .info-panel {
+                min-height: auto;
+                padding: 28px;
+            }
+
+            .info-panel h1 {
+                margin: 42px 0 14px;
+                font-size: 30px;
+            }
+
+            .form-panel {
+                padding: 34px 28px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="auth-shell">
+        <section class="info-panel" aria-label="Registration information">
+            <div>
+                <div class="brand">SIMS</div>
+                <h1>Create a system user</h1>
+                <p>Add a staff or admin account for the Stock Inventory Management System.</p>
+                <div class="role-note">Admin users can manage users and system records. Staff users can work with day-to-day inventory tasks.</div>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <h2>Register</h2>
+            <p class="subtitle">Enter the user details and choose an account role.</p>
+
+            <div class="alert" th:if="${message}" th:text="${message}"></div>
+
+            <form action="/users/register" method="post">
+                <div class="form-grid">
+                    <label>
+                        First name
+                        <input type="text" name="firstName" autocomplete="given-name" placeholder="First name" required>
+                    </label>
+
+                    <label>
+                        Last name
+                        <input type="text" name="lastName" autocomplete="family-name" placeholder="Last name" required>
+                    </label>
+
+                    <label class="full-width">
+                        Email address
+                        <input type="email" name="email" autocomplete="email" placeholder="user@sims.com" required>
+                    </label>
+
+                    <label>
+                        Phone number
+                        <input type="tel" name="phone" autocomplete="tel" placeholder="0771234567">
+                    </label>
+
+                    <label>
+                        User role
+                        <select name="role" required>
+                            <option value="">Select role</option>
+                            <option value="ADMIN">Admin</option>
+                            <option value="STAFF">Staff</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Password
+                        <input type="password" name="password" autocomplete="new-password" placeholder="Create password" minlength="6" required>
+                    </label>
+
+                    <label>
+                        Confirm password
+                        <input type="password" name="confirmPassword" autocomplete="new-password" placeholder="Repeat password" minlength="6" required>
+                    </label>
+                </div>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="active" checked>
+                    Activate this user account immediately.
+                </label>
+
+                <button type="submit">Create user</button>
+            </form>
+
+            <p class="switch-link">Already registered? <a href="/users/login">Back to login</a></p>
+        </section>
+    </main>
+</body>
+</html>
