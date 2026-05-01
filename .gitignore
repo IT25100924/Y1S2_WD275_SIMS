@@ -25,3 +25,6 @@ replay_pid*
 
 # Maven build output
 target/
+
+# IDE specific files
+.idea/workspace.xml
