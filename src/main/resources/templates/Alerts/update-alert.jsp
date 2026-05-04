@@ -1,9 +1,10 @@
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Alert | SIMS</title>
+    <title>Update Alert | SIMS</title>
     <style>
         * {
             box-sizing: border-box;
@@ -131,9 +132,9 @@
             margin: 0 0 18px;
             padding: 12px 14px;
             border-radius: 6px;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            background: #f0fdf4;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            background: #eff6ff;
             font-size: 14px;
         }
 
@@ -264,8 +265,8 @@
         <main class="main">
             <header class="topbar">
                 <div class="page-title">
-                    <h1>Add alert</h1>
-                    <p>Create a manual alert or log an inventory warning.</p>
+                    <h1>Update alert</h1>
+                    <p>Edit alert details and mark it as resolved when handled.</p>
                 </div>
                 <div class="actions">
                     <a class="button button-secondary" href="/alerts">Back</a>
@@ -273,10 +274,10 @@
                 </div>
             </header>
 
-            <section class="card" aria-label="Add alert form">
+            <section class="card" aria-label="Update alert form">
                 <div class="alert" th:if="${message}" th:text="${message}"></div>
 
-                <form th:action="@{/alerts/add}" action="/alerts/add" method="post" th:object="${alert}">
+                <form th:action="@{/alerts/update/{id}(id=${alert.id})}" action="/alerts/update/ALT-001" method="post" th:object="${alert}">
                     <div class="form-grid">
                         <label>
                             Alert title
@@ -331,7 +332,7 @@
                     </label>
 
                     <div class="form-actions">
-                        <button class="button button-primary" type="submit">Save alert</button>
+                        <button class="button button-primary" type="submit">Update alert</button>
                         <a class="button button-secondary" href="/alerts">Cancel</a>
                     </div>
                 </form>
