@@ -5,14 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="21d210e0-5662-4369-8640-b21b5d3eeb0c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/dashboard.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/add-alert.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/alerts.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/update-alert.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/dashboard.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/login.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/register.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/users.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/config/AppConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/AdminUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/AdminUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/StaffUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/StaffUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserFileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserFileHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/data/users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/data/users.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/add-alert.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/alerts.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/update-alert.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/dashboard.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/login.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/register.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/users.jsp" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +31,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="60" />
+    <option name="cachedIndexableFilesCount" value="69" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -111,6 +122,7 @@
       <workItem from="1777448955923" duration="3200000" />
       <workItem from="1777537622960" duration="109000" />
       <workItem from="1777538064061" duration="6383000" />
+      <workItem from="1777881100476" duration="1200000" />
     </task>
     <servers />
   </component>
