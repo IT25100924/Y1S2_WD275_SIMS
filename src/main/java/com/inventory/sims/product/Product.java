@@ -61,4 +61,10 @@ public class Product {
                 ", quantity=" + quantity +
                 '}';
     }
+
+    // Method to format the product for file storage
+    public String toFileString() {
+        return "General!" + id + "!" + name + "!" + price + "!" + quantity;
+    }
+
 }
