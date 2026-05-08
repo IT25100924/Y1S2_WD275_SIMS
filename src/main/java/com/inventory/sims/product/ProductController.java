@@ -20,14 +20,14 @@ public class ProductController {
     @GetMapping
     public String viewProducts(Model model) {
         model.addAttribute("products", productService.getAllProducts());
-        return "viewProducts";
+        return "products/viewProducts";
     }
 
     // 2. Show the form to add a new product (URL: GET /products/add)
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new Product());
-        return "addProduct";
+        return "products/addProduct";
     }
 
     // 3. Handle the submission of the add product form (URL: POST /products/add)
@@ -43,7 +43,7 @@ public class ProductController {
         Product product = productService.getProductById(id);
         if (product != null) {
             model.addAttribute("product", product);
-            return "editProduct";
+            return "products/editProduct";
         }
         return "redirect:/products";
     }
