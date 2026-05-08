@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public class ProductRepository {
 
-    private static final String FILE_PATH = "products.txt";
+    private static final String FILE_PATH = "src/main/resources/data/products.txt";
     private static final String DELIMITER = "!";
 
     // Read all products from the text file
