@@ -1,3 +1,4 @@
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -242,7 +243,7 @@
             <h2>Register</h2>
             <p class="subtitle">Enter the user details and choose an account role.</p>
 
-            <div class="alert" th:if="${message}" th:text="${message}"></div>
+            <div class="alert">${message}</div>
 
             <form action="/users/register" method="post">
                 <div class="form-grid">

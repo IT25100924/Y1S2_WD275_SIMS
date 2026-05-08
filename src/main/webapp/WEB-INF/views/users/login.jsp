@@ -1,3 +1,4 @@
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -249,7 +250,7 @@
             <h2>Login</h2>
             <p class="subtitle">Use your registered email and password.</p>
 
-            <div class="alert" th:if="${error}" th:text="${error}"></div>
+            <div class="alert">${error}${message}</div>
 
             <form action="/users/login" method="post">
                 <label>
