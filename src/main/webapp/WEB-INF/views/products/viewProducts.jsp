@@ -81,20 +81,32 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- Thymeleaf loop for products -->
-                    <tr th:each="product : ${products}">
-                        <td th:text="${product.id}">P001</td>
-                        <td th:text="${product.name}">Sample Product</td>
-                        <td><span class="badge" th:text="${product.class.simpleName}">Product</span></td>
-                        <td th:text="'$' + ${product.price}">$10.0</td>
-                        <td th:text="${product.quantity}">100</td>
+                    <%
+                        java.util.List<com.inventory.sims.product.Product> productList = (java.util.List<com.inventory.sims.product.Product>) request.getAttribute("products");
+                        if (productList != null && !productList.isEmpty()) {
+                            for (com.inventory.sims.product.Product product : productList) {
+                    %>
+                    <tr>
+                        <td><%= product.getId() %></td>
+                        <td><%= product.getName() %></td>
+                        <td><span class="badge"><%= product.getClass().getSimpleName() %></span></td>
+                        <td>$<%= String.format("%.2f", product.getPrice()) %></td>
+                        <td><%= product.getQuantity() %></td>
                         <td>
                             <div class="table-actions">
-                                <a th:href="@{/products/edit/{id}(id=${product.id})}">Edit</a>
-                                <a th:href="@{/products/delete/{id}(id=${product.id})}">Delete</a>
+                                <a href="/products/edit/<%= product.getId() %>">Edit</a>
+                                <a href="/products/delete/<%= product.getId() %>">Delete</a>
                             </div>
                         </td>
                     </tr>
+                    <%
+                        }
+                    } else {
+                    %>
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
+                    </tr>
+                    <% } %>
                     </tbody>
                 </table>
             </div>
