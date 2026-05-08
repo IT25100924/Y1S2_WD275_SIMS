@@ -25,14 +25,31 @@ public class ProductRepository {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(DELIMITER);
-                if (data.length == 4) {
-                    Product product = new Product(
-                            data[0],                     // id
-                            data[1],                     // name
-                            Double.parseDouble(data[2]), // price
-                            Integer.parseInt(data[3])    // quantity
-                    );
-                    products.add(product);
+
+                // Our new format has at least 5 parts: Type!ID!Name!Price!Quantity
+                if (data.length >= 5) {
+                    String type = data[0];
+                    String id = data[1];
+                    String name = data[2];
+                    double price = Double.parseDouble(data[3]);
+                    int quantity = Integer.parseInt(data[4]);
+
+                    Product product = null;
+
+                    // Check the type and instantiate the correct subclass
+                    if ("Electronics".equals(type) && data.length == 6) {
+                        int warrantyMonths = Integer.parseInt(data[5]);
+                        product = new ElectronicsProduct(id, name, price, quantity, warrantyMonths);
+                    } else if ("Food".equals(type) && data.length == 6) {
+                        String expirationDate = data[5];
+                        product = new FoodProduct(id, name, price, quantity, expirationDate);
+                    } else if ("General".equals(type)) {
+                        product = new Product(id, name, price, quantity);
+                    }
+
+                    if (product != null) {
+                        products.add(product);
+                    }
                 }
             }
         } catch (IOException | NumberFormatException e) {
@@ -81,14 +98,13 @@ public class ProductRepository {
     private void saveAll(List<Product> products) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Product p : products) {
-                bw.write(p.getId() + DELIMITER +
-                        p.getName() + DELIMITER +
-                        p.getPrice() + DELIMITER +
-                        p.getQuantity());
+                // Polymorphism in action: Java calls the correct method based on the object type
+                bw.write(p.toFileString());
                 bw.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
