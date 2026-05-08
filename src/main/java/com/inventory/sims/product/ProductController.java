@@ -32,7 +32,24 @@ public class ProductController {
 
     // 3. Handle the submission of the add product form (URL: POST /products/add)
     @PostMapping("/add")
-    public String addProduct(@ModelAttribute("product") Product product) {
+    public String addProduct(
+            @RequestParam String type,
+            @RequestParam String id,
+            @RequestParam String name,
+            @RequestParam double price,
+            @RequestParam int quantity,
+            @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
+            @RequestParam(required = false) String expirationDate) {
+        Product product;
+
+        // Instantiate the correct subclass based on the dropdown selection
+        if ("Electronics".equals(type)) {
+            product = new ElectronicsProduct(id, name, price, quantity, warrantyMonths);
+        } else if ("Food".equals(type)) {
+            product = new FoodProduct(id, name, price, quantity, expirationDate);
+        } else {
+            product = new Product(id, name, price, quantity);
+        }
         productService.saveProduct(product);
         return "redirect:/products";
     }
@@ -50,8 +67,22 @@ public class ProductController {
 
     // 5. Handle the submission of the edit product form (URL: POST /products/edit/{id})
     @PostMapping("/edit/{id}")
-    public String editProduct(@PathVariable String id, @ModelAttribute("product") Product product) {
-        product.setId(id);
+    public String editProduct(
+            @PathVariable String id,
+            @RequestParam String type,
+            @RequestParam String name,
+            @RequestParam double price,
+            @RequestParam int quantity,
+            @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
+            @RequestParam(required = false) String expirationDate) {
+        Product product;
+        if ("Electronics".equals(type)) {
+            product = new ElectronicsProduct(id, name, price, quantity, warrantyMonths);
+        } else if ("Food".equals(type)) {
+            product = new FoodProduct(id, name, price, quantity, expirationDate);
+        } else {
+            product = new Product(id, name, price, quantity);
+        }
         productService.saveProduct(product);
         return "redirect:/products";
     }
