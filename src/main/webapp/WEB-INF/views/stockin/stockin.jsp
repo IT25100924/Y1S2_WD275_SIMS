@@ -146,7 +146,7 @@
                     <button type="submit" class="button button-primary">Save Stock In</button>
                 </form>
             </section>
-            
+
         </div>
     </main>
 </div>
