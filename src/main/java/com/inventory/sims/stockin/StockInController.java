@@ -27,6 +27,12 @@ public class StockInController {
         return "stockin/stockin";
     }
 
+    @GetMapping("/stockin/view")
+    public String viewStockInRecords(Model model) {
+        model.addAttribute("stockIns", stockInService.getAllStockIns());
+        return "stockin/viewStockIn";
+    }
+
     @PostMapping("/stockin")
     public String addStockIn(@RequestParam String productId,
                              @RequestParam String supplierName,
