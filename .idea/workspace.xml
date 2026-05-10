@@ -5,25 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="21d210e0-5662-4369-8640-b21b5d3eeb0c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/dashboard.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/config/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/AdminUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/AdminUser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/StaffUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/StaffUser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserFileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserFileHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/inventory/sims/user/UserType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/data/users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/data/users.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/add-alert.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/alerts.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/Alerts/update-alert.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/dashboard.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/login.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/register.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/users/users.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/users/users.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/users/users.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

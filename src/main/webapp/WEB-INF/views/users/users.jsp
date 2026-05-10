@@ -1,6 +1,44 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="com.inventory.sims.user.User" %>
+<%@ page import="com.inventory.sims.user.UserType" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.List" %>
+<%@ page import="org.springframework.web.util.HtmlUtils" %>
+<%!
+    private String text(String value) {
+        return HtmlUtils.htmlEscape(value == null ? "" : value);
+    }
+
+    private String attribute(String value) {
+        return HtmlUtils.htmlEscape(value == null ? "" : value, "UTF-8");
+    }
+
+    private long longValue(Object value) {
+        return value instanceof Number number ? number.longValue() : 0L;
+    }
+
+    private String firstLetter(User user) {
+        if (user == null || user.getFirstName() == null || user.getFirstName().isBlank()) {
+            return "U";
+        }
+        return user.getFirstName().trim().substring(0, 1).toUpperCase();
+    }
+%>
+<%
+    List<User> users = (List<User>) request.getAttribute("users");
+    if (users == null) {
+        users = Collections.emptyList();
+    }
+
+    String keyword = (String) request.getAttribute("keyword");
+    long totalUsers = longValue(request.getAttribute("totalUsers"));
+    long adminUsers = longValue(request.getAttribute("adminUsers"));
+    long staffUsers = longValue(request.getAttribute("staffUsers"));
+    long activeUsers = longValue(request.getAttribute("activeUsers"));
+    long filteredUsers = longValue(request.getAttribute("filteredUsers"));
+%>
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -121,7 +159,7 @@
 
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
@@ -158,7 +196,9 @@
         }
 
         .search {
-            width: min(100%, 360px);
+            display: flex;
+            width: min(100%, 460px);
+            gap: 10px;
         }
 
         .search input {
@@ -175,6 +215,12 @@
             outline: 3px solid rgba(37, 99, 235, 0.16);
         }
 
+        .result-count {
+            color: #64748b;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
         .table-wrap {
             overflow-x: auto;
             background: #ffffff;
@@ -186,7 +232,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 760px;
+            min-width: 820px;
         }
 
         th,
@@ -274,31 +320,19 @@
             background: #fee2e2;
         }
 
-        .table-actions {
-            display: flex;
-            gap: 8px;
+        .empty-state {
+            padding: 34px 16px;
+            text-align: center;
+            color: #64748b;
         }
 
-        .table-actions a,
-        .table-actions button {
-            min-height: 34px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            background: #ffffff;
-            color: #334155;
-            padding: 7px 10px;
-            font: inherit;
-            font-size: 14px;
-            text-decoration: none;
-            cursor: pointer;
+        @media (max-width: 960px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
-        .table-actions a:hover,
-        .table-actions button:hover {
-            background: #f8fafc;
-        }
-
-        @media (max-width: 860px) {
+        @media (max-width: 760px) {
             .layout {
                 grid-template-columns: 1fr;
             }
@@ -320,7 +354,8 @@
             }
 
             .topbar,
-            .toolbar {
+            .toolbar,
+            .search {
                 align-items: stretch;
                 flex-direction: column;
             }
@@ -329,13 +364,14 @@
                 grid-template-columns: 1fr;
             }
 
-            .actions {
-                width: 100%;
-            }
-
+            .actions,
             .button,
             .search {
                 width: 100%;
+            }
+
+            .result-count {
+                white-space: normal;
             }
         }
     </style>
@@ -359,7 +395,7 @@
             <header class="topbar">
                 <div class="page-title">
                     <h1>Users</h1>
-                    <p>Manage system accounts and access roles.</p>
+                    <p>View registered system accounts and access roles.</p>
                 </div>
                 <div class="actions">
                     <a class="button button-secondary" href="/users/login">Logout</a>
@@ -370,133 +406,74 @@
             <section class="summary-grid" aria-label="User summary">
                 <div class="summary-card">
                     <span>Total users</span>
-                    <strong th:text="${totalUsers}">3</strong>
+                    <strong><%= totalUsers %></strong>
                 </div>
                 <div class="summary-card">
                     <span>Admin users</span>
-                    <strong th:text="${adminUsers}">1</strong>
+                    <strong><%= adminUsers %></strong>
                 </div>
                 <div class="summary-card">
                     <span>Staff users</span>
-                    <strong th:text="${staffUsers}">2</strong>
+                    <strong><%= staffUsers %></strong>
+                </div>
+                <div class="summary-card">
+                    <span>Active users</span>
+                    <strong><%= activeUsers %></strong>
                 </div>
             </section>
 
             <section aria-label="Users table">
                 <div class="toolbar">
                     <form class="search" action="/users" method="get">
-                        <input type="search" name="keyword" placeholder="Search users" th:value="${keyword}">
+                        <input type="search" name="keyword" placeholder="Search by name, email, phone, role, or ID" value="<%= attribute(keyword) %>">
+                        <button class="button button-primary" type="submit">Search</button>
                     </form>
-                    <a class="button button-secondary" href="/users">Clear filters</a>
+                    <div class="actions">
+                        <span class="result-count"><%= filteredUsers %> shown</span>
+                        <a class="button button-secondary" href="/users">Clear</a>
+                    </div>
                 </div>
 
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>User</th>
                                 <th>Phone</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="user : ${users}">
-                                <td>
-                                    <div class="user-cell">
-                                        <span class="avatar" th:text="${#strings.substring(user.firstName, 0, 1)}">A</span>
-                                        <div>
-                                            <span class="user-name" th:text="${user.firstName + ' ' + user.lastName}">Admin User</span>
-                                            <span class="user-email" th:text="${user.email}">admin@sims.com</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td th:text="${user.phone}">0771234567</td>
-                                <td>
-                                    <span class="badge badge-admin" th:class="${user.role == 'STAFF'} ? 'badge badge-staff' : 'badge badge-admin'" th:text="${user.role}">ADMIN</span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-active" th:class="${user.active} ? 'badge badge-active' : 'badge badge-inactive'" th:text="${user.active} ? 'Active' : 'Inactive'">Active</span>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a th:href="@{/users/edit/{id}(id=${user.id})}" href="/users/edit/1">Edit</a>
-                                        <form th:action="@{/users/delete/{id}(id=${user.id})}" action="/users/delete/1" method="post">
-                                            <button type="submit">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr th:remove="all">
-                                <td>
-                                    <div class="user-cell">
-                                        <span class="avatar">A</span>
-                                        <div>
-                                            <span class="user-name">Admin User</span>
-                                            <span class="user-email">admin@sims.com</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>0771234567</td>
-                                <td><span class="badge badge-admin">ADMIN</span></td>
-                                <td><span class="badge badge-active">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/users/edit/1">Edit</a>
-                                        <form action="/users/delete/1" method="post">
-                                            <button type="submit">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr th:remove="all">
-                                <td>
-                                    <div class="user-cell">
-                                        <span class="avatar">S</span>
-                                        <div>
-                                            <span class="user-name">Staff User</span>
-                                            <span class="user-email">staff@sims.com</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>0712345678</td>
-                                <td><span class="badge badge-staff">STAFF</span></td>
-                                <td><span class="badge badge-active">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/users/edit/2">Edit</a>
-                                        <form action="/users/delete/2" method="post">
-                                            <button type="submit">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr th:remove="all">
-                                <td>
-                                    <div class="user-cell">
-                                        <span class="avatar">N</span>
-                                        <div>
-                                            <span class="user-name">New Staff</span>
-                                            <span class="user-email">newstaff@sims.com</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>0755555555</td>
-                                <td><span class="badge badge-staff">STAFF</span></td>
-                                <td><span class="badge badge-inactive">Inactive</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/users/edit/3">Edit</a>
-                                        <form action="/users/delete/3" method="post">
-                                            <button type="submit">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                            <% if (users.isEmpty()) { %>
+                                <tr>
+                                    <td colspan="5" class="empty-state">No users found.</td>
+                                </tr>
+                            <% } else { %>
+                                <% for (User user : users) { %>
+                                    <tr>
+                                        <td><%= text(user.getId()) %></td>
+                                        <td>
+                                            <div class="user-cell">
+                                                <span class="avatar"><%= text(firstLetter(user)) %></span>
+                                                <div>
+                                                    <span class="user-name"><%= text(user.getFirstName() + " " + user.getLastName()) %></span>
+                                                    <span class="user-email"><%= text(user.getEmail()) %></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><%= text(user.getPhone()) %></td>
+                                        <td>
+                                            <% boolean staff = user.getRole() == UserType.STAFF; %>
+                                            <span class="badge <%= staff ? "badge-staff" : "badge-admin" %>"><%= text(user.getRole() == null ? "" : user.getRole().name()) %></span>
+                                        </td>
+                                        <td>
+                                            <span class="badge <%= user.isActive() ? "badge-active" : "badge-inactive" %>"><%= user.isActive() ? "Active" : "Inactive" %></span>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>
