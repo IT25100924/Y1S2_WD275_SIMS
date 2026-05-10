@@ -76,6 +76,7 @@
                 <p>Record incoming stock and add it to product quantity.</p>
             </div>
             <div class="actions">
+                <a class="button button-secondary" href="/stockin/view">View Stock In</a>
                 <a class="button button-secondary" href="/products">View Products</a>
             </div>
         </header>
