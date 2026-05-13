@@ -57,6 +57,96 @@ public class StockInService {
         return stockInFileHandler.readStockIns();
     }
 
+    public StockIn getStockInById(String id) {
+        validateRequired(id, "Stock-in ID");
+        for (StockIn stockIn : stockInFileHandler.readStockIns()) {
+            if (id.trim().equals(stockIn.getId())) {
+                return stockIn;
+            }
+        }
+        return null;
+    }
+
+    public StockIn updateStockIn(String id, String productId, String supplierName, int quantity,
+                                 double unitCost, String receivedDate, String note) {
+        validateRequired(id, "Stock-in ID");
+        validateRequired(productId, "Product");
+        validateRequired(supplierName, "Supplier name");
+        validateRequired(receivedDate, "Received date");
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+        if (unitCost < 0) {
+            throw new IllegalArgumentException("Unit cost cannot be negative.");
+        }
+        validateDate(receivedDate);
+
+        List<StockIn> stockIns = stockInFileHandler.readStockIns();
+        StockIn existing = null;
+        int existingIndex = -1;
+        for (int i = 0; i < stockIns.size(); i++) {
+            StockIn stockIn = stockIns.get(i);
+            if (id.trim().equals(stockIn.getId())) {
+                existing = stockIn;
+                existingIndex = i;
+                break;
+            }
+        }
+
+        if (existing == null) {
+            throw new IllegalArgumentException("Stock-in record was not found.");
+        }
+
+        Product selectedProduct = productService.getProductById(productId);
+        if (selectedProduct == null) {
+            throw new IllegalArgumentException("Selected product was not found.");
+        }
+
+        adjustProductQuantity(existing, selectedProduct, quantity);
+
+        StockIn updated = new StockIn(
+                existing.getId(),
+                selectedProduct.getId(),
+                selectedProduct.getName(),
+                supplierName.trim(),
+                quantity,
+                unitCost,
+                receivedDate.trim(),
+                safeTrim(note));
+
+        stockIns.set(existingIndex, updated);
+        stockInFileHandler.saveAllStockIns(stockIns);
+        return updated;
+    }
+
+    private void adjustProductQuantity(StockIn existing, Product selectedProduct, int updatedQuantity) {
+        if (existing.getProductId().equals(selectedProduct.getId())) {
+            int adjustedQuantity = selectedProduct.getQuantity() - existing.getQuantity() + updatedQuantity;
+            if (adjustedQuantity < 0) {
+                throw new IllegalArgumentException("Cannot reduce product quantity below zero.");
+            }
+            selectedProduct.setQuantity(adjustedQuantity);
+            productService.saveProduct(selectedProduct);
+            return;
+        }
+
+        Product originalProduct = productService.getProductById(existing.getProductId());
+        if (originalProduct == null) {
+            throw new IllegalArgumentException("Original product was not found, so quantity cannot be adjusted.");
+        }
+
+        int originalAdjustedQuantity = originalProduct.getQuantity() - existing.getQuantity();
+        if (originalAdjustedQuantity < 0) {
+            throw new IllegalArgumentException("Cannot reduce original product quantity below zero.");
+        }
+
+        originalProduct.setQuantity(originalAdjustedQuantity);
+        selectedProduct.setQuantity(selectedProduct.getQuantity() + updatedQuantity);
+        productService.saveProduct(originalProduct);
+        productService.saveProduct(selectedProduct);
+    }
+
     private String nextStockInId() {
         int max = 0;
         for (StockIn stockIn : stockInFileHandler.readStockIns()) {
