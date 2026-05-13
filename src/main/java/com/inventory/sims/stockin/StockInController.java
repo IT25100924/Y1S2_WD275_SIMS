@@ -84,4 +84,16 @@ public class StockInController {
             return "redirect:/stockin/edit/" + id;
         }
     }
+
+    @PostMapping("/stockin/delete/{id}")
+    public String deleteStockIn(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            StockIn stockIn = stockInService.deleteStockIn(id);
+            redirectAttributes.addFlashAttribute("success",
+                    "Stock in " + stockIn.getId() + " deleted and product quantity adjusted.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        }
+        return "redirect:/stockin/view";
+    }
 }
