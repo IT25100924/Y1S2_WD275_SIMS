@@ -49,6 +49,26 @@ public class StockInFileHandler {
         }
     }
 
+    public void saveAllStockIns(List<StockIn> stockIns) {
+        ensureFile();
+
+        List<String> lines = new ArrayList<>();
+        for (StockIn stockIn : stockIns) {
+            lines.add(stockIn.toFileLine());
+        }
+
+        try {
+            Files.write(
+                    STOCK_IN_FILE,
+                    lines,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to update stock-in records", ex);
+        }
+    }
+
     private void ensureFile() {
         try {
             Path parent = STOCK_IN_FILE.getParent();
