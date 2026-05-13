@@ -2,8 +2,11 @@ package com.inventory.sims.supplier;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SupplierService {
@@ -60,6 +63,37 @@ public class SupplierService {
         return supplierFileHandler.readSuppliers();
     }
 
+    public List<Supplier> searchSuppliers(String keyword) {
+        String normalizedKeyword = safeTrim(keyword).toLowerCase(Locale.ROOT);
+
+        return supplierFileHandler.readSuppliers().stream()
+                .filter(supplier -> normalizedKeyword.isEmpty() || containsSupplierKeyword(supplier, normalizedKeyword))
+                .sorted(Comparator.comparing(Supplier::getCompanyName, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<Supplier> findById(String supplierId) {
+        if (supplierId == null || supplierId.isBlank()) {
+            return Optional.empty();
+        }
+
+        return supplierFileHandler.readSuppliers().stream()
+                .filter(supplier -> supplierId.equalsIgnoreCase(supplier.getId()))
+                .findFirst();
+    }
+
+    public long countActiveSuppliers() {
+        return supplierFileHandler.readSuppliers().stream()
+                .filter(supplier -> "ACTIVE".equalsIgnoreCase(supplier.getStatus()))
+                .count();
+    }
+
+    public long countPendingSuppliers() {
+        return supplierFileHandler.readSuppliers().stream()
+                .filter(supplier -> "PENDING".equalsIgnoreCase(supplier.getStatus()))
+                .count();
+    }
+
     private boolean emailExists(String email) {
         return supplierFileHandler.readSuppliers().stream()
                 .anyMatch(supplier -> email.equalsIgnoreCase(supplier.getEmail()));
@@ -88,5 +122,23 @@ public class SupplierService {
 
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private boolean containsSupplierKeyword(Supplier supplier, String keyword) {
+        return contains(supplier.getId(), keyword)
+                || contains(supplier.getCompanyName(), keyword)
+                || contains(supplier.getCategory(), keyword)
+                || contains(supplier.getContactPerson(), keyword)
+                || contains(supplier.getPhone(), keyword)
+                || contains(supplier.getEmail(), keyword)
+                || contains(supplier.getCity(), keyword)
+                || contains(supplier.getLeadTime(), keyword)
+                || contains(supplier.getAddress(), keyword)
+                || contains(supplier.getNotes(), keyword)
+                || contains(supplier.getStatus(), keyword);
+    }
+
+    private boolean contains(String value, String keyword) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(keyword);
     }
 }

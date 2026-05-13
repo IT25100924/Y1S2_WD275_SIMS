@@ -1,10 +1,14 @@
 package com.inventory.sims.supplier;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 public class SupplierController {
@@ -12,6 +16,30 @@ public class SupplierController {
 
     public SupplierController(SupplierService supplierService) {
         this.supplierService = supplierService;
+    }
+
+    @GetMapping("/suppliers")
+    public String showSuppliers(@RequestParam(required = false) String keyword, Model model) {
+        List<Supplier> suppliers = supplierService.searchSuppliers(keyword);
+        model.addAttribute("suppliers", suppliers);
+        model.addAttribute("keyword", keyword == null ? "" : keyword);
+        model.addAttribute("totalSuppliers", suppliers.size());
+        model.addAttribute("activeSuppliers", supplierService.countActiveSuppliers());
+        model.addAttribute("pendingSuppliers", supplierService.countPendingSuppliers());
+        return "supplier/suppliers";
+    }
+
+    @GetMapping("/suppliers/details/{id}")
+    public String showSupplierDetails(@PathVariable("id") String supplierId, Model model, RedirectAttributes redirectAttributes) {
+        return supplierService.findById(supplierId)
+                .map(supplier -> {
+                    model.addAttribute("supplier", supplier);
+                    return "supplier/details";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("message", "Supplier not found.");
+                    return "redirect:/suppliers";
+                });
     }
 
     @GetMapping("/suppliers/register")
