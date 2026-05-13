@@ -1,2 +1,3 @@
 U001|Dovin|Anjuna|dovinanjuna@sims.com|071234567|ADMIN|Dovin123|true
 U002|DOHAN|IMANJITH|dohanimanjith@sims.com|0712345667|STAFF|Dohan123|true
+U003|Dsasd|zcdcds|sfsdf@sims.com|077123456|STAFF|Davan123|true
