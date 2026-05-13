@@ -73,6 +73,7 @@
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Supplier ID</th>
                         <th>Name</th>
                         <th>Type</th>
                         <th>Price</th>
@@ -88,6 +89,7 @@
                     %>
                     <tr>
                         <td><%= product.getId() %></td>
+                        <td><span class="badge" style="background:#eef2f6; color:#475569;"><%= product.getSupplierId() %></span></td>
                         <td><%= product.getName() %></td>
                         <td><span class="badge"><%= product.getClass().getSimpleName() %></span></td>
                         <td>$<%= String.format("%.2f", product.getPrice()) %></td>
