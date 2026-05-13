@@ -9,8 +9,8 @@ public class FoodProduct extends Product {
     }
 
     // Parameterized constructor
-    public FoodProduct(String id, String name, double price, int quantity, String expirationDate) {
-        super(id, name, price, quantity);
+    public FoodProduct(String id, String name, double price, int quantity, String supplierId, String expirationDate) {
+        super(id, name, price, quantity, supplierId);
         this.expirationDate = expirationDate;
     }
 
@@ -23,22 +23,10 @@ public class FoodProduct extends Product {
         this.expirationDate = expirationDate;
     }
 
-    // Override the toString method
-    @Override
-    public String toString() {
-        return "FoodProduct{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", price=" + getPrice() +
-                ", quantity=" + getQuantity() +
-                ", expirationDate='" + expirationDate + '\'' +
-                '}';
-    }
-
     // Override to format the string specific to Food
     @Override
     public String toFileString() {
-        return "Food!" + getId() + "!" + getName() + "!" + getPrice() + "!" + getQuantity() + "!" + expirationDate;
+        return "Food!" + getId() + "!" + getSupplierId() + "!" + getName() + "!" + getPrice() + "!" + getQuantity() + "!" + expirationDate;
     }
     
 }

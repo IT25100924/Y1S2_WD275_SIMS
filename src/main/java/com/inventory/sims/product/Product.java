@@ -5,17 +5,19 @@ public class Product {
     private String name;
     private double price;
     private int quantity;
+    private String supplierId;
 
     // Default constructor
     public Product() {
     }
 
     // Parameterized constructor
-    public Product(String id, String name, double price, int quantity) {
+    public Product(String id, String name, double price, int quantity, String supplierId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+        this.supplierId = supplierId;
     }
 
     // Getters and Setters
@@ -51,11 +53,19 @@ public class Product {
         this.quantity = quantity;
     }
 
+    public String getSupplierId() {
+        return supplierId;
+    }
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId;
+    }
+
     // toString method for easier debugging
     @Override
     public String toString() {
         return "Product{" +
                 "id='" + id + '\'' +
+                ", supplierId='" + supplierId + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", quantity=" + quantity +
@@ -64,7 +74,7 @@ public class Product {
 
     // Method to format the product for file storage
     public String toFileString() {
-        return "General!" + id + "!" + name + "!" + price + "!" + quantity;
+        return "General!" + id + "!" + supplierId + "!" + name + "!" + price + "!" + quantity;
     }
 
 }
