@@ -2,6 +2,9 @@ package com.inventory.sims.product;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
 
 import java.util.List;
 
@@ -52,4 +55,57 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    // --- INTEGRATION METHODS FOR OTHER MODULES ---
+
+    // 1. For the Stock-In / Stock-Out
+    // Safely updates the quantity of a product.
+    // Pass a positive number (Stock-In) or negative number (Stock-Out).
+    public boolean updateStock(String id, int quantityChange) {
+        Product product = getProductById(id);
+        if (product == null) {
+            return false;
+        }
+
+        int newQuantity = product.getQuantity() + quantityChange;
+        if (newQuantity < 0) {
+            throw new IllegalArgumentException("Insufficient stock! Cannot reduce quantity below zero.");
+        }
+
+        product.setQuantity(newQuantity);
+        productRepository.save(product);
+        return true;
+    }
+
+    // 2. For the Dashboard (Alerts)
+    // Returns all products where the stock is at or below the given threshold.
+    public List<Product> getLowStockProducts(int threshold) {
+        return getAllProducts().stream()
+                .filter(p -> p.getQuantity() <= threshold)
+                .collect(Collectors.toList());
+    }
+
+    // 3. For the Dashboard (Alerts)
+    // Filters only FoodProducts and checks if they expire within 'daysThreshold'.
+    public List<FoodProduct> getExpiringFoodProducts(int daysThreshold) {
+        LocalDate today = LocalDate.now();
+
+        return getAllProducts().stream()
+                .filter(p -> p instanceof FoodProduct)
+                .map(p -> (FoodProduct) p)
+                .filter(fp -> {
+                    try {
+                        if (fp.getExpirationDate() == null || fp.getExpirationDate().isEmpty()) return false;
+                        LocalDate expDate = LocalDate.parse(fp.getExpirationDate());
+                        long daysUntilExpiry = ChronoUnit.DAYS.between(today, expDate);
+
+                        // Return true if it expires between today (0) and the threshold
+                        return daysUntilExpiry >= 0 && daysUntilExpiry <= daysThreshold;
+                    } catch (Exception e) {
+                        return false; // Ignore parsing errors if they typed a bad date
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
 }
