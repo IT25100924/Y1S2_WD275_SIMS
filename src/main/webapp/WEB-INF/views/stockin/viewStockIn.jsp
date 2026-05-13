@@ -43,8 +43,11 @@
         .money { font-weight: 700; color: #111827; }
         .muted { color: #64748b; }
         .table-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
-        .table-actions a:hover { background: #f8fafc; }
+        .table-actions form { margin: 0; }
+        .table-actions a, .table-actions button { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
+        .table-actions a:hover, .table-actions button:hover { background: #f8fafc; }
+        .table-actions .delete-button { color: #991b1b; border-color: #fecaca; }
+        .table-actions .delete-button:hover { background: #fee2e2; }
 
         @media (max-width: 900px) {
             .layout { grid-template-columns: 1fr; }
@@ -163,6 +166,10 @@
                         <td>
                             <div class="table-actions">
                                 <a href="/stockin/edit/<%= stockIn.getId() %>">Edit</a>
+                                <form action="/stockin/delete/<%= stockIn.getId() %>" method="post"
+                                      onsubmit="return confirm('Delete stock-in record <%= stockIn.getId() %>?');">
+                                    <button type="submit" class="delete-button">Delete</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
