@@ -120,6 +120,40 @@ public class StockInService {
         return updated;
     }
 
+    public StockIn deleteStockIn(String id) {
+        validateRequired(id, "Stock-in ID");
+
+        List<StockIn> stockIns = stockInFileHandler.readStockIns();
+        StockIn deleted = null;
+
+        for (int i = 0; i < stockIns.size(); i++) {
+            StockIn stockIn = stockIns.get(i);
+            if (id.trim().equals(stockIn.getId())) {
+                deleted = stockIns.remove(i);
+                break;
+            }
+        }
+
+        if (deleted == null) {
+            throw new IllegalArgumentException("Stock-in record was not found.");
+        }
+
+        Product product = productService.getProductById(deleted.getProductId());
+        if (product == null) {
+            throw new IllegalArgumentException("Product was not found, so quantity cannot be adjusted.");
+        }
+
+        int adjustedQuantity = product.getQuantity() - deleted.getQuantity();
+        if (adjustedQuantity < 0) {
+            throw new IllegalArgumentException("Cannot reduce product quantity below zero.");
+        }
+
+        product.setQuantity(adjustedQuantity);
+        productService.saveProduct(product);
+        stockInFileHandler.saveAllStockIns(stockIns);
+        return deleted;
+    }
+
     private void adjustProductQuantity(StockIn existing, Product selectedProduct, int updatedQuantity) {
         if (existing.getProductId().equals(selectedProduct.getId())) {
             int adjustedQuantity = selectedProduct.getQuantity() - existing.getQuantity() + updatedQuantity;
