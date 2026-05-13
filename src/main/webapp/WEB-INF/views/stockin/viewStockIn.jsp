@@ -24,6 +24,9 @@
         .button-primary:hover { background: #1e40af; }
         .button-secondary { background: #ffffff; color: #334155; border-color: #cbd5e1; }
         .button-secondary:hover { background: #f8fafc; }
+        .alert { margin-bottom: 18px; padding: 12px 14px; border-radius: 6px; font-size: 14px; font-weight: 700; }
+        .alert-success { color: #166534; background: #dcfce7; border: 1px solid #86efac; }
+        .alert-error { color: #991b1b; background: #fee2e2; border: 1px solid #fecaca; }
         .summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
         .summary-card { background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px; padding: 18px; }
         .summary-card span { display: block; color: #64748b; font-size: 14px; margin-bottom: 10px; }
@@ -39,6 +42,9 @@
         .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #dcfce7; color: #166534; }
         .money { font-weight: 700; color: #111827; }
         .muted { color: #64748b; }
+        .table-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
+        .table-actions a:hover { background: #f8fafc; }
 
         @media (max-width: 900px) {
             .layout { grid-template-columns: 1fr; }
@@ -84,6 +90,8 @@
             int totalRecords = stockIns == null ? 0 : stockIns.size();
             int totalQuantity = 0;
             double totalCost = 0;
+            String success = (String) request.getAttribute("success");
+            String error = (String) request.getAttribute("error");
             if (stockIns != null) {
                 for (com.inventory.sims.stockin.StockIn stockIn : stockIns) {
                     totalQuantity += stockIn.getQuantity();
@@ -91,6 +99,13 @@
                 }
             }
         %>
+
+        <% if (success != null && !success.isBlank()) { %>
+        <div class="alert alert-success"><%= success %></div>
+        <% } %>
+        <% if (error != null && !error.isBlank()) { %>
+        <div class="alert alert-error"><%= error %></div>
+        <% } %>
 
         <section class="summary-grid" aria-label="Stock in summary">
             <div class="summary-card">
@@ -125,6 +140,7 @@
                         <th>Unit Cost</th>
                         <th>Total Cost</th>
                         <th>Note</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -144,13 +160,18 @@
                         <td class="money">$<%= String.format("%.2f", stockIn.getUnitCost()) %></td>
                         <td class="money">$<%= String.format("%.2f", stockIn.getTotalCost()) %></td>
                         <td><%= stockIn.getNote() == null || stockIn.getNote().isBlank() ? "-" : stockIn.getNote() %></td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="/stockin/edit/<%= stockIn.getId() %>">Edit</a>
+                            </div>
+                        </td>
                     </tr>
                     <%
                             }
                         } else {
                     %>
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 22px; color: #64748b;">No stock-in records found.</td>
+                        <td colspan="9" style="text-align: center; padding: 22px; color: #64748b;">No stock-in records found.</td>
                     </tr>
                     <% } %>
                     </tbody>
