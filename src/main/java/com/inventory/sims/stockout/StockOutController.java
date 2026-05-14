@@ -2,6 +2,7 @@ package com.inventory.sims.stockout;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,12 @@ public class StockOutController {
 
     public StockOutController(StockOutService stockOutService) {
         this.stockOutService = stockOutService;
+    }
+
+    @GetMapping("/stockout")
+    public String viewStockOutRecords(Model model) {
+        model.addAttribute("stockOutRecords", stockOutService.getAllStockOuts());
+        return "stockout/view";
     }
 
     @GetMapping("/stockout/create")
