@@ -158,6 +158,19 @@ public class SupplierService {
         return updatedSupplier;
     }
 
+    public void deleteSupplier(String supplierId) {
+        validateRequired(supplierId, "Supplier ID");
+
+        List<Supplier> suppliers = new ArrayList<>(supplierFileHandler.readSuppliers());
+        boolean removed = suppliers.removeIf(supplier -> supplierId.equalsIgnoreCase(supplier.getId()));
+
+        if (!removed) {
+            throw new IllegalArgumentException("Supplier not found.");
+        }
+
+        supplierFileHandler.saveAllSuppliers(suppliers);
+    }
+
     private boolean emailExists(String email) {
         return supplierFileHandler.readSuppliers().stream()
                 .anyMatch(supplier -> email.equalsIgnoreCase(supplier.getEmail()));
