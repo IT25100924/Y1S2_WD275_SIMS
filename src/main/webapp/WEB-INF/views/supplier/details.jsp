@@ -1,6 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,34 +71,34 @@
                 </div>
                 <div class="actions">
                     <a class="button button-secondary" href="/suppliers">Back to suppliers</a>
-                    <a class="button button-primary" th:href="@{/suppliers/edit/{id}(id=${supplier.id})}" href="/suppliers/edit/1">Edit supplier</a>
+                    <a class="button button-primary" href="/suppliers/edit/${supplier.id}">Edit supplier</a>
                 </div>
             </header>
             <section class="hero">
-                <h2 th:text="${supplier.companyName}">ABC Distributors</h2>
-                <p th:text="${supplier.notes}">Primary supplier for packaged goods, dry stock, and scheduled weekly deliveries.</p>
+                <h2>${supplier.companyName}</h2>
+                <p>${supplier.notes}</p>
                 <div class="hero-meta">
-                    <span class="badge badge-local" th:class="${supplier.category == 'IMPORT'} ? 'badge badge-import' : 'badge badge-local'" th:text="${supplier.category}">LOCAL</span>
-                    <span class="badge badge-active" th:class="${supplier.status == 'PENDING'} ? 'badge badge-pending' : 'badge badge-active'" th:text="${supplier.status}">ACTIVE</span>
+                    <span class="badge ${supplier.category eq 'IMPORT' ? 'badge-import' : 'badge-local'}">${supplier.category}</span>
+                    <span class="badge ${supplier.status eq 'PENDING' ? 'badge-pending' : 'badge-active'}">${supplier.status}</span>
                 </div>
             </section>
             <section class="grid" aria-label="Supplier details">
                 <article class="card">
                     <h3>Contact Information</h3>
                     <div class="detail-list">
-                        <div class="detail-item"><span>Contact person</span><strong th:text="${supplier.contactPerson}">Nimal Perera</strong></div>
-                        <div class="detail-item"><span>Email address</span><strong th:text="${supplier.email}">abc@supplier.com</strong></div>
-                        <div class="detail-item"><span>Phone number</span><strong th:text="${supplier.phone}">0771234567</strong></div>
-                        <div class="detail-item"><span>Address</span><p th:text="${supplier.address}">No. 25, Main Street, Colombo 03</p></div>
+                        <div class="detail-item"><span>Contact person</span><strong>${supplier.contactPerson}</strong></div>
+                        <div class="detail-item"><span>Email address</span><strong>${supplier.email}</strong></div>
+                        <div class="detail-item"><span>Phone number</span><strong>${supplier.phone}</strong></div>
+                        <div class="detail-item"><span>Address</span><p>${supplier.address}</p></div>
                     </div>
                 </article>
                 <article class="card">
                     <h3>Supply Information</h3>
                     <div class="detail-list">
-                        <div class="detail-item"><span>City</span><strong th:text="${supplier.city}">Colombo</strong></div>
-                        <div class="detail-item"><span>Lead time</span><strong th:text="${supplier.leadTime}">3 working days</strong></div>
-                        <div class="detail-item"><span>Category</span><strong th:text="${supplier.category}">LOCAL</strong></div>
-                        <div class="detail-item"><span>Status</span><strong th:text="${supplier.status}">ACTIVE</strong></div>
+                        <div class="detail-item"><span>City</span><strong>${supplier.city}</strong></div>
+                        <div class="detail-item"><span>Lead time</span><strong>${supplier.leadTime}</strong></div>
+                        <div class="detail-item"><span>Category</span><strong>${supplier.category}</strong></div>
+                        <div class="detail-item"><span>Status</span><strong>${supplier.status}</strong></div>
                     </div>
                 </article>
             </section>
