@@ -3,6 +3,7 @@ package com.inventory.sims.supplier;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -92,6 +93,69 @@ public class SupplierService {
         return supplierFileHandler.readSuppliers().stream()
                 .filter(supplier -> "PENDING".equalsIgnoreCase(supplier.getStatus()))
                 .count();
+    }
+
+    public Supplier updateSupplier(String supplierId,
+                                   String companyName,
+                                   String category,
+                                   String contactPerson,
+                                   String phone,
+                                   String email,
+                                   String city,
+                                   String leadTime,
+                                   String address,
+                                   String notes,
+                                   boolean active) {
+        validateRequired(supplierId, "Supplier ID");
+        validateRequired(companyName, "Company name");
+        validateRequired(category, "Category");
+        validateRequired(contactPerson, "Contact person");
+        validateRequired(phone, "Phone number");
+        validateRequired(email, "Email");
+
+        String normalizedCategory = category.trim().toUpperCase(Locale.ROOT);
+        if (!"LOCAL".equals(normalizedCategory) && !"IMPORT".equals(normalizedCategory)) {
+            throw new IllegalArgumentException("Category must be LOCAL or IMPORT.");
+        }
+
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        List<Supplier> suppliers = new ArrayList<>(supplierFileHandler.readSuppliers());
+
+        Supplier existing = suppliers.stream()
+                .filter(supplier -> supplierId.equalsIgnoreCase(supplier.getId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Supplier not found."));
+
+        boolean duplicateEmail = suppliers.stream()
+                .anyMatch(supplier ->
+                        !supplier.getId().equalsIgnoreCase(existing.getId())
+                                && normalizedEmail.equalsIgnoreCase(supplier.getEmail()));
+        if (duplicateEmail) {
+            throw new IllegalArgumentException("A supplier with this email already exists.");
+        }
+
+        Supplier updatedSupplier = new Supplier(
+                existing.getId(),
+                companyName.trim(),
+                normalizedCategory,
+                contactPerson.trim(),
+                phone.trim(),
+                normalizedEmail,
+                safeTrim(city),
+                safeTrim(leadTime),
+                safeTrim(address),
+                safeTrim(notes),
+                active ? "ACTIVE" : "PENDING");
+
+        for (int i = 0; i < suppliers.size(); i++) {
+            if (existing.getId().equalsIgnoreCase(suppliers.get(i).getId())) {
+                suppliers.set(i, updatedSupplier);
+                break;
+            }
+        }
+
+        supplierFileHandler.saveAllSuppliers(suppliers);
+        return updatedSupplier;
     }
 
     private boolean emailExists(String email) {
