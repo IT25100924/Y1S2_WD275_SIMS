@@ -295,6 +295,7 @@
 
                 <div class="actions">
                     <button type="submit">Create stockout</button>
+                    <a class="button button-secondary" href="/stockout">View records</a>
                     <a class="button button-secondary" href="/dashboard">Back to dashboard</a>
                 </div>
             </form>
