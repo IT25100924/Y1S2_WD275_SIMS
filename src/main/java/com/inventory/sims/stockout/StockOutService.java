@@ -43,6 +43,55 @@ public class StockOutService {
         return stockOutFileHandler.readStockOuts();
     }
 
+    public StockOut getStockOutById(String id) {
+        validateRequired(id, "Stockout ID");
+
+        for (StockOut stockOut : stockOutFileHandler.readStockOuts()) {
+            if (stockOut.getId().equals(id.trim())) {
+                return stockOut;
+            }
+        }
+        return null;
+    }
+
+    public StockOut updateStockOut(String id, String productId, String productName, int quantity,
+                                   LocalDate stockOutDate, String issuedTo, String reason, String note) {
+        validateRequired(id, "Stockout ID");
+        validateRequired(productId, "Product ID");
+        validateRequired(productName, "Product name");
+        validateRequired(issuedTo, "Issued to");
+        validateRequired(reason, "Reason");
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+
+        List<StockOut> stockOuts = stockOutFileHandler.readStockOuts();
+        String stockOutId = id.trim();
+        LocalDate savedDate = stockOutDate == null ? LocalDate.now() : stockOutDate;
+
+        for (int i = 0; i < stockOuts.size(); i++) {
+            StockOut currentStockOut = stockOuts.get(i);
+            if (currentStockOut.getId().equals(stockOutId)) {
+                StockOut updatedStockOut = new StockOut(
+                        stockOutId,
+                        productId.trim(),
+                        productName.trim(),
+                        quantity,
+                        savedDate,
+                        issuedTo.trim(),
+                        reason.trim(),
+                        safeTrim(note));
+
+                stockOuts.set(i, updatedStockOut);
+                stockOutFileHandler.saveAllStockOuts(stockOuts);
+                return updatedStockOut;
+            }
+        }
+
+        throw new IllegalArgumentException("Stockout record not found.");
+    }
+
     private String nextStockOutId() {
         int max = 0;
         for (StockOut stockOut : stockOutFileHandler.readStockOuts()) {
