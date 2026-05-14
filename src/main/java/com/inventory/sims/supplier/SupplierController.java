@@ -104,4 +104,16 @@ public class SupplierController {
             return "redirect:/suppliers/edit/" + supplierId;
         }
     }
+
+    @PostMapping("/suppliers/delete/{id}")
+    public String delete(@PathVariable("id") String supplierId, RedirectAttributes redirectAttributes) {
+        try {
+            supplierService.deleteSupplier(supplierId);
+            redirectAttributes.addFlashAttribute("message", "Supplier deleted successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+
+        return "redirect:/suppliers";
+    }
 }
