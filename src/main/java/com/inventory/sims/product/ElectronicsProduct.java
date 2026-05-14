@@ -9,8 +9,8 @@ public class ElectronicsProduct extends Product {
     }
 
     // Parameterized constructor
-    public ElectronicsProduct(String id, String name, double price, int quantity, int warrantyMonths) {
-        super(id, name, price, quantity);
+    public ElectronicsProduct(String id, String name, double price, int quantity, String supplierId, int warrantyMonths) {
+        super(id, name, price, quantity, supplierId);
         this.warrantyMonths = warrantyMonths;
     }
 
@@ -23,22 +23,10 @@ public class ElectronicsProduct extends Product {
         this.warrantyMonths = warrantyMonths;
     }
 
-    // Override the toString method
-    @Override
-    public String toString() {
-        return "ElectronicsProduct{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", price=" + getPrice() +
-                ", quantity=" + getQuantity() +
-                ", warrantyMonths=" + warrantyMonths +
-                '}';
-    }
-
     // Override to format the string specific to Electronics
     @Override
     public String toFileString() {
-        return "Electronics!" + getId() + "!" + getName() + "!" + getPrice() + "!" + getQuantity() + "!" + warrantyMonths;
+        return "Electronics!" + getId() + "!" + getSupplierId() + "!" + getName() + "!" + getPrice() + "!" + getQuantity() + "!" + warrantyMonths;
     }
 
 }

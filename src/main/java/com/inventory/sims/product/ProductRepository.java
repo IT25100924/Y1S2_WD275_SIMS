@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public class ProductRepository {
 
-    private static final String FILE_PATH = "products.txt";
+    private static final String FILE_PATH = "src/main/resources/data/products.txt";
     private static final String DELIMITER = "!";
 
     // Read all products from the text file
@@ -26,25 +26,26 @@ public class ProductRepository {
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(DELIMITER);
 
-                // Our new format has at least 5 parts: Type!ID!Name!Price!Quantity
-                if (data.length >= 5) {
+                // Our format now has at least 6 parts: Type!ID!SupplierID!Name!Price!Quantity
+                if (data.length >= 6) {
                     String type = data[0];
                     String id = data[1];
-                    String name = data[2];
-                    double price = Double.parseDouble(data[3]);
-                    int quantity = Integer.parseInt(data[4]);
+                    String supplierId = data[2]; // New Field!
+                    String name = data[3];
+                    double price = Double.parseDouble(data[4]);
+                    int quantity = Integer.parseInt(data[5]);
 
                     Product product = null;
 
-                    // Check the type and instantiate the correct subclass
-                    if ("Electronics".equals(type) && data.length == 6) {
-                        int warrantyMonths = Integer.parseInt(data[5]);
-                        product = new ElectronicsProduct(id, name, price, quantity, warrantyMonths);
-                    } else if ("Food".equals(type) && data.length == 6) {
-                        String expirationDate = data[5];
-                        product = new FoodProduct(id, name, price, quantity, expirationDate);
+                    // Check the type and instantiate the correct subclass with supplierId
+                    if ("Electronics".equals(type) && data.length == 7) {
+                        int warrantyMonths = Integer.parseInt(data[6]);
+                        product = new ElectronicsProduct(id, name, price, quantity, supplierId, warrantyMonths);
+                    } else if ("Food".equals(type) && data.length == 7) {
+                        String expirationDate = data[6];
+                        product = new FoodProduct(id, name, price, quantity, supplierId, expirationDate);
                     } else if ("General".equals(type)) {
-                        product = new Product(id, name, price, quantity);
+                        product = new Product(id, name, price, quantity, supplierId);
                     }
 
                     if (product != null) {
