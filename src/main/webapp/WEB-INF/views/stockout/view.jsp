@@ -24,8 +24,11 @@
         .button-primary:hover { background: #1e40af; }
         .button-secondary { background: #ffffff; color: #334155; border-color: #cbd5e1; }
         .button-secondary:hover { background: #f8fafc; }
+        .button-small { min-height: 34px; padding: 7px 10px; font-size: 13px; }
         .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
         .toolbar h2 { margin: 0; color: #111827; font-size: 16px; }
+        .alert { margin-bottom: 18px; padding: 12px 14px; border-radius: 6px; border: 1px solid #bfdbfe; color: #1e3a8a; background: #eff6ff; font-size: 14px; font-weight: 700; }
+        .alert:empty { display: none; }
         .record-count { color: #64748b; font-size: 14px; font-weight: 700; }
         .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
         table { width: 100%; border-collapse: collapse; min-width: 980px; }
@@ -74,6 +77,7 @@
         </header>
 
         <section aria-label="Stockout records table">
+            <div class="alert">${message}</div>
             <%
                 java.util.List<com.inventory.sims.stockout.StockOut> stockOutRecords =
                         (java.util.List<com.inventory.sims.stockout.StockOut>) request.getAttribute("stockOutRecords");
@@ -96,6 +100,7 @@
                         <th>Issued To</th>
                         <th>Reason</th>
                         <th>Note</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -112,13 +117,14 @@
                         <td><%= stockOut.getIssuedTo() %></td>
                         <td><%= stockOut.getReason() %></td>
                         <td class="muted"><%= stockOut.getNote() == null || stockOut.getNote().isBlank() ? "-" : stockOut.getNote() %></td>
+                        <td><a class="button button-secondary button-small" href="/stockout/update/<%= stockOut.getId() %>">Update</a></td>
                     </tr>
                     <%
                             }
                         } else {
                     %>
                     <tr>
-                        <td class="empty" colspan="8">No stockout records found. Create a stockout record to show it here.</td>
+                        <td class="empty" colspan="9">No stockout records found. Create a stockout record to show it here.</td>
                     </tr>
                     <% } %>
                     </tbody>
