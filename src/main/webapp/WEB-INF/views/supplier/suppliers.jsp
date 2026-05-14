@@ -52,8 +52,9 @@
         .badge-active { color: #166534; background: #dcfce7; }
         .badge-pending { color: #92400e; background: #fef3c7; }
         .row-actions { display: flex; gap: 6px; }
-        .row-actions a { min-height: 32px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #334155; padding: 6px 10px; font: inherit; font-size: 13px; text-decoration: none; font-weight: 700; }
-        .row-actions a:hover { background: #f8fafc; }
+        .row-actions a, .row-actions button { min-height: 32px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #334155; padding: 6px 10px; font: inherit; font-size: 13px; text-decoration: none; font-weight: 700; cursor: pointer; }
+        .row-actions a:hover, .row-actions button:hover { background: #f8fafc; }
+        .row-actions form { margin: 0; }
         .action-update { color: #1d4ed8 !important; border-color: #93c5fd !important; background: #eff6ff !important; }
         .action-delete { color: #b91c1c !important; border-color: #fecaca !important; background: #fef2f2 !important; }
         .empty { text-align: center; color: #64748b; padding: 26px 14px; }
@@ -157,7 +158,9 @@
                             <div class="row-actions">
                                 <a href="/suppliers/details/<%= supplier.getId() %>">View</a>
                                 <a class="action-update" href="/suppliers/edit/<%= supplier.getId() %>">Update</a>
-                                <a class="action-delete" href="/suppliers/delete/<%= supplier.getId() %>">Delete</a>
+                                <form action="/suppliers/delete/<%= supplier.getId() %>" method="post" onsubmit="return confirm('Delete this supplier record?');">
+                                    <button class="action-delete" type="submit">Delete</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
