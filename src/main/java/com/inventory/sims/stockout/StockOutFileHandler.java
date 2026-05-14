@@ -49,6 +49,26 @@ public class StockOutFileHandler {
         }
     }
 
+    public void saveAllStockOuts(List<StockOut> stockOuts) {
+        ensureFile();
+
+        List<String> lines = new ArrayList<>();
+        for (StockOut stockOut : stockOuts) {
+            lines.add(stockOut.toFileLine());
+        }
+
+        try {
+            Files.write(
+                    STOCK_OUT_FILE,
+                    lines,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to update stockout file", ex);
+        }
+    }
+
     private void ensureFile() {
         try {
             Path parent = STOCK_OUT_FILE.getParent();
