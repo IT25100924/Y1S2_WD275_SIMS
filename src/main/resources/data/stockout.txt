@@ -1,1 +1,2 @@
-SO001|p02|tshirt material|2|2026-05-19|customer|Sale|bhgfuygi
+SO001|p04|tshirt material|2|2026-05-16|customer|Sale|bhgfuygi
+SO002|p004|shorts|4|2026-05-20|customer|Sale|asdfghj
