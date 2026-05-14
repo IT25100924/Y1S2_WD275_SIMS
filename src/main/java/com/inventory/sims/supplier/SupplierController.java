@@ -68,4 +68,40 @@ public class SupplierController {
             return "redirect:/suppliers/register";
         }
     }
+
+    @GetMapping("/suppliers/edit/{id}")
+    public String showEditPage(@PathVariable("id") String supplierId, Model model, RedirectAttributes redirectAttributes) {
+        return supplierService.findById(supplierId)
+                .map(supplier -> {
+                    model.addAttribute("supplier", supplier);
+                    return "supplier/edit";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("message", "Supplier not found.");
+                    return "redirect:/suppliers";
+                });
+    }
+
+    @PostMapping("/suppliers/edit/{id}")
+    public String update(@PathVariable("id") String supplierId,
+                         @RequestParam String companyName,
+                         @RequestParam String category,
+                         @RequestParam String contactPerson,
+                         @RequestParam String phone,
+                         @RequestParam String email,
+                         @RequestParam(required = false) String city,
+                         @RequestParam(required = false) String leadTime,
+                         @RequestParam(required = false) String address,
+                         @RequestParam(required = false) String notes,
+                         @RequestParam(defaultValue = "false") boolean active,
+                         RedirectAttributes redirectAttributes) {
+        try {
+            supplierService.updateSupplier(supplierId, companyName, category, contactPerson, phone, email, city, leadTime, address, notes, active);
+            redirectAttributes.addFlashAttribute("message", "Supplier updated successfully.");
+            return "redirect:/suppliers";
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            return "redirect:/suppliers/edit/" + supplierId;
+        }
+    }
 }
