@@ -49,6 +49,26 @@ public class SupplierFileHandler {
         }
     }
 
+    public void saveAllSuppliers(List<Supplier> suppliers) {
+        ensureFile();
+
+        StringBuilder content = new StringBuilder();
+        for (Supplier supplier : suppliers) {
+            content.append(supplier.toFileLine()).append(System.lineSeparator());
+        }
+
+        try {
+            Files.writeString(
+                    SUPPLIERS_FILE,
+                    content.toString(),
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to update suppliers", ex);
+        }
+    }
+
     private void ensureFile() {
         try {
             Path parent = SUPPLIERS_FILE.getParent();
