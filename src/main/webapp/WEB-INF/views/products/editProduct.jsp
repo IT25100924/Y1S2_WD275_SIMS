@@ -92,6 +92,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="supplierId">Supplier ID</label>
+                    <input type="text" id="supplierId" name="supplierId" class="form-control" required value="<%= p.getSupplierId() %>">
+                </div>
+
+                <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" class="form-control" required value="<%= p.getName() %>">
                 </div>

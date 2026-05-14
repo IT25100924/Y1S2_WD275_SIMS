@@ -1,10 +1,10 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products | SIMS</title>
+    <title>Customers | SIMS</title>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: #172033; background: #eef2f6; }
@@ -25,16 +25,22 @@
         .button-secondary { background: #ffffff; color: #334155; border-color: #cbd5e1; }
         .button-secondary:hover { background: #f8fafc; }
         .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
+        .toolbar h3 { margin: 0; color: #111827; font-size: 16px; }
         .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
         table { width: 100%; border-collapse: collapse; min-width: 760px; }
         th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
         th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; }
         tbody tr:hover { background: #f8fafc; }
         tbody tr:last-child td { border-bottom: 0; }
-        .table-actions { display: flex; gap: 8px; }
-        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
-        .table-actions a:hover { background: #f8fafc; }
-        .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #e0f2fe; color: #075985; }
+        .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #eef2f6; color: #475569; }
+        .empty { text-align: center; padding: 22px 16px; color: #64748b; }
+        @media (max-width: 760px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { padding: 20px; }
+            .nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .main { padding: 24px; }
+            .topbar { align-items: flex-start; flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -43,7 +49,8 @@
         <div class="brand">SIMS</div>
         <nav class="nav" aria-label="Main navigation">
             <a href="/dashboard">Dashboard</a>
-            <a href="/products" class="active">Products</a>
+            <a href="/products">Products</a>
+            <a href="/customers" class="active">Customers</a>
             <a href="/suppliers">Suppliers</a>
             <a href="/stockin">Stock In</a>
             <a href="/stockout">Stock Out</a>
@@ -55,17 +62,17 @@
     <main class="main">
         <header class="topbar">
             <div class="page-title">
-                <h1>Products</h1>
-                <p>Manage your inventory items and details.</p>
+                <h1>Customers</h1>
+                <p>View customer contact details saved in the system.</p>
             </div>
             <div class="actions">
-                <a class="button button-primary" href="/products/add">Add Product</a>
+                <a class="button button-primary" href="/customers/add">Add Customer</a>
             </div>
         </header>
 
-        <section aria-label="Products table">
+        <section aria-label="Customers table">
             <div class="toolbar">
-                <h3 style="margin: 0; color: #111827; font-size: 16px;">Product List</h3>
+                <h3>Customer List</h3>
             </div>
 
             <div class="table-wrap">
@@ -73,40 +80,32 @@
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Supplier ID</th>
                         <th>Name</th>
-                        <th>Type</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Actions</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
                     </tr>
                     </thead>
                     <tbody>
                     <%
-                        java.util.List<com.inventory.sims.product.Product> productList = (java.util.List<com.inventory.sims.product.Product>) request.getAttribute("products");
-                        if (productList != null && !productList.isEmpty()) {
-                            for (com.inventory.sims.product.Product product : productList) {
+                        java.util.List<com.inventory.sims.customer.Customer> customerList =
+                                (java.util.List<com.inventory.sims.customer.Customer>) request.getAttribute("customers");
+                        if (customerList != null && !customerList.isEmpty()) {
+                            for (com.inventory.sims.customer.Customer customer : customerList) {
                     %>
                     <tr>
-                        <td><%= product.getId() %></td>
-                        <td><span class="badge" style="background:#eef2f6; color:#475569;"><%= product.getSupplierId() %></span></td>
-                        <td><%= product.getName() %></td>
-                        <td><span class="badge"><%= product.getClass().getSimpleName() %></span></td>
-                        <td>$<%= String.format("%.2f", product.getPrice()) %></td>
-                        <td><%= product.getQuantity() %></td>
-                        <td>
-                            <div class="table-actions">
-                                <a href="/products/edit/<%= product.getId() %>">Edit</a>
-                                <a href="/products/delete/<%= product.getId() %>">Delete</a>
-                            </div>
-                        </td>
+                        <td><span class="badge"><%= customer.getId() %></span></td>
+                        <td><%= customer.getName() %></td>
+                        <td><%= customer.getEmail() %></td>
+                        <td><%= customer.getPhone() %></td>
+                        <td><%= customer.getAddress() == null || customer.getAddress().isBlank() ? "-" : customer.getAddress() %></td>
                     </tr>
                     <%
-                        }
-                    } else {
+                            }
+                        } else {
                     %>
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
+                        <td colspan="5" class="empty">No customers found. Click "Add Customer" to create one.</td>
                     </tr>
                     <% } %>
                     </tbody>

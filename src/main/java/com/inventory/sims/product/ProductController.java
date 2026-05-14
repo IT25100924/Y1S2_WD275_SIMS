@@ -38,17 +38,16 @@ public class ProductController {
             @RequestParam String name,
             @RequestParam double price,
             @RequestParam int quantity,
+            @RequestParam(required = true) String supplierId,
             @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
             @RequestParam(required = false) String expirationDate) {
         Product product;
-
-        // Instantiate the correct subclass based on the dropdown selection
         if ("Electronics".equals(type)) {
-            product = new ElectronicsProduct(id, name, price, quantity, warrantyMonths);
+            product = new ElectronicsProduct(id, name, price, quantity, supplierId, warrantyMonths);
         } else if ("Food".equals(type)) {
-            product = new FoodProduct(id, name, price, quantity, expirationDate);
+            product = new FoodProduct(id, name, price, quantity, supplierId, expirationDate);
         } else {
-            product = new Product(id, name, price, quantity);
+            product = new Product(id, name, price, quantity, supplierId);
         }
         productService.saveProduct(product);
         return "redirect:/products";
@@ -73,15 +72,16 @@ public class ProductController {
             @RequestParam String name,
             @RequestParam double price,
             @RequestParam int quantity,
+            @RequestParam(required = true) String supplierId,
             @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
             @RequestParam(required = false) String expirationDate) {
         Product product;
         if ("Electronics".equals(type)) {
-            product = new ElectronicsProduct(id, name, price, quantity, warrantyMonths);
+            product = new ElectronicsProduct(id, name, price, quantity, supplierId, warrantyMonths);
         } else if ("Food".equals(type)) {
-            product = new FoodProduct(id, name, price, quantity, expirationDate);
+            product = new FoodProduct(id, name, price, quantity, supplierId, expirationDate);
         } else {
-            product = new Product(id, name, price, quantity);
+            product = new Product(id, name, price, quantity, supplierId);
         }
         productService.saveProduct(product);
         return "redirect:/products";
