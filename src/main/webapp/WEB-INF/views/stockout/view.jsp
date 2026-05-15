@@ -25,6 +25,10 @@
         .button-secondary { background: #ffffff; color: #334155; border-color: #cbd5e1; }
         .button-secondary:hover { background: #f8fafc; }
         .button-small { min-height: 34px; padding: 7px 10px; font-size: 13px; }
+        .button-danger { background: #dc2626; color: #ffffff; border-color: #dc2626; }
+        .button-danger:hover { background: #b91c1c; }
+        .row-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .delete-form { margin: 0; }
         .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
         .toolbar h2 { margin: 0; color: #111827; font-size: 16px; }
         .alert { margin-bottom: 18px; padding: 12px 14px; border-radius: 6px; border: 1px solid #bfdbfe; color: #1e3a8a; background: #eff6ff; font-size: 14px; font-weight: 700; }
@@ -117,7 +121,15 @@
                         <td><%= stockOut.getIssuedTo() %></td>
                         <td><%= stockOut.getReason() %></td>
                         <td class="muted"><%= stockOut.getNote() == null || stockOut.getNote().isBlank() ? "-" : stockOut.getNote() %></td>
-                        <td><a class="button button-secondary button-small" href="/stockout/update/<%= stockOut.getId() %>">Update</a></td>
+                        <td>
+                            <div class="row-actions">
+                                <a class="button button-secondary button-small" href="/stockout/update/<%= stockOut.getId() %>">Update</a>
+                                <form class="delete-form" action="/stockout/delete/<%= stockOut.getId() %>" method="post"
+                                      onsubmit="return confirm('Delete stockout record <%= stockOut.getId() %>?');">
+                                    <button class="button button-danger button-small" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                     <%
                             }
