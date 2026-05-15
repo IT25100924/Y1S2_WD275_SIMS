@@ -63,6 +63,17 @@ public class CustomerService {
         return updatedCustomer;
     }
 
+    public void deleteCustomer(String id) {
+        validateRequired(id, "Customer ID");
+
+        Customer existingCustomer = getCustomerById(id);
+        if (existingCustomer == null) {
+            throw new IllegalArgumentException("Customer not found.");
+        }
+
+        customerFileHandler.deleteCustomer(id.trim());
+    }
+
     private boolean emailExists(String email) {
         return customerFileHandler.readCustomers().stream()
                 .anyMatch(customer -> email.equalsIgnoreCase(customer.getEmail()));
