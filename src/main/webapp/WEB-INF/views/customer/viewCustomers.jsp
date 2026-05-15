@@ -34,6 +34,12 @@
         tbody tr:last-child td { border-bottom: 0; }
         .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #eef2f6; color: #475569; }
         .empty { text-align: center; padding: 22px 16px; color: #64748b; }
+        .table-actions { display: flex; gap: 8px; }
+        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
+        .table-actions a:hover { background: #f8fafc; }
+        .message { margin-bottom: 18px; border-radius: 6px; padding: 12px 14px; font-weight: 700; }
+        .message-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .message-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         @media (max-width: 760px) {
             .layout { grid-template-columns: 1fr; }
             .sidebar { padding: 20px; }
@@ -71,6 +77,13 @@
         </header>
 
         <section aria-label="Customers table">
+            <% if (request.getAttribute("message") != null) { %>
+            <div class="message message-success"><%= request.getAttribute("message") %></div>
+            <% } %>
+            <% if (request.getAttribute("error") != null) { %>
+            <div class="message message-error"><%= request.getAttribute("error") %></div>
+            <% } %>
+
             <div class="toolbar">
                 <h3>Customer List</h3>
             </div>
@@ -84,6 +97,7 @@
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Address</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -99,13 +113,18 @@
                         <td><%= customer.getEmail() %></td>
                         <td><%= customer.getPhone() %></td>
                         <td><%= customer.getAddress() == null || customer.getAddress().isBlank() ? "-" : customer.getAddress() %></td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="/customers/edit/<%= customer.getId() %>">Edit</a>
+                            </div>
+                        </td>
                     </tr>
                     <%
                             }
                         } else {
                     %>
                     <tr>
-                        <td colspan="5" class="empty">No customers found. Click "Add Customer" to create one.</td>
+                        <td colspan="6" class="empty">No customers found. Click "Add Customer" to create one.</td>
                     </tr>
                     <% } %>
                     </tbody>
