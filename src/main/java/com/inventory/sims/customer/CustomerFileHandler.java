@@ -68,6 +68,17 @@ public class CustomerFileHandler {
         writeCustomers(customers);
     }
 
+    public void deleteCustomer(String id) {
+        List<Customer> customers = readCustomers();
+        boolean removed = customers.removeIf(customer -> customer.getId().equals(id));
+
+        if (!removed) {
+            throw new IllegalArgumentException("Customer not found.");
+        }
+
+        writeCustomers(customers);
+    }
+
     private void writeCustomers(List<Customer> customers) {
         ensureFile();
 
