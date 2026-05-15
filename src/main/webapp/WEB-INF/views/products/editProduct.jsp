@@ -88,12 +88,25 @@
 
                 <div class="form-group">
                     <label for="id">Product ID</label>
-                    <input type="text" id="id" class="form-control" value="<%= p.getId() %>" readonly>
+                    <input type="text" id="id" class="form-control" value="<%= p.getId() %>" disabled>
                 </div>
 
                 <div class="form-group">
-                    <label for="supplierId">Supplier ID</label>
-                    <input type="text" id="supplierId" name="supplierId" class="form-control" required value="<%= p.getSupplierId() %>">
+                    <label for="supplierIdDisplay">Supplier</label>
+                    <!-- Disabled select so it's grayed out and unchangeable -->
+                    <select id="supplierIdDisplay" class="form-control" disabled>
+                        <%
+                            java.util.List<com.inventory.sims.supplier.Supplier> editSuppliers = (java.util.List<com.inventory.sims.supplier.Supplier>) request.getAttribute("suppliers");
+                            if (editSuppliers != null) {
+                                for(com.inventory.sims.supplier.Supplier s : editSuppliers) {
+                        %>
+                        <option value="<%= s.getId() %>" <%= s.getId().equals(p.getSupplierId()) ? "selected" : "" %>><%= s.getId() %> - <%= s.getCompanyName() %></option>
+                        <%      }
+                        }
+                        %>
+                    </select>
+                    <!-- Hidden input to submit the actual supplier value since disabled inputs don't submit -->
+                    <input type="hidden" name="supplierId" value="<%= p.getSupplierId() %>">
                 </div>
 
                 <div class="form-group">
@@ -102,13 +115,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="price">Price ($)</label>
-                    <input type="number" id="price" name="price" class="form-control" step="0.01" min="0" required value="<%= p.getPrice() %>">
+                    <label for="price">Unit Price (LKR)</label>
+                    <input type="number" id="price" name="price" class="form-control" step="0.01" min="0" value="<%= p.getPrice() %>">
                 </div>
 
                 <div class="form-group">
-                    <label for="quantity">Quantity</label>
-                    <input type="number" id="quantity" name="quantity" class="form-control" min="0" required value="<%= p.getQuantity() %>">
+                    <label for="quantity">Initial Quantity</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" min="0" value="<%= p.getQuantity() %>">
                 </div>
 
                 <div class="form-group hidden" id="warrantyGroup">
