@@ -32,9 +32,46 @@ public class CustomerService {
         return customerFileHandler.readCustomers();
     }
 
+    public Customer getCustomerById(String id) {
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+        return customerFileHandler.readCustomers().stream()
+                .filter(customer -> id.equals(customer.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Customer updateCustomer(String id, String name, String email, String phone, String address) {
+        validateRequired(id, "Customer ID");
+        validateRequired(name, "Customer name");
+        validateRequired(email, "Email");
+        validateRequired(phone, "Phone");
+
+        Customer existingCustomer = getCustomerById(id);
+        if (existingCustomer == null) {
+            throw new IllegalArgumentException("Customer not found.");
+        }
+
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        if (emailExistsForAnotherCustomer(normalizedEmail, id)) {
+            throw new IllegalArgumentException("A customer with this email already exists.");
+        }
+
+        Customer updatedCustomer = new Customer(id.trim(), name.trim(), normalizedEmail, phone.trim(), safeTrim(address));
+        customerFileHandler.updateCustomer(updatedCustomer);
+        return updatedCustomer;
+    }
+
     private boolean emailExists(String email) {
         return customerFileHandler.readCustomers().stream()
                 .anyMatch(customer -> email.equalsIgnoreCase(customer.getEmail()));
+    }
+
+    private boolean emailExistsForAnotherCustomer(String email, String customerId) {
+        return customerFileHandler.readCustomers().stream()
+                .anyMatch(customer -> email.equalsIgnoreCase(customer.getEmail())
+                        && !customerId.equals(customer.getId()));
     }
 
     private String nextCustomerId() {
