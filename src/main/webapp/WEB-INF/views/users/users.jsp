@@ -350,8 +350,29 @@
             text-decoration: none;
         }
 
+        .row-actions form {
+            margin: 0;
+        }
+
+        .row-actions button {
+            min-height: 34px;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            background: #fef2f2;
+            color: #b91c1c;
+            padding: 7px 11px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
         .row-actions a:hover {
             background: #dbeafe;
+        }
+
+        .row-actions button:hover {
+            background: #fee2e2;
         }
 
         .flash {
@@ -522,6 +543,9 @@
                                         <td>
                                             <div class="row-actions">
                                                 <a href="/users/edit/<%= attribute(user.getId()) %>">Update</a>
+                                                <form action="/users/delete/<%= attribute(user.getId()) %>" method="post" onsubmit="return confirm('Delete this user account?');">
+                                                    <button type="submit">Delete</button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
