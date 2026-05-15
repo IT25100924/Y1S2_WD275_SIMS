@@ -115,4 +115,16 @@ public class UserController {
             return "redirect:/users/edit/" + userId;
         }
     }
+
+    @PostMapping("/users/delete/{id}")
+    public String delete(@PathVariable("id") String userId, RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteUser(userId);
+            redirectAttributes.addFlashAttribute("message", "User deleted successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+
+        return "redirect:/users";
+    }
 }
