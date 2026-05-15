@@ -49,6 +49,26 @@ public class UserFileHandler {
         }
     }
 
+    public void saveAllUsers(List<User> users) {
+        ensureFile();
+
+        StringBuilder content = new StringBuilder();
+        for (User user : users) {
+            content.append(user.toFileLine()).append(System.lineSeparator());
+        }
+
+        try {
+            Files.writeString(
+                    USERS_FILE,
+                    content.toString(),
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to update users", ex);
+        }
+    }
+
     private void ensureFile() {
         try {
             Path parent = USERS_FILE.getParent();
