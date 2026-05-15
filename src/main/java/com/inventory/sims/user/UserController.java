@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Locale;
 
 @Controller
 public class UserController {
@@ -68,8 +67,8 @@ public class UserController {
 
     @GetMapping("/users")
     public String showUsers(@RequestParam(required = false) String keyword, Model model) {
-        List<User> users = userService.getAllUsers();
-        List<User> filteredUsers = filterUsers(users, keyword);
+        List<User> users = userService.getUsersForView();
+        List<User> filteredUsers = userService.searchUsers(users, keyword);
 
         model.addAttribute("users", filteredUsers);
         model.addAttribute("keyword", keyword == null ? "" : keyword.trim());
@@ -79,25 +78,5 @@ public class UserController {
         model.addAttribute("activeUsers", users.stream().filter(User::isActive).count());
         model.addAttribute("filteredUsers", filteredUsers.size());
         return "users/users";
-    }
-
-    private List<User> filterUsers(List<User> users, String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return users;
-        }
-
-        String search = keyword.trim().toLowerCase(Locale.ROOT);
-        return users.stream()
-                .filter(user -> contains(user.getId(), search)
-                        || contains(user.getFirstName(), search)
-                        || contains(user.getLastName(), search)
-                        || contains(user.getEmail(), search)
-                        || contains(user.getPhone(), search)
-                        || contains(user.getRole() == null ? "" : user.getRole().name(), search))
-                .toList();
-    }
-
-    private boolean contains(String value, String search) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(search);
     }
 }
