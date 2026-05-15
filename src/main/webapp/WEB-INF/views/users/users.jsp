@@ -23,6 +23,15 @@
         }
         return user.getFirstName().trim().substring(0, 1).toUpperCase();
     }
+
+    private String fullName(User user) {
+        if (user == null) {
+            return "";
+        }
+        String first = user.getFirstName() == null ? "" : user.getFirstName().trim();
+        String last = user.getLastName() == null ? "" : user.getLastName().trim();
+        return (first + " " + last).trim();
+    }
 %>
 <%
     List<User> users = (List<User>) request.getAttribute("users");
@@ -458,7 +467,7 @@
                                             <div class="user-cell">
                                                 <span class="avatar"><%= text(firstLetter(user)) %></span>
                                                 <div>
-                                                    <span class="user-name"><%= text(user.getFirstName() + " " + user.getLastName()) %></span>
+                                                    <span class="user-name"><%= text(fullName(user)) %></span>
                                                     <span class="user-email"><%= text(user.getEmail()) %></span>
                                                 </div>
                                             </div>
