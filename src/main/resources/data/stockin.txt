@@ -1,0 +1,4 @@
+SI001|p001|laptop webbb|perera|10|245.0|2026-05-10|buy new stock in record
+SI002|p001|laptop webbb|kasun|2|2000.0|2026-05-11|
+SI003|p001|laptop webbb|Perera|2|500.0|2026-05-13|
+SI004|p001|laptop webbb|Perera|5|25.0|2026-05-13|

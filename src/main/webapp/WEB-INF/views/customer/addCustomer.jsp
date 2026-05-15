@@ -57,6 +57,7 @@
                 <p>Enter customer contact details for sales and order records.</p>
             </div>
             <div class="actions">
+                <a class="button button-secondary" href="/customers">View Customers</a>
                 <a class="button button-secondary" href="/dashboard">Cancel</a>
             </div>
         </header>

@@ -92,6 +92,19 @@ public class StockOutService {
         throw new IllegalArgumentException("Stockout record not found.");
     }
 
+    public void deleteStockOut(String id) {
+        validateRequired(id, "Stockout ID");
+
+        List<StockOut> stockOuts = stockOutFileHandler.readStockOuts();
+        boolean removed = stockOuts.removeIf(stockOut -> stockOut.getId().equals(id.trim()));
+
+        if (!removed) {
+            throw new IllegalArgumentException("Stockout record not found.");
+        }
+
+        stockOutFileHandler.saveAllStockOuts(stockOuts);
+    }
+
     private String nextStockOutId() {
         int max = 0;
         for (StockOut stockOut : stockOutFileHandler.readStockOuts()) {
