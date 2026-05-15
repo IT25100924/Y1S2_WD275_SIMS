@@ -32,20 +32,28 @@ public class ProductService {
     }
 
     // Save a new product or update an existing one
-    public Product saveProduct(Product product) {
-        if (product == null) {
-            throw new IllegalArgumentException("Cannot save a null product.");
-        }
-        if (product.getId() == null || product.getId().trim().isEmpty()) {
-            throw new IllegalArgumentException("Product ID cannot be empty.");
-        }
+    public void saveProduct(Product product) {
+        // 1. Standard Validations
         if (product.getPrice() < 0) {
-            throw new IllegalArgumentException("Product price cannot be negative.");
+            throw new IllegalArgumentException("Unit Price cannot be negative.");
         }
         if (product.getQuantity() < 0) {
-            throw new IllegalArgumentException("Product quantity cannot be negative.");
+            throw new IllegalArgumentException("Initial Quantity cannot be negative.");
         }
-        return productRepository.save(product);
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Product name cannot be empty.");
+        }
+
+        // 2. Unique name validation (ignore case)
+        boolean nameExists = getAllProducts().stream()
+                .anyMatch(p -> p.getName().equalsIgnoreCase(product.getName().trim())
+                        && !p.getId().equals(product.getId()));
+        if (nameExists) {
+            throw new IllegalArgumentException("A product with this name already exists.");
+        }
+
+        product.setName(product.getName().trim());
+        productRepository.save(product);
     }
 
     // Delete a product
@@ -106,6 +114,20 @@ public class ProductService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    // Auto-generate the next Product ID (e.g., P001 -> P002)
+    public String generateNextProductId() {
+        int max = 0;
+        for (Product product : getAllProducts()) {
+            String id = product.getId();
+            if (id != null && id.startsWith("P")) {
+                try {
+                    max = Math.max(max, Integer.parseInt(id.substring(1)));
+                } catch (NumberFormatException ignored) { }
+            }
+        }
+        return String.format("P%03d", max + 1);
     }
 
 }
