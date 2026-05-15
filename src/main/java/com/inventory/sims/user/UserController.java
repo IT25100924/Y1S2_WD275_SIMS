@@ -3,6 +3,7 @@ package com.inventory.sims.user;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -78,5 +79,40 @@ public class UserController {
         model.addAttribute("activeUsers", users.stream().filter(User::isActive).count());
         model.addAttribute("filteredUsers", filteredUsers.size());
         return "users/users";
+    }
+
+    @GetMapping("/users/edit/{id}")
+    public String showEditPage(@PathVariable("id") String userId, Model model, RedirectAttributes redirectAttributes) {
+        return userService.findById(userId)
+                .map(user -> {
+                    model.addAttribute("user", user);
+                    model.addAttribute("roles", UserType.values());
+                    return "users/edit";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("message", "User not found.");
+                    return "redirect:/users";
+                });
+    }
+
+    @PostMapping("/users/edit/{id}")
+    public String update(@PathVariable("id") String userId,
+                         @RequestParam String firstName,
+                         @RequestParam String lastName,
+                         @RequestParam String email,
+                         @RequestParam(required = false) String phone,
+                         @RequestParam UserType role,
+                         @RequestParam(required = false) String password,
+                         @RequestParam(required = false) String confirmPassword,
+                         @RequestParam(defaultValue = "false") boolean active,
+                         RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateUser(userId, firstName, lastName, email, phone, role, password, confirmPassword, active);
+            redirectAttributes.addFlashAttribute("message", "User updated successfully.");
+            return "redirect:/users";
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            return "redirect:/users/edit/" + userId;
+        }
     }
 }
