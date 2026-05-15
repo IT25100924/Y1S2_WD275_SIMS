@@ -82,4 +82,16 @@ public class StockOutController {
             return "redirect:/stockout/update/" + id;
         }
     }
+
+    @PostMapping("/stockout/delete/{id}")
+    public String deleteStockOut(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            stockOutService.deleteStockOut(id);
+            redirectAttributes.addFlashAttribute("message", "Stockout record deleted successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+
+        return "redirect:/stockout";
+    }
 }
