@@ -77,6 +77,11 @@
 
         <div class="form-card">
             <form action="/products/edit/<%= p.getId() %>" method="post" id="productForm">
+                <% if (request.getAttribute("errorMessage") != null) { %>
+                <div style="margin-bottom: 18px; padding: 12px 14px; border-radius: 6px; border: 1px solid #fecaca; color: #b91c1c; background: #fef2f2; font-weight: bold;">
+                    <%= request.getAttribute("errorMessage") %>
+                </div>
+                <% } %>
                 <div class="form-group">
                     <label for="type">Product Type</label>
                     <select id="type" name="type" class="form-control" onchange="toggleFields()">

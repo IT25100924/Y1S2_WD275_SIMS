@@ -1,1 +1,3 @@
-Electronics!p001!laptop webbb!230.0!24!6
+General!P001!S001!Microfiber Cloth!150.0!100
+Electronics!P002!S001!Laptop!240000.0!12!24
+Food!P003!S001!Biscuits!100.0!50!2027-05-16

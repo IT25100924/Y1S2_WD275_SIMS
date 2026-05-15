@@ -51,7 +51,7 @@ public class ProductController {
         return "products/addProduct";
     }
 
-    // 3. Handle the submission of the add product form (URL: POST /products/add)
+    // 3. Handle the submission of the add product form with error catching (URL: POST /products/add)
     @PostMapping("/add")
     public String addProduct(
             @RequestParam String type,
@@ -61,7 +61,8 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "0") int quantity,
             @RequestParam(required = true) String supplierId,
             @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
-            @RequestParam(required = false) String expirationDate) {
+            @RequestParam(required = false) String expirationDate,
+            Model model) { // Added Model to pass errors back
         Product product;
 
         if ("Electronics".equals(type)) {
@@ -71,8 +72,18 @@ public class ProductController {
         } else {
             product = new Product(id, name, price, quantity, supplierId);
         }
-        productService.saveProduct(product);
-        return "redirect:/products";
+
+        try {
+            productService.saveProduct(product);
+            return "redirect:/products";
+        } catch (IllegalArgumentException e) {
+            // Validation failed! Pass data back to the UI.
+            model.addAttribute("product", product);
+            model.addAttribute("nextId", id);
+            model.addAttribute("suppliers", supplierService.getAllSuppliers());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "products/addProduct";
+        }
     }
 
     // 4. Show the form to edit an existing product (URL: GET /products/edit/{id})
@@ -97,7 +108,8 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "0") int quantity,
             @RequestParam(required = true) String supplierId,
             @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
-            @RequestParam(required = false) String expirationDate) {
+            @RequestParam(required = false) String expirationDate,
+            Model model) {
 
         Product product;
         if ("Electronics".equals(type)) {
@@ -108,8 +120,15 @@ public class ProductController {
             product = new Product(id, name, price, quantity, supplierId);
         }
 
-        productService.saveProduct(product);
-        return "redirect:/products";
+        try {
+            productService.saveProduct(product);
+            return "redirect:/products";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("product", product);
+            model.addAttribute("suppliers", supplierService.getAllSuppliers());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "products/editProduct";
+        }
     }
 
     // 6. Handle the deletion of a product (URL: GET /products/delete/{id})

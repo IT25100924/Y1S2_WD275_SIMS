@@ -23,20 +23,21 @@
         .button-primary { background: #1d4ed8; color: #ffffff; }
         .button-primary:hover { background: #1e40af; }
 
-        /* NEW: Summary Cards CSS */
+        /* Summary Cards CSS */
         .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
         .summary-card { background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px; padding: 18px; }
         .summary-card span { display: block; color: #64748b; font-size: 14px; margin-bottom: 10px; font-weight: bold; }
         .summary-card strong { display: block; color: #111827; font-size: 28px; }
 
-        /* NEW: Search Bar CSS */
+        /* Search Bar CSS */
         .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
         .search { display: flex; width: min(100%, 460px); gap: 10px; }
         .search input { width: 100%; min-height: 42px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; font: inherit; }
         .search input:focus { border-color: #2563eb; outline: 3px solid rgba(37, 99, 235, 0.16); }
 
+        /* Table CSS */
         .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 760px; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
         th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
         th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; }
         tbody tr:hover { background: #f8fafc; }
@@ -44,7 +45,13 @@
         .table-actions { display: flex; gap: 8px; }
         .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
         .table-actions a:hover { background: #f8fafc; }
-        .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #e0f2fe; color: #075985; }
+
+        /* Dynamic Badge & Row Colors */
+        .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+        .badge-electronics { background: #f3e8ff; color: #7e22ce; }
+        .badge-food { background: #dcfce7; color: #166534; }
+        .badge-general { background: #e0f2fe; color: #075985; }
+        .low-stock { background-color: #fef2f2 !important; }
     </style>
 </head>
 <body>
@@ -73,21 +80,20 @@
             </div>
         </header>
 
-        <!-- NEW: Summary Cards Section -->
         <section class="summary-grid" aria-label="Product summary">
-            <div class="summary-card">
+            <div class="summary-card" style="border-left: 4px solid #075985;">
                 <span>Total Products</span>
                 <strong><%= request.getAttribute("totalProducts") %></strong>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" style="border-left: 4px solid #7e22ce;">
                 <span>Electronics</span>
                 <strong><%= request.getAttribute("electronicsCount") %></strong>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" style="border-left: 4px solid #166534;">
                 <span>Food Items</span>
                 <strong><%= request.getAttribute("foodCount") %></strong>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" style="border-left: 4px solid #b91c1c;">
                 <span style="color: #b91c1c;">Low Stock Alert</span>
                 <strong style="color: #b91c1c;"><%= request.getAttribute("lowStockCount") %></strong>
             </div>
@@ -95,14 +101,12 @@
 
         <section aria-label="Products table">
             <div class="toolbar">
-                <!-- NEW: Live Search Bar -->
                 <div class="search">
                     <input type="search" id="searchInput" placeholder="Search by Product Name or ID..." onkeyup="filterTable()">
                 </div>
             </div>
 
             <div class="table-wrap">
-                <!-- Added ID for JS filtering -->
                 <table id="productTable">
                     <thead>
                     <tr>
@@ -112,6 +116,7 @@
                         <th>Type</th>
                         <th>Unit Price (LKR)</th>
                         <th>Initial Quantity</th>
+                        <th>Special Details</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -120,18 +125,34 @@
                         java.util.List<com.inventory.sims.product.Product> productList = (java.util.List<com.inventory.sims.product.Product>) request.getAttribute("products");
                         if (productList != null && !productList.isEmpty()) {
                             for (com.inventory.sims.product.Product product : productList) {
+                                // Polymorphism at work: Determine the badge color and extra details based on the object's actual class
+                                String typeBadgeClass = "badge-general";
+                                String extraDetails = "-";
+
+                                if (product instanceof com.inventory.sims.product.ElectronicsProduct) {
+                                    typeBadgeClass = "badge-electronics";
+                                    extraDetails = "Warranty: " + ((com.inventory.sims.product.ElectronicsProduct) product).getWarrantyMonths() + " months";
+                                } else if (product instanceof com.inventory.sims.product.FoodProduct) {
+                                    typeBadgeClass = "badge-food";
+                                    String exp = ((com.inventory.sims.product.FoodProduct) product).getExpirationDate();
+                                    extraDetails = "Initial Expiry: " + (exp != null && !exp.isEmpty() ? exp : "N/A");
+                                }
+
+                                boolean isLowStock = product.getQuantity() <= 5;
                     %>
-                    <tr>
+                    <tr class="<%= isLowStock ? "low-stock" : "" %>">
                         <td><%= product.getId() %></td>
                         <td><span class="badge" style="background:#eef2f6; color:#475569;"><%= product.getSupplierId() %></span></td>
                         <td><%= product.getName() %></td>
-                        <td><span class="badge"><%= product.getClass().getSimpleName() %></span></td>
-                        <td>$<%= String.format("%.2f", product.getPrice()) %></td>
+                        <td><span class="badge <%= typeBadgeClass %>"><%= product.getClass().getSimpleName() %></span></td>
+                        <!-- $ sign removed! -->
+                        <td><%= String.format("%.2f", product.getPrice()) %></td>
                         <td><%= product.getQuantity() %></td>
+                        <td style="color: #64748b; font-size: 13px; font-weight: bold;"><%= extraDetails %></td>
                         <td>
                             <div class="table-actions">
                                 <a href="/products/edit/<%= product.getId() %>">Edit</a>
-                                <a href="/products/delete/<%= product.getId() %>">Delete</a>
+                                <a href="/products/delete/<%= product.getId() %>" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
                             </div>
                         </td>
                     </tr>
@@ -140,7 +161,7 @@
                     } else {
                     %>
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
+                        <td colspan="8" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
                     </tr>
                     <% } %>
                     </tbody>
@@ -150,7 +171,6 @@
     </main>
 </div>
 
-<!-- NEW: JavaScript for Live Table Filtering -->
 <script>
     function filterTable() {
         let input = document.getElementById("searchInput");
@@ -166,7 +186,6 @@
                 let txtValueId = tdId.textContent || tdId.innerText;
                 let txtValueName = tdName.textContent || tdName.innerText;
 
-                // Check if either the ID or Name contains the search string
                 if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueName.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
