@@ -2,8 +2,10 @@ package com.inventory.sims.user;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -49,6 +51,38 @@ public class UserService {
         return userFileHandler.readUsers();
     }
 
+    public List<User> getUsersForView() {
+        return userFileHandler.readUsers().stream()
+                .sorted(Comparator
+                        .comparing(User::getId, Comparator.nullsLast(String::compareToIgnoreCase))
+                        .thenComparing(User::getEmail, Comparator.nullsLast(String::compareToIgnoreCase)))
+                .toList();
+    }
+
+    public List<User> searchUsers(String keyword) {
+        return searchUsers(getUsersForView(), keyword);
+    }
+
+    public List<User> searchUsers(List<User> users, String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return users;
+        }
+
+        String search = keyword.trim().toLowerCase(Locale.ROOT);
+        return users.stream()
+                .filter(user -> contains(user.getId(), search)
+                        || contains(user.getFirstName(), search)
+                        || contains(user.getLastName(), search)
+                        || contains(user.getEmail(), search)
+                        || contains(user.getPhone(), search)
+                        || contains(user.getRole() == null ? "" : user.getRole().name(), search))
+                .toList();
+    }
+
+    private boolean contains(String value, String search) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(search);
+    }
+
     private User createUser(String id, String firstName, String lastName, String email, String phone, UserType role, String password, boolean active) {
         if (role == UserType.ADMIN) {
             return new AdminUser(id, firstName, lastName, email, phone, password, active);
@@ -83,6 +117,6 @@ public class UserService {
     }
 
     private String safeTrim(String value) {
-        return value == null ? "" : value.trim();
+        return Objects.requireNonNullElse(value, "").trim();
     }
 }
