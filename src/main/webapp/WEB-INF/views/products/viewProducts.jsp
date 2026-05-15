@@ -1,6 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,9 +22,19 @@
         .button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid transparent; padding: 10px 14px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
         .button-primary { background: #1d4ed8; color: #ffffff; }
         .button-primary:hover { background: #1e40af; }
-        .button-secondary { background: #ffffff; color: #334155; border-color: #cbd5e1; }
-        .button-secondary:hover { background: #f8fafc; }
+
+        /* NEW: Summary Cards CSS */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .summary-card { background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px; padding: 18px; }
+        .summary-card span { display: block; color: #64748b; font-size: 14px; margin-bottom: 10px; font-weight: bold; }
+        .summary-card strong { display: block; color: #111827; font-size: 28px; }
+
+        /* NEW: Search Bar CSS */
         .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
+        .search { display: flex; width: min(100%, 460px); gap: 10px; }
+        .search input { width: 100%; min-height: 42px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; font: inherit; }
+        .search input:focus { border-color: #2563eb; outline: 3px solid rgba(37, 99, 235, 0.16); }
+
         .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
         table { width: 100%; border-collapse: collapse; min-width: 760px; }
         th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
@@ -63,21 +73,45 @@
             </div>
         </header>
 
+        <!-- NEW: Summary Cards Section -->
+        <section class="summary-grid" aria-label="Product summary">
+            <div class="summary-card">
+                <span>Total Products</span>
+                <strong><%= request.getAttribute("totalProducts") %></strong>
+            </div>
+            <div class="summary-card">
+                <span>Electronics</span>
+                <strong><%= request.getAttribute("electronicsCount") %></strong>
+            </div>
+            <div class="summary-card">
+                <span>Food Items</span>
+                <strong><%= request.getAttribute("foodCount") %></strong>
+            </div>
+            <div class="summary-card">
+                <span style="color: #b91c1c;">Low Stock Alert</span>
+                <strong style="color: #b91c1c;"><%= request.getAttribute("lowStockCount") %></strong>
+            </div>
+        </section>
+
         <section aria-label="Products table">
             <div class="toolbar">
-                <h3 style="margin: 0; color: #111827; font-size: 16px;">Product List</h3>
+                <!-- NEW: Live Search Bar -->
+                <div class="search">
+                    <input type="search" id="searchInput" placeholder="Search by Product Name or ID..." onkeyup="filterTable()">
+                </div>
             </div>
 
             <div class="table-wrap">
-                <table>
+                <!-- Added ID for JS filtering -->
+                <table id="productTable">
                     <thead>
                     <tr>
                         <th>ID</th>
                         <th>Supplier ID</th>
                         <th>Name</th>
                         <th>Type</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
+                        <th>Unit Price (LKR)</th>
+                        <th>Initial Quantity</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -106,7 +140,7 @@
                     } else {
                     %>
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
                     </tr>
                     <% } %>
                     </tbody>
@@ -115,5 +149,32 @@
         </section>
     </main>
 </div>
+
+<!-- NEW: JavaScript for Live Table Filtering -->
+<script>
+    function filterTable() {
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toUpperCase();
+        let table = document.getElementById("productTable");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            let tdId = tr[i].getElementsByTagName("td")[0];
+            let tdName = tr[i].getElementsByTagName("td")[2];
+
+            if (tdId || tdName) {
+                let txtValueId = tdId.textContent || tdId.innerText;
+                let txtValueName = tdName.textContent || tdName.innerText;
+
+                // Check if either the ID or Name contains the search string
+                if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueName.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
 </body>
 </html>
