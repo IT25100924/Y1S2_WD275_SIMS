@@ -45,6 +45,7 @@
     long staffUsers = longValue(request.getAttribute("staffUsers"));
     long activeUsers = longValue(request.getAttribute("activeUsers"));
     long filteredUsers = longValue(request.getAttribute("filteredUsers"));
+    Object message = request.getAttribute("message");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -241,7 +242,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 820px;
+            min-width: 940px;
         }
 
         th,
@@ -327,6 +328,39 @@
         .badge-inactive {
             color: #991b1b;
             background: #fee2e2;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .row-actions a {
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #93c5fd;
+            border-radius: 6px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 7px 11px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .row-actions a:hover {
+            background: #dbeafe;
+        }
+
+        .flash {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border-radius: 6px;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            background: #f0fdf4;
         }
 
         .empty-state {
@@ -431,6 +465,10 @@
                 </div>
             </section>
 
+            <% if (message != null) { %>
+                <div class="flash"><%= text(message.toString()) %></div>
+            <% } %>
+
             <section aria-label="Users table">
                 <div class="toolbar">
                     <form class="search" action="/users" method="get">
@@ -452,12 +490,13 @@
                                 <th>Phone</th>
                                 <th>Role</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% if (users.isEmpty()) { %>
                                 <tr>
-                                    <td colspan="5" class="empty-state">No users found.</td>
+                                    <td colspan="6" class="empty-state">No users found.</td>
                                 </tr>
                             <% } else { %>
                                 <% for (User user : users) { %>
@@ -479,6 +518,11 @@
                                         </td>
                                         <td>
                                             <span class="badge <%= user.isActive() ? "badge-active" : "badge-inactive" %>"><%= user.isActive() ? "Active" : "Inactive" %></span>
+                                        </td>
+                                        <td>
+                                            <div class="row-actions">
+                                                <a href="/users/edit/<%= attribute(user.getId()) %>">Update</a>
+                                            </div>
                                         </td>
                                     </tr>
                                 <% } %>
