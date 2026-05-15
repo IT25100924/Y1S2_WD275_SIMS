@@ -157,6 +157,19 @@ public class UserService {
         return updatedUser;
     }
 
+    public void deleteUser(String userId) {
+        validateRequired(userId, "User ID");
+
+        List<User> users = new ArrayList<>(userFileHandler.readUsers());
+        boolean removed = users.removeIf(user -> userId.equalsIgnoreCase(user.getId()));
+
+        if (!removed) {
+            throw new IllegalArgumentException("User not found.");
+        }
+
+        userFileHandler.saveAllUsers(users);
+    }
+
     private User createUser(String id, String firstName, String lastName, String email, String phone, UserType role, String password, boolean active) {
         if (role == UserType.ADMIN) {
             return new AdminUser(id, firstName, lastName, email, phone, password, active);
