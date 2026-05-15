@@ -37,6 +37,9 @@
         .table-actions { display: flex; gap: 8px; }
         .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
         .table-actions a:hover { background: #f8fafc; }
+        .delete-form { margin: 0; }
+        .delete-button { min-height: 34px; border: 1px solid #fecaca; border-radius: 6px; background: #ffffff; color: #991b1b; padding: 7px 10px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .delete-button:hover { background: #fee2e2; }
         .message { margin-bottom: 18px; border-radius: 6px; padding: 12px 14px; font-weight: 700; }
         .message-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
         .message-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
@@ -116,6 +119,9 @@
                         <td>
                             <div class="table-actions">
                                 <a href="/customers/edit/<%= customer.getId() %>">Edit</a>
+                                <form class="delete-form" action="/customers/delete/<%= customer.getId() %>" method="post" onsubmit="return confirm('Delete customer <%= customer.getId() %>?');">
+                                    <button type="submit" class="delete-button">Delete</button>
+                                </form>
                             </div>
                         </td>
                     </tr>

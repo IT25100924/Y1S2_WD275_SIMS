@@ -55,6 +55,17 @@ public class CustomerController {
         }
     }
 
+    @PostMapping("/customers/delete/{id}")
+    public String deleteCustomer(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            customerService.deleteCustomer(id);
+            redirectAttributes.addFlashAttribute("message", "Customer " + id + " deleted successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        }
+        return "redirect:/customers";
+    }
+
     @PostMapping("/customers/add")
     public String addCustomer(@RequestParam String name,
                               @RequestParam String email,
