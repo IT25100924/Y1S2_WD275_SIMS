@@ -40,6 +40,18 @@ public class StockInController {
         return "stockin/viewStockIn";
     }
 
+    @GetMapping("/stockin/details/{id}")
+    public String showStockInDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        StockIn stockIn = stockInService.getStockInById(id);
+        if (stockIn == null) {
+            redirectAttributes.addFlashAttribute("error", "Stock-in record was not found.");
+            return "redirect:/stockin/view";
+        }
+
+        model.addAttribute("stockIn", stockIn);
+        return "stockin/details";
+    }
+
     @GetMapping("/stockin/edit/{id}")
     public String showEditStockInPage(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         StockIn stockIn = stockInService.getStockInById(id);

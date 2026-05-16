@@ -167,6 +167,7 @@
                         <td><%= stockIn.getNote() == null || stockIn.getNote().isBlank() ? "-" : stockIn.getNote() %></td>
                         <td>
                             <div class="table-actions">
+                                <a href="/stockin/details/<%= stockIn.getId() %>">View</a>
                                 <a href="/stockin/edit/<%= stockIn.getId() %>">Edit</a>
                                 <form action="/stockin/delete/<%= stockIn.getId() %>" method="post"
                                       onsubmit="return confirm('Delete stock-in record <%= stockIn.getId() %>?');">
