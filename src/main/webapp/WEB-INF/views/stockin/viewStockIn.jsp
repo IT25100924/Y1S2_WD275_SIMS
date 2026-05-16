@@ -121,7 +121,7 @@
             </div>
             <div class="summary-card">
                 <span>Total stock cost</span>
-                <strong>$<%= String.format("%.2f", totalCost) %></strong>
+                <strong>LKR <%= String.format("%.2f", totalCost) %></strong>
             </div>
         </section>
 
@@ -140,8 +140,8 @@
                         <th>Product</th>
                         <th>Supplier</th>
                         <th>Quantity</th>
-                        <th>Unit Cost</th>
-                        <th>Total Cost</th>
+                        <th>Unit Cost (LKR)</th>
+                        <th>Total Cost (LKR)</th>
                         <th>Note</th>
                         <th>Actions</th>
                     </tr>
@@ -160,8 +160,8 @@
                         </td>
                         <td><%= stockIn.getSupplierName() %></td>
                         <td><%= stockIn.getQuantity() %></td>
-                        <td class="money">$<%= String.format("%.2f", stockIn.getUnitCost()) %></td>
-                        <td class="money">$<%= String.format("%.2f", stockIn.getTotalCost()) %></td>
+                        <td class="money">LKR <%= String.format("%.2f", stockIn.getUnitCost()) %></td>
+                        <td class="money">LKR <%= String.format("%.2f", stockIn.getTotalCost()) %></td>
                         <td><%= stockIn.getNote() == null || stockIn.getNote().isBlank() ? "-" : stockIn.getNote() %></td>
                         <td>
                             <div class="table-actions">

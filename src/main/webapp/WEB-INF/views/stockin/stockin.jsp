@@ -149,7 +149,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="unitCost">Unit Cost</label>
+                            <label for="unitCost">Unit Cost (LKR)</label>
                             <input type="number" id="unitCost" name="unitCost" class="form-control" step="0.01" min="0" required placeholder="0.00">
                         </div>
 
