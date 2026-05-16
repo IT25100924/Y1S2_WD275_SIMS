@@ -49,6 +49,51 @@ public class CustomerFileHandler {
         }
     }
 
+    public void updateCustomer(Customer updatedCustomer) {
+        List<Customer> customers = readCustomers();
+        boolean found = false;
+
+        for (int i = 0; i < customers.size(); i++) {
+            if (customers.get(i).getId().equals(updatedCustomer.getId())) {
+                customers.set(i, updatedCustomer);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new IllegalArgumentException("Customer not found.");
+        }
+
+        writeCustomers(customers);
+    }
+
+    public void deleteCustomer(String id) {
+        List<Customer> customers = readCustomers();
+        boolean removed = customers.removeIf(customer -> customer.getId().equals(id));
+
+        if (!removed) {
+            throw new IllegalArgumentException("Customer not found.");
+        }
+
+        writeCustomers(customers);
+    }
+
+    private void writeCustomers(List<Customer> customers) {
+        ensureFile();
+
+        List<String> lines = new ArrayList<>();
+        for (Customer customer : customers) {
+            lines.add(customer.toFileLine());
+        }
+
+        try {
+            Files.write(CUSTOMERS_FILE, lines, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to update customers file", ex);
+        }
+    }
+
     private void ensureFile() {
         try {
             Path parent = CUSTOMERS_FILE.getParent();

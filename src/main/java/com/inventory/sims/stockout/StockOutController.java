@@ -1,5 +1,9 @@
 package com.inventory.sims.stockout;
 
+import com.inventory.sims.customer.Customer;
+import com.inventory.sims.customer.CustomerService;
+import com.inventory.sims.product.Product;
+import com.inventory.sims.product.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
@@ -14,9 +18,14 @@ import java.time.LocalDate;
 @Controller
 public class StockOutController {
     private final StockOutService stockOutService;
+    private final ProductService productService;
+    private final CustomerService customerService;
 
-    public StockOutController(StockOutService stockOutService) {
+    public StockOutController(StockOutService stockOutService, ProductService productService,
+                              CustomerService customerService) {
         this.stockOutService = stockOutService;
+        this.productService = productService;
+        this.customerService = customerService;
     }
 
     @GetMapping("/stockout")
@@ -26,14 +35,29 @@ public class StockOutController {
     }
 
     @GetMapping("/stockout/create")
-    public String showCreateStockOutPage() {
+    public String showCreateStockOutPage(Model model) {
+        addFormLists(model);
         return "stockout/create";
+    }
+
+    @GetMapping("/stockout/details/{id}")
+    public String showStockOutDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        StockOut stockOut = stockOutService.getStockOutById(id);
+        if (stockOut == null) {
+            redirectAttributes.addFlashAttribute("message", "Stockout record not found.");
+            return "redirect:/stockout";
+        }
+
+        Product product = productService.getProductById(stockOut.getProductId());
+        model.addAttribute("stockOut", stockOut);
+        model.addAttribute("product", product);
+        return "stockout/details";
     }
 
     @PostMapping("/stockout/create")
     public String createStockOut(@RequestParam String productId,
-                                 @RequestParam String productName,
                                  @RequestParam int quantity,
+                                 @RequestParam double unitPrice,
                                  @RequestParam(required = false)
                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate stockOutDate,
                                  @RequestParam String issuedTo,
@@ -41,7 +65,8 @@ public class StockOutController {
                                  @RequestParam(required = false) String note,
                                  RedirectAttributes redirectAttributes) {
         try {
-            stockOutService.createStockOut(productId, productName, quantity, stockOutDate, issuedTo, reason, note);
+            Customer customer = getSelectedCustomer(issuedTo);
+            stockOutService.createStockOut(productId, quantity, unitPrice, stockOutDate, customer.getName(), reason, note);
             redirectAttributes.addFlashAttribute("message", "Stockout record created successfully.");
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
@@ -59,14 +84,15 @@ public class StockOutController {
         }
 
         model.addAttribute("stockOut", stockOut);
+        addFormLists(model);
         return "stockout/update";
     }
 
     @PostMapping("/stockout/update/{id}")
     public String updateStockOut(@PathVariable String id,
                                  @RequestParam String productId,
-                                 @RequestParam String productName,
                                  @RequestParam int quantity,
+                                 @RequestParam double unitPrice,
                                  @RequestParam(required = false)
                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate stockOutDate,
                                  @RequestParam String issuedTo,
@@ -74,7 +100,8 @@ public class StockOutController {
                                  @RequestParam(required = false) String note,
                                  RedirectAttributes redirectAttributes) {
         try {
-            stockOutService.updateStockOut(id, productId, productName, quantity, stockOutDate, issuedTo, reason, note);
+            Customer customer = getSelectedCustomer(issuedTo);
+            stockOutService.updateStockOut(id, productId, quantity, unitPrice, stockOutDate, customer.getName(), reason, note);
             redirectAttributes.addFlashAttribute("message", "Stockout record updated successfully.");
             return "redirect:/stockout";
         } catch (IllegalArgumentException ex) {
@@ -93,5 +120,19 @@ public class StockOutController {
         }
 
         return "redirect:/stockout";
+    }
+
+    private void addFormLists(Model model) {
+        model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("customers", customerService.getAllCustomers());
+        model.addAttribute("today", LocalDate.now().toString());
+    }
+
+    private Customer getSelectedCustomer(String customerId) {
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer == null) {
+            throw new IllegalArgumentException("Selected customer was not found.");
+        }
+        return customer;
     }
 }

@@ -1,5 +1,6 @@
 package com.inventory.sims.supplier;
 
+import com.inventory.sims.stockin.StockInService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +14,11 @@ import java.util.List;
 @Controller
 public class SupplierController {
     private final SupplierService supplierService;
+    private final StockInService stockInService;
 
-    public SupplierController(SupplierService supplierService) {
+    public SupplierController(SupplierService supplierService, StockInService stockInService) {
         this.supplierService = supplierService;
+        this.stockInService = stockInService;
     }
 
     @GetMapping("/suppliers")
@@ -34,6 +37,7 @@ public class SupplierController {
         return supplierService.findById(supplierId)
                 .map(supplier -> {
                     model.addAttribute("supplier", supplier);
+                    model.addAttribute("stockIns", stockInService.getStockInsBySupplierName(supplier.getCompanyName()));
                     return "supplier/details";
                 })
                 .orElseGet(() -> {

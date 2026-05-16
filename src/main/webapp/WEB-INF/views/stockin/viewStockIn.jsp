@@ -34,7 +34,7 @@
         .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
         .toolbar h2 { margin: 0; color: #111827; font-size: 16px; }
         .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 960px; }
+        table { width: 100%; border-collapse: collapse; min-width: 820px; }
         th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
         th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; }
         tbody tr:hover { background: #f8fafc; }
@@ -42,7 +42,7 @@
         .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #dcfce7; color: #166534; }
         .money { font-weight: 700; color: #111827; }
         .muted { color: #64748b; }
-        .table-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .table-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .table-actions form { margin: 0; }
         .table-actions a, .table-actions button { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
         .table-actions a:hover, .table-actions button:hover { background: #f8fafc; }
@@ -121,7 +121,7 @@
             </div>
             <div class="summary-card">
                 <span>Total stock cost</span>
-                <strong>$<%= String.format("%.2f", totalCost) %></strong>
+                <strong>LKR <%= String.format("%.2f", totalCost) %></strong>
             </div>
         </section>
 
@@ -140,9 +140,7 @@
                         <th>Product</th>
                         <th>Supplier</th>
                         <th>Quantity</th>
-                        <th>Unit Cost</th>
-                        <th>Total Cost</th>
-                        <th>Note</th>
+                        <th>Total Cost (LKR)</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -160,11 +158,10 @@
                         </td>
                         <td><%= stockIn.getSupplierName() %></td>
                         <td><%= stockIn.getQuantity() %></td>
-                        <td class="money">$<%= String.format("%.2f", stockIn.getUnitCost()) %></td>
-                        <td class="money">$<%= String.format("%.2f", stockIn.getTotalCost()) %></td>
-                        <td><%= stockIn.getNote() == null || stockIn.getNote().isBlank() ? "-" : stockIn.getNote() %></td>
+                        <td class="money">LKR <%= String.format("%.2f", stockIn.getTotalCost()) %></td>
                         <td>
                             <div class="table-actions">
+                                <a href="/stockin/details/<%= stockIn.getId() %>">View</a>
                                 <a href="/stockin/edit/<%= stockIn.getId() %>">Edit</a>
                                 <form action="/stockin/delete/<%= stockIn.getId() %>" method="post"
                                       onsubmit="return confirm('Delete stock-in record <%= stockIn.getId() %>?');">
@@ -178,7 +175,7 @@
                         } else {
                     %>
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 22px; color: #64748b;">No stock-in records found.</td>
+                        <td colspan="7" style="text-align: center; padding: 22px; color: #64748b;">No stock-in records found.</td>
                     </tr>
                     <% } %>
                     </tbody>

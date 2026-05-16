@@ -34,6 +34,16 @@
         tbody tr:last-child td { border-bottom: 0; }
         .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #eef2f6; color: #475569; }
         .empty { text-align: center; padding: 22px 16px; color: #64748b; }
+        .table-actions { display: flex; gap: 8px; }
+        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; font-weight: 700; }
+        .table-actions a:hover { background: #f8fafc; }
+        .action-update { color: #1d4ed8 !important; border-color: #93c5fd !important; background: #eff6ff !important; }
+        .delete-form { margin: 0; }
+        .delete-button { min-height: 34px; border: 1px solid #fecaca; border-radius: 6px; background: #ffffff; color: #991b1b; padding: 7px 10px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .delete-button:hover { background: #fee2e2; }
+        .message { margin-bottom: 18px; border-radius: 6px; padding: 12px 14px; font-weight: 700; }
+        .message-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .message-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         @media (max-width: 760px) {
             .layout { grid-template-columns: 1fr; }
             .sidebar { padding: 20px; }
@@ -71,6 +81,13 @@
         </header>
 
         <section aria-label="Customers table">
+            <% if (request.getAttribute("message") != null) { %>
+            <div class="message message-success"><%= request.getAttribute("message") %></div>
+            <% } %>
+            <% if (request.getAttribute("error") != null) { %>
+            <div class="message message-error"><%= request.getAttribute("error") %></div>
+            <% } %>
+
             <div class="toolbar">
                 <h3>Customer List</h3>
             </div>
@@ -84,6 +101,7 @@
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Address</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -99,13 +117,22 @@
                         <td><%= customer.getEmail() %></td>
                         <td><%= customer.getPhone() %></td>
                         <td><%= customer.getAddress() == null || customer.getAddress().isBlank() ? "-" : customer.getAddress() %></td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="/customers/details/<%= customer.getId() %>">View</a>
+                                <a class="action-update" href="/customers/edit/<%= customer.getId() %>">Edit</a>
+                                <form class="delete-form" action="/customers/delete/<%= customer.getId() %>" method="post" onsubmit="return confirm('Delete customer <%= customer.getId() %>?');">
+                                    <button type="submit" class="delete-button">Delete</button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                     <%
                             }
                         } else {
                     %>
                     <tr>
-                        <td colspan="5" class="empty">No customers found. Click "Add Customer" to create one.</td>
+                        <td colspan="6" class="empty">No customers found. Click "Add Customer" to create one.</td>
                     </tr>
                     <% } %>
                     </tbody>

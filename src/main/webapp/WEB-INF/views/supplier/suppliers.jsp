@@ -40,7 +40,7 @@
         .search input { flex: 1; min-height: 40px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; font: inherit; }
         .search input:focus { border-color: #2563eb; outline: 3px solid rgba(37, 99, 235, 0.16); }
         .table-wrap { overflow-x: auto; background: #fff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 1160px; }
+        table { width: 100%; border-collapse: collapse; min-width: 960px; }
         th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
         th { color: #475569; background: #f8fafc; font-size: 12px; text-transform: uppercase; letter-spacing: 0; }
         tbody tr:hover { background: #f8fafc; }
@@ -111,7 +111,7 @@
         <section aria-label="Supplier records table">
             <div class="toolbar">
                 <form class="search" action="/suppliers" method="get">
-                    <input type="search" name="keyword" placeholder="Search by id, company, email, phone, status..." value="<%= keyword == null ? "" : keyword %>">
+                    <input type="search" name="keyword" placeholder="Search by id, company, contact, city, status..." value="<%= keyword == null ? "" : keyword %>">
                     <button class="button button-secondary" type="submit">Search</button>
                 </form>
             </div>
@@ -122,8 +122,6 @@
                         <th>ID</th>
                         <th>Company</th>
                         <th>Contact</th>
-                        <th>Phone</th>
-                        <th>Email</th>
                         <th>City</th>
                         <th>Lead time</th>
                         <th>Category</th>
@@ -136,7 +134,7 @@
                         if (suppliers == null || suppliers.isEmpty()) {
                     %>
                     <tr>
-                        <td colspan="10" class="empty">No supplier records found.</td>
+                        <td colspan="8" class="empty">No supplier records found.</td>
                     </tr>
                     <%
                         } else {
@@ -148,8 +146,6 @@
                         <td><%= supplier.getId() %></td>
                         <td><%= supplier.getCompanyName() %></td>
                         <td><%= supplier.getContactPerson() %></td>
-                        <td><%= supplier.getPhone() %></td>
-                        <td class="muted"><%= supplier.getEmail() %></td>
                         <td><%= supplier.getCity() %></td>
                         <td><%= supplier.getLeadTime() %></td>
                         <td><span class="<%= categoryClass %>"><%= supplier.getCategory() %></span></td>

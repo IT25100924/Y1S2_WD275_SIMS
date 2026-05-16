@@ -39,6 +39,23 @@
         .detail-list { display: grid; gap: 16px; }
         .detail-item span { display: block; color: #64748b; font-size: 14px; margin-bottom: 6px; }
         .detail-item strong, .detail-item p { margin: 0; color: #111827; line-height: 1.6; }
+        .stock-section { margin-top: 24px; }
+        .section-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #fff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px 18px; flex-wrap: wrap; }
+        .section-toolbar h3 { margin: 0; color: #111827; font-size: 18px; }
+        .section-toolbar p { margin: 4px 0 0; color: #64748b; font-size: 14px; }
+        .summary-inline { display: flex; gap: 12px; flex-wrap: wrap; }
+        .summary-pill { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 6px 10px; border-radius: 999px; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 14px; }
+        .summary-pill strong { color: #111827; }
+        .table-wrap { overflow-x: auto; background: #fff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
+        table { width: 100%; border-collapse: collapse; min-width: 820px; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; }
+        tbody tr:hover { background: #f8fafc; }
+        tbody tr:last-child td { border-bottom: 0; }
+        .stock-id { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #e0f2fe; color: #075985; }
+        .money { font-weight: 700; color: #111827; }
+        .muted { color: #64748b; }
+        .empty-row { text-align: center; padding: 22px; color: #64748b; }
         @media (max-width: 860px) {
             .layout { grid-template-columns: 1fr; }
             .sidebar { padding: 18px; }
@@ -101,6 +118,73 @@
                         <div class="detail-item"><span>Status</span><strong>${supplier.status}</strong></div>
                     </div>
                 </article>
+            </section>
+            <%
+                java.util.List<com.inventory.sims.stockin.StockIn> stockIns =
+                        (java.util.List<com.inventory.sims.stockin.StockIn>) request.getAttribute("stockIns");
+                int totalStockInRecords = stockIns == null ? 0 : stockIns.size();
+                int totalStockInQuantity = 0;
+                double totalStockInCost = 0;
+                if (stockIns != null) {
+                    for (com.inventory.sims.stockin.StockIn stockIn : stockIns) {
+                        totalStockInQuantity += stockIn.getQuantity();
+                        totalStockInCost += stockIn.getTotalCost();
+                    }
+                }
+            %>
+            <section class="stock-section" aria-label="Supplier stock-in records">
+                <div class="section-toolbar">
+                    <div>
+                        <h3>Stock In Records</h3>
+                        <p>Incoming stock received from ${supplier.companyName}.</p>
+                    </div>
+                    <div class="summary-inline" aria-label="Supplier stock-in summary">
+                        <span class="summary-pill">Records <strong><%= totalStockInRecords %></strong></span>
+                        <span class="summary-pill">Quantity <strong><%= totalStockInQuantity %></strong></span>
+                        <span class="summary-pill">Cost <strong>LKR <%= String.format("%.2f", totalStockInCost) %></strong></span>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Cost (LKR)</th>
+                            <th>Total Cost (LKR)</th>
+                            <th>Details</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <%
+                            if (stockIns != null && !stockIns.isEmpty()) {
+                                for (com.inventory.sims.stockin.StockIn stockIn : stockIns) {
+                        %>
+                        <tr>
+                            <td><span class="stock-id"><%= stockIn.getId() %></span></td>
+                            <td><%= stockIn.getReceivedDate() %></td>
+                            <td>
+                                <strong><%= stockIn.getProductName() %></strong><br>
+                                <span class="muted"><%= stockIn.getProductId() %></span>
+                            </td>
+                            <td><%= stockIn.getQuantity() %></td>
+                            <td class="money">LKR <%= String.format("%.2f", stockIn.getUnitCost()) %></td>
+                            <td class="money">LKR <%= String.format("%.2f", stockIn.getTotalCost()) %></td>
+                            <td><%= stockIn.getSpecialDetails() %></td>
+                        </tr>
+                        <%
+                                }
+                            } else {
+                        %>
+                        <tr>
+                            <td colspan="7" class="empty-row">No stock-in records found for this supplier.</td>
+                        </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+                </div>
             </section>
         </main>
     </div>
