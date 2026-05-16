@@ -61,11 +61,14 @@ public class StockInController {
                              @RequestParam int quantity,
                              @RequestParam double unitCost,
                              @RequestParam String receivedDate,
+                             @RequestParam(required = false) String expirationDate,
+                             @RequestParam(required = false) String warrantyMonths,
                              @RequestParam(required = false) String note,
                              RedirectAttributes redirectAttributes) {
         try {
             String supplierName = getSupplierName(supplierId);
-            StockIn stockIn = stockInService.addStockIn(productId, supplierName, quantity, unitCost, receivedDate, note);
+            StockIn stockIn = stockInService.addStockIn(productId, supplierName, quantity, unitCost,
+                    receivedDate, expirationDate, warrantyMonths, note);
             redirectAttributes.addFlashAttribute("success",
                     "Stock in " + stockIn.getId() + " saved and product quantity updated.");
         } catch (IllegalArgumentException ex) {
@@ -81,11 +84,14 @@ public class StockInController {
                                 @RequestParam int quantity,
                                 @RequestParam double unitCost,
                                 @RequestParam String receivedDate,
+                                @RequestParam(required = false) String expirationDate,
+                                @RequestParam(required = false) String warrantyMonths,
                                 @RequestParam(required = false) String note,
                                 RedirectAttributes redirectAttributes) {
         try {
             String supplierName = getSupplierName(supplierId);
-            StockIn stockIn = stockInService.updateStockIn(id, productId, supplierName, quantity, unitCost, receivedDate, note);
+            StockIn stockIn = stockInService.updateStockIn(id, productId, supplierName, quantity, unitCost,
+                    receivedDate, expirationDate, warrantyMonths, note);
             redirectAttributes.addFlashAttribute("success",
                     "Stock in " + stockIn.getId() + " updated and product quantity adjusted.");
             return "redirect:/stockin/view";

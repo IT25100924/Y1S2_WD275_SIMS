@@ -43,6 +43,7 @@
         textarea.form-control { min-height: 96px; resize: vertical; }
         .form-control:focus { border-color: #2563eb; outline: 3px solid rgba(37, 99, 235, 0.16); }
         .form-control[readonly] { background-color: #f1f5f9; cursor: not-allowed; color: #64748b; }
+        .hidden { display: none; }
         .alert { margin-bottom: 18px; padding: 12px 14px; border-radius: 6px; font-size: 14px; font-weight: 700; }
         .alert-error { color: #991b1b; background: #fee2e2; border: 1px solid #fecaca; }
 
@@ -103,8 +104,24 @@
                             if (products != null) {
                                 for (com.inventory.sims.product.Product product : products) {
                                     String selected = product.getId().equals(stockIn.getProductId()) ? "selected" : "";
+                                    String productType = "General";
+                                    String expirationDate = "";
+                                    int warrantyMonths = 0;
+                                    if (product instanceof com.inventory.sims.product.FoodProduct) {
+                                        productType = "Food";
+                                        expirationDate = ((com.inventory.sims.product.FoodProduct) product).getExpirationDate();
+                                        if (expirationDate == null) {
+                                            expirationDate = "";
+                                        }
+                                    } else if (product instanceof com.inventory.sims.product.ElectronicsProduct) {
+                                        productType = "Electronics";
+                                        warrantyMonths = ((com.inventory.sims.product.ElectronicsProduct) product).getWarrantyMonths();
+                                    }
                         %>
-                        <option value="<%= product.getId() %>" <%= selected %>>
+                        <option value="<%= product.getId() %>" <%= selected %>
+                                data-product-type="<%= productType %>"
+                                data-expiration-date="<%= expirationDate %>"
+                                data-warranty-months="<%= warrantyMonths %>">
                             <%= product.getId() %> - <%= product.getName() %> (Current: <%= product.getQuantity() %>)
                         </option>
                         <%
@@ -149,6 +166,16 @@
                         <input type="number" id="unitCost" name="unitCost" class="form-control" step="0.01" min="0" required value="<%= stockIn.getUnitCost() %>">
                     </div>
 
+                    <div class="form-group hidden" id="expirationDateGroup">
+                        <label for="expirationDate">Expiration Date</label>
+                        <input type="date" id="expirationDate" name="expirationDate" class="form-control" min="<%= today == null ? "" : today %>" value="<%= stockIn.getExpirationDate() == null ? "" : stockIn.getExpirationDate() %>">
+                    </div>
+
+                    <div class="form-group hidden" id="warrantyMonthsGroup">
+                        <label for="warrantyMonths">Warranty (Months)</label>
+                        <input type="number" id="warrantyMonths" name="warrantyMonths" class="form-control" min="0" value="<%= stockIn.getWarrantyMonths() %>">
+                    </div>
+
                     <div class="form-group full-width">
                         <label for="note">Note</label>
                         <textarea id="note" name="note" class="form-control"><%= stockIn.getNote() == null ? "" : stockIn.getNote() %></textarea>
@@ -160,5 +187,49 @@
         </section>
     </main>
 </div>
+<script>
+    const productSelect = document.getElementById("productId");
+    const receivedDateInput = document.getElementById("receivedDate");
+    const expirationGroup = document.getElementById("expirationDateGroup");
+    const expirationInput = document.getElementById("expirationDate");
+    const warrantyGroup = document.getElementById("warrantyMonthsGroup");
+    const warrantyInput = document.getElementById("warrantyMonths");
+    const initialProductId = "<%= stockIn.getProductId() %>";
+    const initialExpirationDate = "<%= stockIn.getExpirationDate() == null ? "" : stockIn.getExpirationDate() %>";
+    const initialWarrantyMonths = "<%= stockIn.getWarrantyMonths() %>";
+
+    function toggleProductDetails() {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const productType = selectedOption ? selectedOption.dataset.productType : "";
+
+        expirationGroup.classList.add("hidden");
+        warrantyGroup.classList.add("hidden");
+        expirationInput.required = false;
+        warrantyInput.required = false;
+        expirationInput.value = "";
+        warrantyInput.value = "";
+
+        if (productType === "Food") {
+            expirationGroup.classList.remove("hidden");
+            expirationInput.required = true;
+            expirationInput.min = receivedDateInput.value || "<%= today == null ? "" : today %>";
+            expirationInput.value = selectedOption.value === initialProductId
+                    ? (initialExpirationDate || selectedOption.dataset.expirationDate || "")
+                    : (selectedOption.dataset.expirationDate || "");
+        } else if (productType === "Electronics") {
+            warrantyGroup.classList.remove("hidden");
+            warrantyInput.required = true;
+            warrantyInput.value = selectedOption.value === initialProductId
+                    ? (initialWarrantyMonths !== "0" ? initialWarrantyMonths : (selectedOption.dataset.warrantyMonths || ""))
+                    : (selectedOption.dataset.warrantyMonths || "");
+        }
+    }
+
+    productSelect.addEventListener("change", toggleProductDetails);
+    receivedDateInput.addEventListener("change", function () {
+        expirationInput.min = receivedDateInput.value || "<%= today == null ? "" : today %>";
+    });
+    toggleProductDetails();
+</script>
 </body>
 </html>

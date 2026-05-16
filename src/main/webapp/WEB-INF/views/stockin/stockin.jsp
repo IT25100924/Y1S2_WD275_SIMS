@@ -33,6 +33,7 @@
         .form-control { width: 100%; min-height: 42px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; font: inherit; background: #ffffff; }
         textarea.form-control { min-height: 96px; resize: vertical; }
         .form-control:focus { border-color: #2563eb; outline: 3px solid rgba(37, 99, 235, 0.16); }
+        .hidden { display: none; }
         .alert { margin-bottom: 18px; padding: 12px 14px; border-radius: 6px; font-size: 14px; font-weight: 700; }
         .alert-success { color: #166534; background: #dcfce7; border: 1px solid #86efac; }
         .alert-error { color: #991b1b; background: #fee2e2; border: 1px solid #fecaca; }
@@ -108,8 +109,24 @@
                             <%
                                 if (products != null) {
                                     for (com.inventory.sims.product.Product product : products) {
+                                        String productType = "General";
+                                        String expirationDate = "";
+                                        int warrantyMonths = 0;
+                                        if (product instanceof com.inventory.sims.product.FoodProduct) {
+                                            productType = "Food";
+                                            expirationDate = ((com.inventory.sims.product.FoodProduct) product).getExpirationDate();
+                                            if (expirationDate == null) {
+                                                expirationDate = "";
+                                            }
+                                        } else if (product instanceof com.inventory.sims.product.ElectronicsProduct) {
+                                            productType = "Electronics";
+                                            warrantyMonths = ((com.inventory.sims.product.ElectronicsProduct) product).getWarrantyMonths();
+                                        }
                             %>
-                            <option value="<%= product.getId() %>">
+                            <option value="<%= product.getId() %>"
+                                    data-product-type="<%= productType %>"
+                                    data-expiration-date="<%= expirationDate %>"
+                                    data-warranty-months="<%= warrantyMonths %>">
                                 <%= product.getId() %> - <%= product.getName() %> (Current: <%= product.getQuantity() %>)
                             </option>
                             <%
@@ -153,6 +170,16 @@
                             <input type="number" id="unitCost" name="unitCost" class="form-control" step="0.01" min="0" required placeholder="0.00">
                         </div>
 
+                        <div class="form-group hidden" id="expirationDateGroup">
+                            <label for="expirationDate">Expiration Date</label>
+                            <input type="date" id="expirationDate" name="expirationDate" class="form-control" min="<%= today == null ? "" : today %>">
+                        </div>
+
+                        <div class="form-group hidden" id="warrantyMonthsGroup">
+                            <label for="warrantyMonths">Warranty (Months)</label>
+                            <input type="number" id="warrantyMonths" name="warrantyMonths" class="form-control" min="0">
+                        </div>
+
                         <div class="form-group full-width">
                             <label for="note">Note</label>
                             <textarea id="note" name="note" class="form-control" placeholder="Optional stock-in note"></textarea>
@@ -166,5 +193,42 @@
         </div>
     </main>
 </div>
+<script>
+    const productSelect = document.getElementById("productId");
+    const receivedDateInput = document.getElementById("receivedDate");
+    const expirationGroup = document.getElementById("expirationDateGroup");
+    const expirationInput = document.getElementById("expirationDate");
+    const warrantyGroup = document.getElementById("warrantyMonthsGroup");
+    const warrantyInput = document.getElementById("warrantyMonths");
+
+    function toggleProductDetails() {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const productType = selectedOption ? selectedOption.dataset.productType : "";
+
+        expirationGroup.classList.add("hidden");
+        warrantyGroup.classList.add("hidden");
+        expirationInput.required = false;
+        warrantyInput.required = false;
+        expirationInput.value = "";
+        warrantyInput.value = "";
+
+        if (productType === "Food") {
+            expirationGroup.classList.remove("hidden");
+            expirationInput.required = true;
+            expirationInput.min = receivedDateInput.value || "<%= today == null ? "" : today %>";
+            expirationInput.value = selectedOption.dataset.expirationDate || "";
+        } else if (productType === "Electronics") {
+            warrantyGroup.classList.remove("hidden");
+            warrantyInput.required = true;
+            warrantyInput.value = selectedOption.dataset.warrantyMonths || "";
+        }
+    }
+
+    productSelect.addEventListener("change", toggleProductDetails);
+    receivedDateInput.addEventListener("change", function () {
+        expirationInput.min = receivedDateInput.value || "<%= today == null ? "" : today %>";
+    });
+    toggleProductDetails();
+</script>
 </body>
 </html>

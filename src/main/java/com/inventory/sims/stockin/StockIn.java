@@ -8,6 +8,9 @@ public class StockIn {
     private int quantity;
     private double unitCost;
     private String receivedDate;
+    private String productType;
+    private String expirationDate;
+    private int warrantyMonths;
     private String note;
 
     public StockIn() {
@@ -15,6 +18,12 @@ public class StockIn {
 
     public StockIn(String id, String productId, String productName, String supplierName,
                    int quantity, double unitCost, String receivedDate, String note) {
+        this(id, productId, productName, supplierName, quantity, unitCost, receivedDate, "", "", 0, note);
+    }
+
+    public StockIn(String id, String productId, String productName, String supplierName,
+                   int quantity, double unitCost, String receivedDate, String productType,
+                   String expirationDate, int warrantyMonths, String note) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
@@ -22,6 +31,9 @@ public class StockIn {
         this.quantity = quantity;
         this.unitCost = unitCost;
         this.receivedDate = receivedDate;
+        this.productType = productType;
+        this.expirationDate = expirationDate;
+        this.warrantyMonths = warrantyMonths;
         this.note = note;
     }
 
@@ -81,6 +93,30 @@ public class StockIn {
         this.receivedDate = receivedDate;
     }
 
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public int getWarrantyMonths() {
+        return warrantyMonths;
+    }
+
+    public void setWarrantyMonths(int warrantyMonths) {
+        this.warrantyMonths = warrantyMonths;
+    }
+
     public String getNote() {
         return note;
     }
@@ -93,6 +129,16 @@ public class StockIn {
         return quantity * unitCost;
     }
 
+    public String getSpecialDetails() {
+        if ("Food".equalsIgnoreCase(productType) && expirationDate != null && !expirationDate.isBlank()) {
+            return "Expiry: " + expirationDate;
+        }
+        if ("Electronics".equalsIgnoreCase(productType)) {
+            return "Warranty: " + warrantyMonths + " months";
+        }
+        return "-";
+    }
+
     public String toFileLine() {
         return String.join("|",
                 clean(id),
@@ -102,6 +148,9 @@ public class StockIn {
                 Integer.toString(quantity),
                 Double.toString(unitCost),
                 clean(receivedDate),
+                clean(productType),
+                clean(expirationDate),
+                Integer.toString(warrantyMonths),
                 clean(note));
     }
 
@@ -112,6 +161,21 @@ public class StockIn {
         }
 
         try {
+            if (parts.length >= 11) {
+                return new StockIn(
+                        parts[0],
+                        parts[1],
+                        parts[2],
+                        parts[3],
+                        Integer.parseInt(parts[4]),
+                        Double.parseDouble(parts[5]),
+                        parts[6],
+                        parts[7],
+                        parts[8],
+                        Integer.parseInt(parts[9]),
+                        parts[10]);
+            }
+
             return new StockIn(
                     parts[0],
                     parts[1],

@@ -1,5 +1,7 @@
 package com.inventory.sims.stockin;
 
+import com.inventory.sims.product.ElectronicsProduct;
+import com.inventory.sims.product.FoodProduct;
 import com.inventory.sims.product.Product;
 import com.inventory.sims.product.ProductService;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,8 @@ public class StockInService {
     }
 
     public StockIn addStockIn(String productId, String supplierName, int quantity,
-                              double unitCost, String receivedDate, String note) {
+                              double unitCost, String receivedDate, String expirationDate,
+                              String warrantyMonths, String note) {
         validateRequired(productId, "Product");
         validateRequired(supplierName, "Supplier name");
         validateRequired(receivedDate, "Received date");
@@ -30,12 +33,13 @@ public class StockInService {
         if (unitCost < 0) {
             throw new IllegalArgumentException("Unit cost cannot be negative.");
         }
-        validateDate(receivedDate);
+        LocalDate parsedReceivedDate = validateDate(receivedDate);
 
         Product product = productService.getProductById(productId);
         if (product == null) {
             throw new IllegalArgumentException("Selected product was not found.");
         }
+        StockInTypeDetails typeDetails = validateTypeDetails(product, expirationDate, warrantyMonths, parsedReceivedDate);
 
         StockIn stockIn = new StockIn(
                 nextStockInId(),
@@ -45,6 +49,9 @@ public class StockInService {
                 quantity,
                 unitCost,
                 receivedDate.trim(),
+                typeDetails.productType,
+                typeDetails.expirationDate,
+                typeDetails.warrantyMonths,
                 safeTrim(note));
 
         product.setQuantity(product.getQuantity() + quantity);
@@ -68,7 +75,8 @@ public class StockInService {
     }
 
     public StockIn updateStockIn(String id, String productId, String supplierName, int quantity,
-                                 double unitCost, String receivedDate, String note) {
+                                 double unitCost, String receivedDate, String expirationDate,
+                                 String warrantyMonths, String note) {
         validateRequired(id, "Stock-in ID");
         validateRequired(productId, "Product");
         validateRequired(supplierName, "Supplier name");
@@ -80,7 +88,7 @@ public class StockInService {
         if (unitCost < 0) {
             throw new IllegalArgumentException("Unit cost cannot be negative.");
         }
-        validateDate(receivedDate);
+        LocalDate parsedReceivedDate = validateDate(receivedDate);
 
         List<StockIn> stockIns = stockInFileHandler.readStockIns();
         StockIn existing = null;
@@ -102,6 +110,7 @@ public class StockInService {
         if (selectedProduct == null) {
             throw new IllegalArgumentException("Selected product was not found.");
         }
+        StockInTypeDetails typeDetails = validateTypeDetails(selectedProduct, expirationDate, warrantyMonths, parsedReceivedDate);
 
         adjustProductQuantity(existing, selectedProduct, quantity);
 
@@ -113,6 +122,9 @@ public class StockInService {
                 quantity,
                 unitCost,
                 receivedDate.trim(),
+                typeDetails.productType,
+                typeDetails.expirationDate,
+                typeDetails.warrantyMonths,
                 safeTrim(note));
 
         stockIns.set(existingIndex, updated);
@@ -196,14 +208,51 @@ public class StockInService {
         return String.format("SI%03d", max + 1);
     }
 
-    private void validateDate(String receivedDate) {
+    private LocalDate validateDate(String receivedDate) {
         try {
             LocalDate selectedDate = LocalDate.parse(receivedDate.trim());
             if (selectedDate.isBefore(LocalDate.now())) {
                 throw new IllegalArgumentException("Received date cannot be before today.");
             }
+            return selectedDate;
         } catch (DateTimeParseException ex) {
             throw new IllegalArgumentException("Received date must be a valid date.");
+        }
+    }
+
+    private StockInTypeDetails validateTypeDetails(Product product, String expirationDate,
+                                                   String warrantyMonths, LocalDate receivedDate) {
+        if (product instanceof FoodProduct) {
+            validateRequired(expirationDate, "Expiration date");
+            LocalDate parsedExpirationDate = parseDate(expirationDate, "Expiration date");
+            if (parsedExpirationDate.isBefore(receivedDate)) {
+                throw new IllegalArgumentException("Expiration date cannot be before received date.");
+            }
+            return new StockInTypeDetails("Food", expirationDate.trim(), 0);
+        }
+
+        if (product instanceof ElectronicsProduct) {
+            validateRequired(warrantyMonths, "Warranty months");
+            int parsedWarrantyMonths;
+            try {
+                parsedWarrantyMonths = Integer.parseInt(warrantyMonths.trim());
+            } catch (NumberFormatException ex) {
+                throw new IllegalArgumentException("Warranty months must be a valid number.");
+            }
+            if (parsedWarrantyMonths < 0) {
+                throw new IllegalArgumentException("Warranty months cannot be negative.");
+            }
+            return new StockInTypeDetails("Electronics", "", parsedWarrantyMonths);
+        }
+
+        return new StockInTypeDetails("General", "", 0);
+    }
+
+    private LocalDate parseDate(String value, String fieldName) {
+        try {
+            return LocalDate.parse(value.trim());
+        } catch (DateTimeParseException ex) {
+            throw new IllegalArgumentException(fieldName + " must be a valid date.");
         }
     }
 
@@ -215,5 +264,17 @@ public class StockInService {
 
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private static class StockInTypeDetails {
+        private final String productType;
+        private final String expirationDate;
+        private final int warrantyMonths;
+
+        private StockInTypeDetails(String productType, String expirationDate, int warrantyMonths) {
+            this.productType = productType;
+            this.expirationDate = expirationDate;
+            this.warrantyMonths = warrantyMonths;
+        }
     }
 }
