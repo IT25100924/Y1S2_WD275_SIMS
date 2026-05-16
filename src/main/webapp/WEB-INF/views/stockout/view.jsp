@@ -35,8 +35,8 @@
         .alert:empty { display: none; }
         .record-count { color: #64748b; font-size: 14px; font-weight: 700; }
         .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 980px; }
-        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        table { width: 100%; border-collapse: collapse; min-width: 760px; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
         th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; white-space: nowrap; }
         tbody tr:hover { background: #f8fafc; }
         tbody tr:last-child td { border-bottom: 0; }
@@ -97,13 +97,10 @@
                     <thead>
                     <tr>
                         <th>Stockout ID</th>
-                        <th>Product ID</th>
-                        <th>Product Name</th>
+                        <th>Product</th>
                         <th>Quantity</th>
                         <th>Date</th>
-                        <th>Issued To</th>
                         <th>Reason</th>
-                        <th>Note</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -114,15 +111,13 @@
                     %>
                     <tr>
                         <td><strong><%= stockOut.getId() %></strong></td>
-                        <td><%= stockOut.getProductId() %></td>
                         <td><%= stockOut.getProductName() %></td>
                         <td><span class="badge"><%= stockOut.getQuantity() %> out</span></td>
                         <td><%= stockOut.getStockOutDate() == null ? "-" : stockOut.getStockOutDate() %></td>
-                        <td><%= stockOut.getIssuedTo() %></td>
                         <td><%= stockOut.getReason() %></td>
-                        <td class="muted"><%= stockOut.getNote() == null || stockOut.getNote().isBlank() ? "-" : stockOut.getNote() %></td>
                         <td>
                             <div class="row-actions">
+                                <a class="button button-secondary button-small" href="/stockout/details/<%= stockOut.getId() %>">View</a>
                                 <a class="button button-secondary button-small" href="/stockout/update/<%= stockOut.getId() %>">Update</a>
                                 <form class="delete-form" action="/stockout/delete/<%= stockOut.getId() %>" method="post"
                                       onsubmit="return confirm('Delete stockout record <%= stockOut.getId() %>?');">
@@ -136,7 +131,7 @@
                         } else {
                     %>
                     <tr>
-                        <td class="empty" colspan="9">No stockout records found. Create a stockout record to show it here.</td>
+                        <td class="empty" colspan="6">No stockout records found. Create a stockout record to show it here.</td>
                     </tr>
                     <% } %>
                     </tbody>

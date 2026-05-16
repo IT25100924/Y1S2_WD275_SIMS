@@ -1,37 +1,46 @@
 package com.inventory.sims.stockout;
 
-import com.inventory.sims.customer.Customer;
+import com.inventory.sims.product.Product;
+import com.inventory.sims.product.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class StockOutService {
     private final StockOutFileHandler stockOutFileHandler;
+    private final ProductService productService;
 
-    public StockOutService(StockOutFileHandler stockOutFileHandler) {
+    public StockOutService(StockOutFileHandler stockOutFileHandler, ProductService productService) {
         this.stockOutFileHandler = stockOutFileHandler;
+        this.productService = productService;
     }
 
-    public StockOut createStockOut(String productId, String productName, int quantity, LocalDate stockOutDate,
+    public StockOut createStockOut(String productId, int quantity, double unitPrice, LocalDate stockOutDate,
                                    String issuedTo, String reason, String note) {
         validateRequired(productId, "Product ID");
-        validateRequired(productName, "Product name");
         validateRequired(issuedTo, "Issued to");
         validateRequired(reason, "Reason");
 
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
+        if (unitPrice < 0) {
+            throw new IllegalArgumentException("Unit price cannot be negative.");
+        }
 
         LocalDate savedDate = stockOutDate == null ? LocalDate.now() : stockOutDate;
+        validateStockOutDate(savedDate);
+
+        Product product = getExistingProduct(productId);
+        validateAvailableQuantity(quantity, product);
         StockOut stockOut = new StockOut(
                 nextStockOutId(),
-                productId.trim(),
-                productName.trim(),
+                product.getId(),
+                product.getName(),
                 quantity,
+                unitPrice,
                 savedDate,
                 issuedTo.trim(),
                 reason.trim(),
@@ -45,20 +54,6 @@ public class StockOutService {
         return stockOutFileHandler.readStockOuts();
     }
 
-    public List<StockOut> getStockOutsByCustomer(Customer customer) {
-        List<StockOut> matchingStockOuts = new ArrayList<>();
-        if (customer == null) {
-            return matchingStockOuts;
-        }
-
-        for (StockOut stockOut : stockOutFileHandler.readStockOuts()) {
-            if (isIssuedToCustomer(stockOut.getIssuedTo(), customer)) {
-                matchingStockOuts.add(stockOut);
-            }
-        }
-        return matchingStockOuts;
-    }
-
     public StockOut getStockOutById(String id) {
         validateRequired(id, "Stockout ID");
 
@@ -70,30 +65,36 @@ public class StockOutService {
         return null;
     }
 
-    public StockOut updateStockOut(String id, String productId, String productName, int quantity,
+    public StockOut updateStockOut(String id, String productId, int quantity, double unitPrice,
                                    LocalDate stockOutDate, String issuedTo, String reason, String note) {
         validateRequired(id, "Stockout ID");
         validateRequired(productId, "Product ID");
-        validateRequired(productName, "Product name");
         validateRequired(issuedTo, "Issued to");
         validateRequired(reason, "Reason");
 
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
+        if (unitPrice < 0) {
+            throw new IllegalArgumentException("Unit price cannot be negative.");
+        }
 
         List<StockOut> stockOuts = stockOutFileHandler.readStockOuts();
         String stockOutId = id.trim();
         LocalDate savedDate = stockOutDate == null ? LocalDate.now() : stockOutDate;
+        validateStockOutDate(savedDate);
+        Product product = getExistingProduct(productId);
+        validateAvailableQuantity(quantity, product);
 
         for (int i = 0; i < stockOuts.size(); i++) {
             StockOut currentStockOut = stockOuts.get(i);
             if (currentStockOut.getId().equals(stockOutId)) {
                 StockOut updatedStockOut = new StockOut(
                         stockOutId,
-                        productId.trim(),
-                        productName.trim(),
+                        product.getId(),
+                        product.getName(),
                         quantity,
+                        unitPrice,
                         savedDate,
                         issuedTo.trim(),
                         reason.trim(),
@@ -136,6 +137,26 @@ public class StockOutService {
         return String.format("SO%03d", max + 1);
     }
 
+    private Product getExistingProduct(String productId) {
+        Product product = productService.getProductById(productId.trim());
+        if (product == null) {
+            throw new IllegalArgumentException("Selected product was not found.");
+        }
+        return product;
+    }
+
+    private void validateStockOutDate(LocalDate stockOutDate) {
+        if (stockOutDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Stockout date cannot be in the past.");
+        }
+    }
+
+    private void validateAvailableQuantity(int quantity, Product product) {
+        if (quantity > product.getQuantity()) {
+            throw new IllegalArgumentException("Stockout quantity cannot be greater than available product quantity.");
+        }
+    }
+
     private void validateRequired(String value, String fieldName) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(fieldName + " is required.");
@@ -144,21 +165,5 @@ public class StockOutService {
 
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
-    }
-
-    private boolean isIssuedToCustomer(String issuedTo, Customer customer) {
-        String normalizedIssuedTo = normalize(issuedTo);
-        if (normalizedIssuedTo.isEmpty()) {
-            return false;
-        }
-
-        return normalizedIssuedTo.equals(normalize(customer.getId()))
-                || normalizedIssuedTo.equals(normalize(customer.getName()))
-                || normalizedIssuedTo.equals(normalize(customer.getEmail()))
-                || normalizedIssuedTo.equals(normalize(customer.getPhone()));
-    }
-
-    private String normalize(String value) {
-        return value == null ? "" : value.trim().toLowerCase();
     }
 }

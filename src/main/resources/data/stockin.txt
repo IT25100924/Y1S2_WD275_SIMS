@@ -5,4 +5,4 @@ SI004|p001|laptop webbb|Perera|5|25.0|2026-05-13|
 SI005|P002|Laptop|Orange Cooperation|16|100.0|2026-05-16|
 SI006|P002|Laptop|Jat holdings|14|200.0|2026-05-05|
 SI007|P002|Laptop|Orange Cooperation|5|40.0|2026-05-16|
-SI008|P001|Microfiber Cloth|Jat holdings|10|100.0|2026-05-16|General||0|
+SI008|P004|chocolates|Orange Cooperation|25|1500.0|2026-05-16|Food|2026-10-24|0|

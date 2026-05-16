@@ -7,6 +7,7 @@ public class StockOut {
     private String productId;
     private String productName;
     private int quantity;
+    private double unitPrice;
     private LocalDate stockOutDate;
     private String issuedTo;
     private String reason;
@@ -17,10 +18,16 @@ public class StockOut {
 
     public StockOut(String id, String productId, String productName, int quantity, LocalDate stockOutDate,
                     String issuedTo, String reason, String note) {
+        this(id, productId, productName, quantity, 0, stockOutDate, issuedTo, reason, note);
+    }
+
+    public StockOut(String id, String productId, String productName, int quantity, double unitPrice,
+                    LocalDate stockOutDate, String issuedTo, String reason, String note) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
+        this.unitPrice = unitPrice;
         this.stockOutDate = stockOutDate;
         this.issuedTo = issuedTo;
         this.reason = reason;
@@ -57,6 +64,14 @@ public class StockOut {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
     public LocalDate getStockOutDate() {
@@ -97,6 +112,7 @@ public class StockOut {
                 clean(productId),
                 clean(productName),
                 Integer.toString(quantity),
+                Double.toString(unitPrice),
                 stockOutDate == null ? "" : stockOutDate.toString(),
                 clean(issuedTo),
                 clean(reason),
@@ -109,9 +125,15 @@ public class StockOut {
             return null;
         }
 
+        boolean hasUnitPrice = parts.length >= 9;
+        int dateIndex = hasUnitPrice ? 5 : 4;
+        int issuedToIndex = hasUnitPrice ? 6 : 5;
+        int reasonIndex = hasUnitPrice ? 7 : 6;
+        int noteIndex = hasUnitPrice ? 8 : 7;
+
         LocalDate parsedDate = null;
-        if (!parts[4].isBlank()) {
-            parsedDate = LocalDate.parse(parts[4]);
+        if (!parts[dateIndex].isBlank()) {
+            parsedDate = LocalDate.parse(parts[dateIndex]);
         }
 
         return new StockOut(
@@ -119,10 +141,11 @@ public class StockOut {
                 parts[1],
                 parts[2],
                 Integer.parseInt(parts[3]),
+                hasUnitPrice ? Double.parseDouble(parts[4]) : 0,
                 parsedDate,
-                parts[5],
-                parts[6],
-                parts[7]);
+                parts[issuedToIndex],
+                parts[reasonIndex],
+                parts[noteIndex]);
     }
 
     private String clean(String value) {
