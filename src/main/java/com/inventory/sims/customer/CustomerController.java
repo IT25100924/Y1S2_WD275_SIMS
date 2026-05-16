@@ -1,5 +1,6 @@
 package com.inventory.sims.customer;
 
+import com.inventory.sims.stockout.StockOutService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +12,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class CustomerController {
     private final CustomerService customerService;
+    private final StockOutService stockOutService;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, StockOutService stockOutService) {
         this.customerService = customerService;
+        this.stockOutService = stockOutService;
     }
 
     @GetMapping("/customers")
@@ -35,6 +38,7 @@ public class CustomerController {
             return "redirect:/customers";
         }
         model.addAttribute("customer", customer);
+        model.addAttribute("stockOutRecords", stockOutService.getStockOutsByCustomer(customer));
         return "customer/details";
     }
 

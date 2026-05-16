@@ -35,6 +35,19 @@
         .detail-list { display: grid; gap: 16px; }
         .detail-item span { display: block; color: #64748b; font-size: 14px; margin-bottom: 6px; }
         .detail-item strong, .detail-item p { margin: 0; color: #111827; line-height: 1.6; overflow-wrap: anywhere; }
+        .records-section { margin-top: 18px; }
+        .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
+        .toolbar h3 { margin: 0; color: #111827; font-size: 18px; }
+        .record-count { color: #64748b; font-size: 14px; font-weight: 700; white-space: nowrap; }
+        .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
+        table { width: 100%; border-collapse: collapse; min-width: 860px; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; white-space: nowrap; }
+        tbody tr:hover { background: #f8fafc; }
+        tbody tr:last-child td { border-bottom: 0; }
+        .quantity-badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #fee2e2; color: #991b1b; white-space: nowrap; }
+        .muted { color: #64748b; }
+        .empty { text-align: center; padding: 24px; color: #64748b; }
         @media (max-width: 860px) {
             .layout { grid-template-columns: 1fr; }
             .sidebar { padding: 18px; }
@@ -42,6 +55,7 @@
             .nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .main { padding: 24px 18px; }
             .grid { grid-template-columns: 1fr; }
+            .toolbar { align-items: flex-start; flex-direction: column; }
         }
     </style>
 </head>
@@ -97,6 +111,55 @@
                     <div class="detail-item"><span>Phone</span><strong>${customer.phone}</strong></div>
                 </div>
             </article>
+        </section>
+        <section class="records-section" aria-label="Customer stockout records">
+            <%
+                java.util.List<com.inventory.sims.stockout.StockOut> stockOutRecords =
+                        (java.util.List<com.inventory.sims.stockout.StockOut>) request.getAttribute("stockOutRecords");
+                int stockOutCount = stockOutRecords == null ? 0 : stockOutRecords.size();
+            %>
+            <div class="toolbar">
+                <h3>Customer Stockout Records</h3>
+                <span class="record-count"><%= stockOutCount %> record<%= stockOutCount == 1 ? "" : "s" %></span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Stockout ID</th>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                        <th>Reason</th>
+                        <th>Note</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <%
+                        if (stockOutRecords != null && !stockOutRecords.isEmpty()) {
+                            for (com.inventory.sims.stockout.StockOut stockOut : stockOutRecords) {
+                    %>
+                    <tr>
+                        <td><strong><%= stockOut.getId() %></strong></td>
+                        <td><%= stockOut.getProductId() %></td>
+                        <td><%= stockOut.getProductName() %></td>
+                        <td><span class="quantity-badge"><%= stockOut.getQuantity() %> out</span></td>
+                        <td><%= stockOut.getStockOutDate() == null ? "-" : stockOut.getStockOutDate() %></td>
+                        <td><%= stockOut.getReason() %></td>
+                        <td class="muted"><%= stockOut.getNote() == null || stockOut.getNote().isBlank() ? "-" : stockOut.getNote() %></td>
+                    </tr>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <tr>
+                        <td class="empty" colspan="7">No stockout records found for this customer.</td>
+                    </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 </div>
