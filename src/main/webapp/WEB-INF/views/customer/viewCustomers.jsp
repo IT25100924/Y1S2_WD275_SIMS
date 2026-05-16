@@ -35,8 +35,9 @@
         .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #eef2f6; color: #475569; }
         .empty { text-align: center; padding: 22px 16px; color: #64748b; }
         .table-actions { display: flex; gap: 8px; }
-        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
+        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; font-weight: 700; }
         .table-actions a:hover { background: #f8fafc; }
+        .action-update { color: #1d4ed8 !important; border-color: #93c5fd !important; background: #eff6ff !important; }
         .delete-form { margin: 0; }
         .delete-button { min-height: 34px; border: 1px solid #fecaca; border-radius: 6px; background: #ffffff; color: #991b1b; padding: 7px 10px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
         .delete-button:hover { background: #fee2e2; }
@@ -118,7 +119,8 @@
                         <td><%= customer.getAddress() == null || customer.getAddress().isBlank() ? "-" : customer.getAddress() %></td>
                         <td>
                             <div class="table-actions">
-                                <a href="/customers/edit/<%= customer.getId() %>">Edit</a>
+                                <a href="/customers/details/<%= customer.getId() %>">View</a>
+                                <a class="action-update" href="/customers/edit/<%= customer.getId() %>">Edit</a>
                                 <form class="delete-form" action="/customers/delete/<%= customer.getId() %>" method="post" onsubmit="return confirm('Delete customer <%= customer.getId() %>?');">
                                     <button type="submit" class="delete-button">Delete</button>
                                 </form>
