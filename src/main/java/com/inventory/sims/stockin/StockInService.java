@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StockInService {
@@ -62,6 +63,15 @@ public class StockInService {
 
     public List<StockIn> getAllStockIns() {
         return stockInFileHandler.readStockIns();
+    }
+
+    public List<StockIn> getStockInsBySupplierName(String supplierName) {
+        validateRequired(supplierName, "Supplier name");
+        String normalizedSupplierName = supplierName.trim();
+        return stockInFileHandler.readStockIns().stream()
+                .filter(stockIn -> stockIn.getSupplierName() != null
+                        && stockIn.getSupplierName().trim().equalsIgnoreCase(normalizedSupplierName))
+                .collect(Collectors.toList());
     }
 
     public StockIn getStockInById(String id) {
