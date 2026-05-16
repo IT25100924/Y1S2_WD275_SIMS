@@ -1,8 +1,10 @@
 package com.inventory.sims.stockout;
 
+import com.inventory.sims.customer.Customer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,6 +43,20 @@ public class StockOutService {
 
     public List<StockOut> getAllStockOuts() {
         return stockOutFileHandler.readStockOuts();
+    }
+
+    public List<StockOut> getStockOutsByCustomer(Customer customer) {
+        List<StockOut> matchingStockOuts = new ArrayList<>();
+        if (customer == null) {
+            return matchingStockOuts;
+        }
+
+        for (StockOut stockOut : stockOutFileHandler.readStockOuts()) {
+            if (isIssuedToCustomer(stockOut.getIssuedTo(), customer)) {
+                matchingStockOuts.add(stockOut);
+            }
+        }
+        return matchingStockOuts;
     }
 
     public StockOut getStockOutById(String id) {
@@ -128,5 +144,21 @@ public class StockOutService {
 
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private boolean isIssuedToCustomer(String issuedTo, Customer customer) {
+        String normalizedIssuedTo = normalize(issuedTo);
+        if (normalizedIssuedTo.isEmpty()) {
+            return false;
+        }
+
+        return normalizedIssuedTo.equals(normalize(customer.getId()))
+                || normalizedIssuedTo.equals(normalize(customer.getName()))
+                || normalizedIssuedTo.equals(normalize(customer.getEmail()))
+                || normalizedIssuedTo.equals(normalize(customer.getPhone()));
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim().toLowerCase();
     }
 }
