@@ -4,6 +4,11 @@
             (com.inventory.sims.stockout.StockOut) request.getAttribute("stockOut");
     String stockOutDate = stockOut.getStockOutDate() == null ? "" : stockOut.getStockOutDate().toString();
     String note = stockOut.getNote() == null ? "" : stockOut.getNote();
+    java.util.List<com.inventory.sims.product.Product> products =
+            (java.util.List<com.inventory.sims.product.Product>) request.getAttribute("products");
+    java.util.List<com.inventory.sims.customer.Customer> customers =
+            (java.util.List<com.inventory.sims.customer.Customer>) request.getAttribute("customers");
+    String today = (String) request.getAttribute("today");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,6 +37,7 @@
         textarea { min-height: 98px; resize: vertical; }
         input:focus, select:focus, textarea:focus { border-color: #2563eb; outline: 3px solid rgba(37, 99, 235, 0.16); }
         .full-width { grid-column: 1 / -1; }
+        .hidden { display: none; }
         .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 22px; }
         .button, button { min-height: 46px; border-radius: 6px; padding: 11px 16px; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
         button { border: 0; background: #1d4ed8; color: #ffffff; }
@@ -87,29 +93,85 @@
                         <input type="text" value="<%= stockOut.getId() %>" readonly>
                     </label>
 
-                    <label>
-                        Product ID
-                        <input type="text" name="productId" value="<%= stockOut.getProductId() %>" required>
+                    <label class="full-width">
+                        Product
+                        <select id="productId" name="productId" required>
+                            <option value="">Select product</option>
+                            <%
+                                if (products != null) {
+                                    for (com.inventory.sims.product.Product product : products) {
+                                        String productType = "General";
+                                        String expirationDate = "";
+                                        int warrantyMonths = 0;
+                                        if (product instanceof com.inventory.sims.product.FoodProduct) {
+                                            productType = "Food";
+                                            expirationDate = ((com.inventory.sims.product.FoodProduct) product).getExpirationDate();
+                                            if (expirationDate == null) {
+                                                expirationDate = "";
+                                            }
+                                        } else if (product instanceof com.inventory.sims.product.ElectronicsProduct) {
+                                            productType = "Electronics";
+                                            warrantyMonths = ((com.inventory.sims.product.ElectronicsProduct) product).getWarrantyMonths();
+                                        }
+                            %>
+                            <option value="<%= product.getId() %>"
+                                    data-product-type="<%= productType %>"
+                                    data-expiration-date="<%= expirationDate %>"
+                                    data-warranty-months="<%= warrantyMonths %>"
+                                    data-available-quantity="<%= product.getQuantity() %>"
+                                    <%= product.getId().equals(stockOut.getProductId()) ? "selected" : "" %>>
+                                <%= product.getName() %> (Available: <%= product.getQuantity() %>)
+                            </option>
+                            <%
+                                    }
+                                }
+                            %>
+                        </select>
                     </label>
 
-                    <label>
-                        Product name
-                        <input type="text" name="productName" value="<%= stockOut.getProductName() %>" required>
+                    <label id="expirationDateGroup" class="hidden">
+                        Expiration date
+                        <input type="text" id="expirationDateDisplay" readonly>
+                    </label>
+
+                    <label id="warrantyMonthsGroup" class="hidden">
+                        Warranty
+                        <input type="text" id="warrantyMonthsDisplay" readonly>
                     </label>
 
                     <label>
                         Quantity
-                        <input type="number" name="quantity" min="1" step="1" value="<%= stockOut.getQuantity() %>" required>
+                        <input type="number" id="quantity" name="quantity" min="1" step="1" value="<%= stockOut.getQuantity() %>" required>
+                    </label>
+
+                    <label>
+                        Unit price (LKR)
+                        <input type="number" name="unitPrice" min="0" step="0.01" value="<%= stockOut.getUnitPrice() %>" required>
                     </label>
 
                     <label>
                         Stockout date
-                        <input type="date" name="stockOutDate" value="<%= stockOutDate %>">
+                        <input type="date" name="stockOutDate" value="<%= stockOutDate %>" min="<%= today == null ? "" : today %>">
                     </label>
 
                     <label>
                         Issued to
-                        <input type="text" name="issuedTo" value="<%= stockOut.getIssuedTo() %>" required>
+                        <select name="issuedTo" required>
+                            <option value="">Select customer</option>
+                            <%
+                                if (customers != null) {
+                                    for (com.inventory.sims.customer.Customer customer : customers) {
+                                        boolean selectedCustomer = customer.getId().equals(stockOut.getIssuedTo())
+                                                || customer.getName().equals(stockOut.getIssuedTo());
+                            %>
+                            <option value="<%= customer.getId() %>" <%= selectedCustomer ? "selected" : "" %>>
+                                <%= customer.getName() %> (<%= customer.getId() %>)
+                            </option>
+                            <%
+                                    }
+                                }
+                            %>
+                        </select>
                     </label>
 
                     <label>
@@ -138,5 +200,42 @@
         </section>
     </main>
 </div>
+<script>
+    const productSelect = document.getElementById("productId");
+    const quantityInput = document.getElementById("quantity");
+    const expirationGroup = document.getElementById("expirationDateGroup");
+    const expirationDisplay = document.getElementById("expirationDateDisplay");
+    const warrantyGroup = document.getElementById("warrantyMonthsGroup");
+    const warrantyDisplay = document.getElementById("warrantyMonthsDisplay");
+
+    function showSelectedProductDetails() {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const productType = selectedOption ? selectedOption.dataset.productType : "";
+
+        expirationGroup.classList.add("hidden");
+        warrantyGroup.classList.add("hidden");
+        expirationDisplay.value = "";
+        warrantyDisplay.value = "";
+        quantityInput.removeAttribute("max");
+
+        if (productType === "Food") {
+            expirationDisplay.value = selectedOption.dataset.expirationDate || "Not set";
+            expirationGroup.classList.remove("hidden");
+        } else if (productType === "Electronics") {
+            warrantyDisplay.value = (selectedOption.dataset.warrantyMonths || "0") + " months";
+            warrantyGroup.classList.remove("hidden");
+        }
+
+        if (selectedOption && selectedOption.dataset.availableQuantity) {
+            quantityInput.max = selectedOption.dataset.availableQuantity;
+            if (Number(quantityInput.value) > Number(selectedOption.dataset.availableQuantity)) {
+                quantityInput.value = selectedOption.dataset.availableQuantity;
+            }
+        }
+    }
+
+    productSelect.addEventListener("change", showSelectedProductDetails);
+    showSelectedProductDetails();
+</script>
 </body>
 </html>
