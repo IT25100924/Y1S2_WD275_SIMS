@@ -27,6 +27,17 @@ public class CustomerController {
         return "customer/addCustomer";
     }
 
+    @GetMapping("/customers/details/{id}")
+    public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        Customer customer = customerService.getCustomerById(id);
+        if (customer == null) {
+            redirectAttributes.addFlashAttribute("error", "Customer not found.");
+            return "redirect:/customers";
+        }
+        model.addAttribute("customer", customer);
+        return "customer/details";
+    }
+
     @GetMapping("/customers/edit/{id}")
     public String showEditCustomerForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         Customer customer = customerService.getCustomerById(id);
