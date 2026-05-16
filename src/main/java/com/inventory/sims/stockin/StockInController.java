@@ -51,6 +51,7 @@ public class StockInController {
         model.addAttribute("stockIn", stockIn);
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
+        model.addAttribute("today", LocalDate.now().toString());
         return "stockin/editStockIn";
     }
 

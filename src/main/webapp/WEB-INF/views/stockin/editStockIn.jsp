@@ -7,6 +7,7 @@
     java.util.List<com.inventory.sims.supplier.Supplier> suppliers =
             (java.util.List<com.inventory.sims.supplier.Supplier>) request.getAttribute("suppliers");
     String error = (String) request.getAttribute("error");
+    String today = (String) request.getAttribute("today");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -135,7 +136,7 @@
 
                     <div class="form-group">
                         <label for="receivedDate">Received Date</label>
-                        <input type="date" id="receivedDate" name="receivedDate" class="form-control" value="<%= stockIn.getReceivedDate() %>" required>
+                        <input type="date" id="receivedDate" name="receivedDate" class="form-control" value="<%= stockIn.getReceivedDate() %>" min="<%= today == null ? "" : today %>" required>
                     </div>
 
                     <div class="form-group">

@@ -140,7 +140,7 @@
 
                         <div class="form-group">
                             <label for="receivedDate">Received Date</label>
-                            <input type="date" id="receivedDate" name="receivedDate" class="form-control" value="<%= today == null ? "" : today %>" required>
+                            <input type="date" id="receivedDate" name="receivedDate" class="form-control" value="<%= today == null ? "" : today %>" min="<%= today == null ? "" : today %>" required>
                         </div>
 
                         <div class="form-group">

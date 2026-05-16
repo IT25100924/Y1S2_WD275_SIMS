@@ -198,7 +198,10 @@ public class StockInService {
 
     private void validateDate(String receivedDate) {
         try {
-            LocalDate.parse(receivedDate.trim());
+            LocalDate selectedDate = LocalDate.parse(receivedDate.trim());
+            if (selectedDate.isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException("Received date cannot be before today.");
+            }
         } catch (DateTimeParseException ex) {
             throw new IllegalArgumentException("Received date must be a valid date.");
         }
