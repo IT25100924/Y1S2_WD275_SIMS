@@ -1,6 +1,8 @@
 package com.inventory.sims.stockin;
 
 import com.inventory.sims.product.ProductService;
+import com.inventory.sims.supplier.Supplier;
+import com.inventory.sims.supplier.SupplierService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,15 +17,19 @@ import java.time.LocalDate;
 public class StockInController {
     private final StockInService stockInService;
     private final ProductService productService;
+    private final SupplierService supplierService;
 
-    public StockInController(StockInService stockInService, ProductService productService) {
+    public StockInController(StockInService stockInService, ProductService productService,
+                             SupplierService supplierService) {
         this.stockInService = stockInService;
         this.productService = productService;
+        this.supplierService = supplierService;
     }
 
     @GetMapping("/stockin")
     public String showStockInPage(Model model) {
         model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("today", LocalDate.now().toString());
         return "stockin/stockin";
     }
@@ -44,18 +50,20 @@ public class StockInController {
 
         model.addAttribute("stockIn", stockIn);
         model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("suppliers", supplierService.getAllSuppliers());
         return "stockin/editStockIn";
     }
 
     @PostMapping("/stockin")
     public String addStockIn(@RequestParam String productId,
-                             @RequestParam String supplierName,
+                             @RequestParam String supplierId,
                              @RequestParam int quantity,
                              @RequestParam double unitCost,
                              @RequestParam String receivedDate,
                              @RequestParam(required = false) String note,
                              RedirectAttributes redirectAttributes) {
         try {
+            String supplierName = getSupplierName(supplierId);
             StockIn stockIn = stockInService.addStockIn(productId, supplierName, quantity, unitCost, receivedDate, note);
             redirectAttributes.addFlashAttribute("success",
                     "Stock in " + stockIn.getId() + " saved and product quantity updated.");
@@ -68,13 +76,14 @@ public class StockInController {
     @PostMapping("/stockin/edit/{id}")
     public String updateStockIn(@PathVariable String id,
                                 @RequestParam String productId,
-                                @RequestParam String supplierName,
+                                @RequestParam String supplierId,
                                 @RequestParam int quantity,
                                 @RequestParam double unitCost,
                                 @RequestParam String receivedDate,
                                 @RequestParam(required = false) String note,
                                 RedirectAttributes redirectAttributes) {
         try {
+            String supplierName = getSupplierName(supplierId);
             StockIn stockIn = stockInService.updateStockIn(id, productId, supplierName, quantity, unitCost, receivedDate, note);
             redirectAttributes.addFlashAttribute("success",
                     "Stock in " + stockIn.getId() + " updated and product quantity adjusted.");
@@ -95,5 +104,11 @@ public class StockInController {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
         }
         return "redirect:/stockin/view";
+    }
+
+    private String getSupplierName(String supplierId) {
+        Supplier supplier = supplierService.findById(supplierId)
+                .orElseThrow(() -> new IllegalArgumentException("Selected supplier was not found."));
+        return supplier.getCompanyName();
     }
 }

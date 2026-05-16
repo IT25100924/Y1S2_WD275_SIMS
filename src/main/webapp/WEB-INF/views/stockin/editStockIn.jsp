@@ -4,6 +4,8 @@
             (com.inventory.sims.stockin.StockIn) request.getAttribute("stockIn");
     java.util.List<com.inventory.sims.product.Product> products =
             (java.util.List<com.inventory.sims.product.Product>) request.getAttribute("products");
+    java.util.List<com.inventory.sims.supplier.Supplier> suppliers =
+            (java.util.List<com.inventory.sims.supplier.Supplier>) request.getAttribute("suppliers");
     String error = (String) request.getAttribute("error");
 %>
 <!DOCTYPE html>
@@ -113,8 +115,22 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="supplierName">Supplier Name</label>
-                        <input type="text" id="supplierName" name="supplierName" class="form-control" required value="<%= stockIn.getSupplierName() %>">
+                        <label for="supplierId">Supplier</label>
+                        <select id="supplierId" name="supplierId" class="form-control" required>
+                            <option value="">Select supplier</option>
+                            <%
+                                if (suppliers != null) {
+                                    for (com.inventory.sims.supplier.Supplier supplier : suppliers) {
+                                        String selected = supplier.getCompanyName().equals(stockIn.getSupplierName()) ? "selected" : "";
+                            %>
+                            <option value="<%= supplier.getId() %>" <%= selected %>>
+                                <%= supplier.getId() %> - <%= supplier.getCompanyName() %>
+                            </option>
+                            <%
+                                    }
+                                }
+                            %>
+                        </select>
                     </div>
 
                     <div class="form-group">
