@@ -58,26 +58,95 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="price">Unit Price (LKR)</label>
-                    <input type="number" id="price" name="price" class="form-control" step="0.01" min="0">
+                    <label for="mrp">MRP / Default Sell Price (LKR)</label>
+                    <input type="number" id="mrp" name="mrp" class="form-control" step="0.01" min="0" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="quantity">Initial Quantity</label>
-                    <input type="number" id="quantity" name="quantity" class="form-control" min="0">
+                <!-- Checkbox 1 -->
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>
+                        <input type="checkbox" id="configurePrices" name="configurePrices" onchange="togglePriceFields()">
+                        Configure Default Product Prices
+                    </label>
                 </div>
+                <div id="priceGroup" class="hidden" style="margin-left: 20px; border-left: 2px solid #e2e8f0; padding-left: 15px;">
+                    <div class="form-group">
+                        <label for="defaultStockInPrice">Default Stock-In Price (LKR)</label>
+                        <input type="number" id="defaultStockInPrice" name="defaultStockInPrice" class="form-control" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="defaultStockOutPrice">Default Stock-Out Price (LKR)</label>
+                        <input type="number" id="defaultStockOutPrice" name="defaultStockOutPrice" class="form-control" step="0.01" min="0">
+                    </div>
+                </div>
+                <!-- Checkbox 2 -->
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>
+                        <input type="checkbox" id="initializeStock" name="initializeStock" onchange="toggleStockFields()">
+                        Initialize First Stock-In Order
+                    </label>
+                </div>
+                <div id="stockGroup" class="hidden" style="margin-left: 20px; border-left: 2px solid #e2e8f0; padding-left: 15px;">
+                    <div class="form-group">
+                        <label for="quantity">Initial Quantity</label>
+                        <input type="number" id="quantity" name="quantity" class="form-control" min="1">
+                    </div>
 
-                <!-- Dynamic Field for Electronics -->
-                <div class="form-group hidden" id="warrantyGroup">
-                    <label for="warrantyMonths">Warranty (Months)</label>
-                    <input type="number" id="warrantyMonths" name="warrantyMonths" class="form-control" min="0">
+                    <!-- Dynamic Field for Electronics -->
+                    <div class="form-group hidden" id="warrantyGroup">
+                        <label for="warrantyMonths">Warranty (Months)</label>
+                        <input type="number" id="warrantyMonths" name="warrantyMonths" class="form-control" min="0">
+                    </div>
+                    <!-- Dynamic Field for Food -->
+                    <div class="form-group hidden" id="expirationGroup">
+                        <label for="expirationDate">Expiration Date</label>
+                        <input type="date" id="expirationDate" name="expirationDate" class="form-control">
+                    </div>
                 </div>
+                <script>
+                    function togglePriceFields() {
+                        document.getElementById('priceGroup').classList.toggle('hidden', !document.getElementById('configurePrices').checked);
+                    }
 
-                <!-- Dynamic Field for Food -->
-                <div class="form-group hidden" id="expirationGroup">
-                    <label for="expirationDate">Expiration Date</label>
-                    <input type="date" id="expirationDate" name="expirationDate" class="form-control">
-                </div>
+                    function toggleStockFields() {
+                        document.getElementById('stockGroup').classList.toggle('hidden', !document.getElementById('initializeStock').checked);
+                        toggleFields(); // Re-trigger the product type logic for warranty/exp date
+                    }
+                    function toggleFields() {
+                        var type = document.getElementById('type').value;
+                        var initChecked = document.getElementById('initializeStock').checked;
+
+                        document.getElementById('warrantyGroup').classList.add('hidden');
+                        document.getElementById('expirationGroup').classList.add('hidden');
+
+                        if (initChecked) {
+                            if (type === 'Electronics') document.getElementById('warrantyGroup').classList.remove('hidden');
+                            if (type === 'Food') document.getElementById('expirationGroup').classList.remove('hidden');
+                        }
+                    }
+                </script>
+
+<%--                <div class="form-group">--%>
+<%--                    <label for="price">Unit Price (LKR)</label>--%>
+<%--                    <input type="number" id="price" name="price" class="form-control" step="0.01" min="0">--%>
+<%--                </div>--%>
+
+<%--                <div class="form-group">--%>
+<%--                    <label for="quantity">Initial Quantity</label>--%>
+<%--                    <input type="number" id="quantity" name="quantity" class="form-control" min="0">--%>
+<%--                </div>--%>
+
+<%--                <!-- Dynamic Field for Electronics -->--%>
+<%--                <div class="form-group hidden" id="warrantyGroup">--%>
+<%--                    <label for="warrantyMonths">Warranty (Months)</label>--%>
+<%--                    <input type="number" id="warrantyMonths" name="warrantyMonths" class="form-control" min="0">--%>
+<%--                </div>--%>
+
+<%--                <!-- Dynamic Field for Food -->--%>
+<%--                <div class="form-group hidden" id="expirationGroup">--%>
+<%--                    <label for="expirationDate">Expiration Date</label>--%>
+<%--                    <input type="date" id="expirationDate" name="expirationDate" class="form-control">--%>
+<%--                </div>--%>
 
                 <button type="submit" class="button button-primary">Save Product</button>
             </form>

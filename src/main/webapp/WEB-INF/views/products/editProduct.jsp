@@ -52,7 +52,7 @@
                 <div class="form-group">
                     <label for="supplierIdDisplay">Supplier</label>
                     <!-- Disabled select so it's grayed out and unchangeable -->
-                    <select id="supplierIdDisplay" class="form-control" disabled>
+                    <select id="supplierId" name="supplierId" class="form-control" required>
                         <%
                             java.util.List<com.inventory.sims.supplier.Supplier> editSuppliers = (java.util.List<com.inventory.sims.supplier.Supplier>) request.getAttribute("suppliers");
                             if (editSuppliers != null) {
@@ -64,7 +64,7 @@
                         %>
                     </select>
                     <!-- Hidden input to submit the actual supplier value since disabled inputs don't submit -->
-                    <input type="hidden" name="supplierId" value="<%= p.getSupplierId() %>">
+<%--                    <input type="hidden" name="supplierId" value="<%= p.getSupplierId() %>">--%>
                 </div>
 
                 <div class="form-group">
@@ -73,14 +73,28 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="price">Unit Price (LKR)</label>
-                    <input type="number" id="price" name="price" class="form-control" step="0.01" min="0" value="<%= p.getPrice() %>">
+                    <label for="mrp">MRP / Default Sell Price (LKR)</label>
+                    <input type="number" id="mrp" name="mrp" class="form-control" step="0.01" min="0" required value="<%= p.getMrp() %>">
+                </div>
+                <div class="form-group">
+                    <label for="defaultStockInPrice">Default Stock-In Price (LKR)</label>
+                    <input type="number" id="defaultStockInPrice" name="defaultStockInPrice" class="form-control" step="0.01" min="0" value="<%= p.getDefaultStockInPrice() %>">
+                </div>
+                <div class="form-group">
+                    <label for="defaultStockOutPrice">Default Stock-Out Price (LKR)</label>
+                    <input type="number" id="defaultStockOutPrice" name="defaultStockOutPrice" class="form-control" step="0.01" min="0" value="<%= p.getDefaultStockOutPrice() %>">
                 </div>
 
-                <div class="form-group">
-                    <label for="quantity">Initial Quantity</label>
-                    <input type="number" id="quantity" name="quantity" class="form-control" min="0" value="<%= p.getQuantity() %>">
-                </div>
+
+            <%--                <div class="form-group">--%>
+<%--                    <label for="price">Unit Price (LKR)</label>--%>
+<%--                    <input type="number" id="price" name="price" class="form-control" step="0.01" min="0" value="<%= p.getPrice() %>">--%>
+<%--                </div>--%>
+
+<%--                <div class="form-group">--%>
+<%--                    <label for="quantity">Initial Quantity</label>--%>
+<%--                    <input type="number" id="quantity" name="quantity" class="form-control" min="0" value="<%= p.getQuantity() %>">--%>
+<%--                </div>--%>
 
                 <div class="form-group hidden" id="warrantyGroup">
                     <label for="warrantyMonths">Warranty (Months)</label>

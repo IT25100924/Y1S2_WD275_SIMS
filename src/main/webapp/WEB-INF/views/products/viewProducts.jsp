@@ -49,8 +49,7 @@
                         <th>Supplier ID</th>
                         <th>Name</th>
                         <th>Type</th>
-                        <th>Unit Price (LKR)</th>
-                        <th>Initial Quantity</th>
+                        <th>Default Sell Price (LKR)</th>
                         <th>Special Details</th>
                         <th>Actions</th>
                     </tr>
@@ -81,8 +80,7 @@
                         <td><%= product.getName() %></td>
                         <td><span class="badge <%= typeBadgeClass %>"><%= product.getClass().getSimpleName() %></span></td>
                         <!-- $ sign removed! -->
-                        <td><%= String.format("%.2f", product.getPrice()) %></td>
-                        <td><%= product.getQuantity() %></td>
+                        <td><%= String.format("%.2f", product.getMrp()) %></td>
                         <td style="color: #64748b; font-size: 13px; font-weight: bold;"><%= extraDetails %></td>
                         <td>
                             <div class="table-actions">
@@ -98,7 +96,7 @@
                     } else {
                     %>
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #64748b;">No products found. Click "Add Product" to create one!</td>
                     </tr>
                     <% } %>
                     </tbody>
