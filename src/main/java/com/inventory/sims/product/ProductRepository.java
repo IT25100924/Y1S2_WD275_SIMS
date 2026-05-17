@@ -24,7 +24,7 @@ public class ProductRepository {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split(DELIMITER);
+                String[] data = line.split(DELIMITER, -1);
 
                 // Our format now has at least 6 parts: Type!ID!SupplierID!Name!Price!Quantity
                 if (data.length >= 6) {

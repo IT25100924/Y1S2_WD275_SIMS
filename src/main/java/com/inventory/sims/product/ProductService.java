@@ -44,6 +44,21 @@ public class ProductService {
             throw new IllegalArgumentException("Product name cannot be empty.");
         }
 
+        // Validate Expiration Date for FoodProducts
+        if (product instanceof FoodProduct) {
+            String expDateStr = ((FoodProduct) product).getExpirationDate();
+            if (expDateStr != null && !expDateStr.trim().isEmpty()) {
+                try {
+                    LocalDate expDate = LocalDate.parse(expDateStr);
+                    if (expDate.isBefore(LocalDate.now())) {
+                        throw new IllegalArgumentException("Expiration date cannot be in the past.");
+                    }
+                } catch (java.time.format.DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid expiration date format. Must be YYYY-MM-DD.");
+                }
+            }
+        }
+
         // 2. Unique name validation (ignore case)
         boolean nameExists = getAllProducts().stream()
                 .anyMatch(p -> p.getName().equalsIgnoreCase(product.getName().trim())
