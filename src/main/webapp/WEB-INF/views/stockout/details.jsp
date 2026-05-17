@@ -8,12 +8,16 @@
     String note = stockOut.getNote() == null || stockOut.getNote().isBlank() ? "-" : stockOut.getNote();
     String productType = "Standard";
     String productDetails = "-";
+    String badgeClass = "badge-general";
+    
     if (product instanceof com.inventory.sims.product.FoodProduct) {
         productType = "Food";
+        badgeClass = "badge-food";
         String expirationDate = ((com.inventory.sims.product.FoodProduct) product).getExpirationDate();
         productDetails = expirationDate == null || expirationDate.isBlank() ? "Expiration date not set" : "Expires on " + expirationDate;
     } else if (product instanceof com.inventory.sims.product.ElectronicsProduct) {
         productType = "Electronics";
+        badgeClass = "badge-electronics";
         productDetails = ((com.inventory.sims.product.ElectronicsProduct) product).getWarrantyMonths() + " months warranty";
     } else if (product == null) {
         productDetails = "Product record not found";
@@ -21,13 +25,13 @@
     double totalValue = stockOut.getQuantity() * stockOut.getUnitPrice();
 %>
 <jsp:include page="/WEB-INF/views/layout/header.jsp">
-    <jsp:param name="pageTitle" value="Details | Stockout" />
+    <jsp:param name="pageTitle" value="Details | Stock Out" />
     <jsp:param name="activeMenu" value="stockout" />
 </jsp:include>
 
         <header class="page-header">
             <div class="page-title">
-                <h1>Stockout Details</h1>
+                <h1>Stock Out Details</h1>
                 <p>Review the full outgoing stock record before updating or deleting it.</p>
             </div>
             <div class="actions">
@@ -40,18 +44,18 @@
             <h2><%= stockOut.getProductName() %></h2>
             <p><%= note %></p>
             <div class="hero-meta">
-                <span class="badge badge-red"><%= stockOut.getId() %></span>
-                <span class="badge"><%= productType %></span>
-                <span class="badge badge-amber"><%= stockOut.getStockOutDate() == null ? "-" : stockOut.getStockOutDate() %></span>
+                <span class="badge" style="background-color: var(--danger-bg); color: var(--danger);"><%= stockOut.getId() %></span>
+                <span class="badge <%= badgeClass %>"><%= productType %></span>
+                <span class="badge" style="background-color: var(--warning-bg); color: var(--warning);"><%= stockOut.getStockOutDate() == null ? "-" : stockOut.getStockOutDate() %></span>
             </div>
         </section>
 
-        <section class="grid" aria-label="Stockout details">
+        <section class="grid" aria-label="Stock out details">
             <article class="card">
                 <h3>Stock Movement</h3>
                 <div class="detail-list">
-                    <div class="detail-item"><span>Stockout ID</span><strong><%= stockOut.getId() %></strong></div>
-                    <div class="detail-item"><span>Stockout date</span><strong><%= stockOut.getStockOutDate() == null ? "-" : stockOut.getStockOutDate() %></strong></div>
+                    <div class="detail-item"><span>Stock Out ID</span><strong><%= stockOut.getId() %></strong></div>
+                    <div class="detail-item"><span>Stock Out date</span><strong><%= stockOut.getStockOutDate() == null ? "-" : stockOut.getStockOutDate() %></strong></div>
                     <div class="detail-item"><span>Issued to</span><strong><%= stockOut.getIssuedTo() %></strong></div>
                     <div class="detail-item"><span>Reason</span><strong><%= stockOut.getReason() %></strong></div>
                 </div>
@@ -84,4 +88,3 @@
             </article>
         </section>
     <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
-
