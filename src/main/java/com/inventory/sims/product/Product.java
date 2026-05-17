@@ -3,7 +3,9 @@ package com.inventory.sims.product;
 public class Product {
     private String id;
     private String name;
-    private double price;
+    private double mrp;
+    private double defaultStockInPrice;
+    private double defaultStockOutPrice;
     private int quantity;
     private String supplierId;
 
@@ -12,10 +14,12 @@ public class Product {
     }
 
     // Parameterized constructor
-    public Product(String id, String name, double price, int quantity, String supplierId) {
+    public Product(String id, String name, double mrp, double defaultStockInPrice, double defaultStockOutPrice, int quantity, String supplierId) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.mrp = mrp;
+        this.defaultStockInPrice = defaultStockInPrice;
+        this.defaultStockOutPrice = defaultStockOutPrice;
         this.quantity = quantity;
         this.supplierId = supplierId;
     }
@@ -37,12 +41,23 @@ public class Product {
         this.name = name;
     }
 
-    public double getPrice() {
-        return price;
+    public double getMrp() {
+        return mrp;
     }
-
-    public void setPrice(double price) {
-        this.price = price;
+    public void setMrp(double mrp) {
+        this.mrp = mrp;
+    }
+    public double getDefaultStockInPrice() {
+        return defaultStockInPrice;
+    }
+    public void setDefaultStockInPrice(double defaultStockInPrice) {
+        this.defaultStockInPrice = defaultStockInPrice;
+    }
+    public double getDefaultStockOutPrice() {
+        return defaultStockOutPrice;
+    }
+    public void setDefaultStockOutPrice(double defaultStockOutPrice) {
+        this.defaultStockOutPrice = defaultStockOutPrice;
     }
 
     public int getQuantity() {
@@ -67,14 +82,17 @@ public class Product {
                 "id='" + id + '\'' +
                 ", supplierId='" + supplierId + '\'' +
                 ", name='" + name + '\'' +
-                ", price=" + price +
+                ", mrp=" + mrp +
+                ", defaultStockInPrice=" + defaultStockInPrice +
+                ", defaultStockOutPrice=" + defaultStockOutPrice +
                 ", quantity=" + quantity +
                 '}';
     }
 
     // Method to format the product for file storage
+    @Override
     public String toFileString() {
-        return "General!" + id + "!" + supplierId + "!" + name + "!" + price + "!" + quantity;
+        return "General!" + id + "!" + supplierId + "!" + name + "!" + mrp + "!" + defaultStockInPrice + "!" + defaultStockOutPrice + "!" + quantity;
     }
 
 }
