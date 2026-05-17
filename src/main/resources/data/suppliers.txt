@@ -1,0 +1,5 @@
+S001|XYZ Company|LOCAL|Kasun perera|0817364785|rashmikachathuranga@yahoo.com|galle|7 days|no.100. new york|fgdfhbfgngfnfgnfngfbdfdf|ACTIVE
+S002|Jat holdings|LOCAL|Saman Samarasinghe|0771239874|jatholdings@yahoo.com|Colombo|3 to 7 days|256 C/2, Colombo||ACTIVE
+S003|Orange Cooperation|LOCAL|Vimal Perera|0757364785|helloorange@gmail.com|Galle|7 days|78 B3, Galle||ACTIVE
+S004|MD Distributers|LOCAL|Kavishka Perera|0771239998|mdholdings@yahoo.com|Gampaha|3 to 6 days|55 A/2, Gampaha||ACTIVE
+S005|TLC Holdings|LOCAL|Namal Athukorala|0757364700|hellotlc@gmail.com|Kaluthara|7 days|78 C/4 Kaluthara||ACTIVE
