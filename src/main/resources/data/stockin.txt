@@ -6,3 +6,5 @@ SI005|P002|Laptop|Orange Cooperation|16|100.0|2026-05-16|
 SI006|P002|Laptop|Jat holdings|14|200.0|2026-05-05|
 SI007|P002|Laptop|Orange Cooperation|5|40.0|2026-05-16|
 SI008|P004|chocolates|Orange Cooperation|25|1500.0|2026-05-16|Food|2026-10-24|0|
+SI009|P006|Mouse|Jat holdings|40|6000.0|2026-05-17|Electronics||12|Initial stock initialization
+SI010|P007|Oranges|Orange Cooperation|50|150.0|2026-05-17|Food|2026-08-17|0|Initial stock initialization

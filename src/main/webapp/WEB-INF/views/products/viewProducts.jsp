@@ -84,6 +84,7 @@
                         <td style="color: #64748b; font-size: 13px; font-weight: bold;"><%= extraDetails %></td>
                         <td>
                             <div class="table-actions">
+                                <a href="/products/details/<%= product.getId() %>" title="View Details"><i class="ph ph-eye"></i></a>
                                 <a href="/products/edit/<%= product.getId() %>" title="Edit"><i class="ph ph-pencil-simple"></i></a>
                                 <form action="/products/delete/<%= product.getId() %>" method="post" onsubmit="return confirm('Are you sure you want to delete this product?');" style="margin:0;">
                                     <button type="submit" title="Delete"><i class="ph ph-trash"></i></button>
