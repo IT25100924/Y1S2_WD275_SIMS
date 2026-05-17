@@ -64,6 +64,43 @@ public class UserService {
                 .findFirst();
     }
 
+    public Optional<User> findByEmail(String email) {
+        if (email == null || email.isBlank()) return Optional.empty();
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        return userFileHandler.readUsers().stream()
+                .filter(u -> normalizedEmail.equalsIgnoreCase(u.getEmail()))
+                .findFirst();
+    }
+
+    public void toggleStaffStatus(String userId) {
+        validateRequired(userId, "User ID");
+        List<User> users = new ArrayList<>(userFileHandler.readUsers());
+        
+        for (int i = 0; i < users.size(); i++) {
+            User existing = users.get(i);
+            if (userId.equalsIgnoreCase(existing.getId())) {
+                if (existing.getRole() == UserType.ADMIN) {
+                    throw new IllegalArgumentException("Cannot toggle active status of ADMIN users.");
+                }
+                
+                User updatedUser = createUser(
+                        existing.getId(),
+                        existing.getFirstName(),
+                        existing.getLastName(),
+                        existing.getEmail(),
+                        existing.getPhone(),
+                        existing.getRole(),
+                        existing.getPassword(),
+                        !existing.isActive());
+                        
+                users.set(i, updatedUser);
+                userFileHandler.saveAllUsers(users);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("User not found.");
+    }
+
     public List<User> getUsersForView() {
         return userFileHandler.readUsers().stream()
                 .sorted(Comparator

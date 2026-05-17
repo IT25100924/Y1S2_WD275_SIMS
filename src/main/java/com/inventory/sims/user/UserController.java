@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import com.inventory.sims.user.User;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping({"/", "/users/login"})
+    @GetMapping("/users/login")
     public String showLoginPage() {
         return "users/login";
     }
@@ -26,12 +28,38 @@ public class UserController {
     @PostMapping("/users/login")
     public String login(@RequestParam String email,
                         @RequestParam String password,
+                        HttpServletRequest request,
                         RedirectAttributes redirectAttributes) {
-        if (userService.authenticate(email, password)) {
+        java.util.Optional<User> optUser = userService.findByEmail(email);
+        
+        if (optUser.isPresent() && optUser.get().getPassword().equals(password)) {
+            if (!optUser.get().isActive()) {
+                redirectAttributes.addFlashAttribute("error", "Your account has been deactivated. Please contact an admin.");
+                return "redirect:/users/login";
+            }
+            // Store user info in session for later use
+            request.getSession().setAttribute("loggedUser", optUser.get());
             return "redirect:/dashboard";
         }
 
         redirectAttributes.addFlashAttribute("error", "Invalid email or password.");
+        return "redirect:/users/login";
+    }
+
+    @PostMapping("/users/toggle-status/{id}")
+    public String toggleStatus(@PathVariable("id") String userId, RedirectAttributes redirectAttributes) {
+        try {
+            userService.toggleStaffStatus(userId);
+            redirectAttributes.addFlashAttribute("message", "User status updated successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        }
+        return "redirect:/users/details/" + userId;
+    }
+
+    @GetMapping("/users/logout")
+    public String logout(HttpServletRequest request) {
+        request.getSession().invalidate();
         return "redirect:/users/login";
     }
 
@@ -79,6 +107,19 @@ public class UserController {
         model.addAttribute("activeUsers", users.stream().filter(User::isActive).count());
         model.addAttribute("filteredUsers", filteredUsers.size());
         return "users/users";
+    }
+
+    @GetMapping("/users/details/{id}")
+    public String showUserDetails(@PathVariable("id") String userId, Model model, RedirectAttributes redirectAttributes) {
+        return userService.findById(userId)
+                .map(user -> {
+                    model.addAttribute("user", user);
+                    return "users/viewUser";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("message", "User not found.");
+                    return "redirect:/users";
+                });
     }
 
     @GetMapping("/users/edit/{id}")

@@ -4,21 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | SIMS</title>
+    <title>Register | InventoryPro</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
+        :root {
+            --primary: #6366F1;
+            --primary-hover: #4f46e5;
+            --secondary: #06B6D4;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748B;
+            --gradient-start: #eef2ff;
+            --gradient-end: #ecfeff;
+        }
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, Helvetica, sans-serif;
-            color: #172033;
-            background: #eef2f6;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 100vh;
             padding: 24px;
         }
 
@@ -26,75 +46,86 @@
             width: min(100%, 1060px);
             display: grid;
             grid-template-columns: 0.9fr 1.1fr;
-            background: #ffffff;
-            border: 1px solid #d9e1ea;
-            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 18px 48px rgba(25, 40, 70, 0.12);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
         }
 
         .info-panel {
-            background: #12333f;
-            color: #ffffff;
-            padding: 42px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            padding: 48px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 640px;
+            position: relative;
         }
 
         .brand {
-            font-size: 14px;
+            font-size: 24px;
             font-weight: 700;
-            text-transform: uppercase;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .info-panel h1 {
-            margin: 96px 0 16px;
-            font-size: 34px;
-            line-height: 1.15;
+            margin: 60px 0 16px;
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-main);
         }
 
         .info-panel p {
-            margin: 0;
-            line-height: 1.7;
-            color: #d8e8ec;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            max-width: 360px;
         }
 
         .role-note {
-            margin-top: 32px;
-            padding: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.08);
-            color: #ecfeff;
+            margin-top: 40px;
+            padding: 24px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--text-main);
+            font-size: 15px;
+            line-height: 1.6;
         }
 
         .form-panel {
-            padding: 44px 48px;
+            padding: 60px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .form-panel h2 {
             margin: 0 0 8px;
-            font-size: 28px;
-            color: #111827;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
         .subtitle {
-            margin: 0 0 28px;
-            color: #64748b;
-            line-height: 1.5;
+            margin: 0 0 32px;
+            color: var(--text-muted);
+            font-size: 15px;
         }
 
         .alert {
             display: none;
-            margin-bottom: 18px;
-            padding: 12px 14px;
-            border-radius: 6px;
+            margin-bottom: 24px;
+            padding: 14px 16px;
+            border-radius: 8px;
             border: 1px solid #bbf7d0;
             color: #166534;
             background: #f0fdf4;
             font-size: 14px;
+            font-weight: 500;
         }
 
         .alert[style],
@@ -104,39 +135,42 @@
 
         form {
             display: grid;
-            gap: 18px;
+            gap: 20px;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
+            gap: 20px;
         }
 
         label {
             display: grid;
             gap: 8px;
-            font-weight: 700;
-            color: #263548;
+            font-weight: 600;
+            color: var(--text-main);
             font-size: 14px;
         }
 
         input,
         select {
             width: 100%;
-            min-height: 46px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 10px 12px;
-            font: inherit;
-            color: #111827;
-            background: #ffffff;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            color: var(--text-main);
+            background: var(--bg-main);
+            transition: all 0.2s ease;
+            outline: none;
         }
 
         input:focus,
         select:focus {
-            border-color: #2563eb;
-            outline: 3px solid rgba(37, 99, 235, 0.16);
+            border-color: var(--primary);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .full-width {
@@ -145,83 +179,69 @@
 
         .checkbox-label {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 10px;
-            font-weight: 400;
-            color: #475569;
-            line-height: 1.5;
-        }
-
-        .checkbox-label input {
-            width: 16px;
-            height: 16px;
-            min-height: 16px;
-            padding: 0;
-            margin-top: 3px;
-            flex: 0 0 auto;
-        }
-
-        button {
-            min-height: 48px;
-            border: 0;
-            border-radius: 6px;
-            background: #1d4ed8;
-            color: #ffffff;
-            font: inherit;
-            font-weight: 700;
+            font-weight: 500;
+            color: var(--text-muted);
             cursor: pointer;
         }
 
+        .checkbox-label input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        button {
+            margin-top: 8px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
         button:hover {
-            background: #1e40af;
+            background: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
         a {
-            color: #1d4ed8;
+            color: var(--primary);
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 600;
+            transition: color 0.2s;
         }
 
         a:hover {
-            text-decoration: underline;
+            color: var(--primary-hover);
         }
 
         .switch-link {
-            margin: 24px 0 0;
-            color: #64748b;
+            margin-top: 32px;
+            color: var(--text-muted);
             text-align: center;
+            font-size: 15px;
         }
 
-        @media (max-width: 840px) {
-            body {
-                align-items: stretch;
-                padding: 0;
-            }
-
+        @media (max-width: 860px) {
             .auth-shell {
                 grid-template-columns: 1fr;
-                width: 100%;
-                min-height: 100vh;
-                border: 0;
-                border-radius: 0;
             }
-
             .info-panel {
-                min-height: auto;
-                padding: 28px;
+                padding: 32px;
+                min-height: 400px;
             }
-
-            .info-panel h1 {
-                margin: 42px 0 14px;
-                font-size: 30px;
-            }
-
             .form-panel {
-                padding: 34px 28px;
+                padding: 40px 32px;
             }
-        }
-
-        @media (max-width: 560px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
@@ -232,8 +252,8 @@
     <main class="auth-shell">
         <section class="info-panel" aria-label="Registration information">
             <div>
-                <div class="brand">SIMS</div>
-                <h1>Create a system user</h1>
+                <div class="brand"><i class="ph ph-squares-four"></i> InventoryPro</div>
+                <h1>Create a <span>system user</span></h1>
                 <p>Add a staff or admin account for the Stock Inventory Management System.</p>
                 <div class="role-note">Admin users can manage users and system records. Staff users can work with day-to-day inventory tasks.</div>
             </div>

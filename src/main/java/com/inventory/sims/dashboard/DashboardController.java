@@ -1,15 +1,23 @@
 package com.inventory.sims.dashboard;
 
+import com.inventory.sims.product.ProductService;
+import com.inventory.sims.stockin.StockIn;
+import com.inventory.sims.stockin.StockInService;
+import com.inventory.sims.stockout.StockOut;
+import com.inventory.sims.stockout.StockOutService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class DashboardController {
 
-<<<<<<< Updated upstream
-    @GetMapping("/dashboard")
-    public String showDashboard() {
-=======
     private final ProductService productService;
     private final StockInService stockInService;
     private final StockOutService stockOutService;
@@ -21,11 +29,8 @@ public class DashboardController {
         this.stockOutService = stockOutService;
     }
 
-    @GetMapping("/dashboard")
-    public String showDashboard(Model model, jakarta.servlet.http.HttpSession session) {
-        if (session.getAttribute("loggedUser") == null) {
-            return "redirect:/users/login";
-        }
+    @GetMapping({"/", "/dashboard"})
+    public String showDashboard(Model model) {
         // 1. Total Products
         int totalProducts = productService.getAllProducts().size();
         
@@ -63,7 +68,6 @@ public class DashboardController {
                 .collect(Collectors.toList());
         model.addAttribute("recentStockIn", recentStockIn);
 
->>>>>>> Stashed changes
         return "dashboard";
     }
 }

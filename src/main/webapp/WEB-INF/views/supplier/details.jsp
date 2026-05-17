@@ -1,124 +1,305 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supplier Details | SIMS</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: #172033; background: #eef2f6; }
-        .layout { min-height: 100vh; display: grid; grid-template-columns: 250px 1fr; }
-        .sidebar { background: #17324d; color: #fff; padding: 28px 22px; }
-        .brand { font-size: 18px; font-weight: 700; margin-bottom: 34px; }
-        .nav { display: grid; gap: 8px; }
-        .nav a { display: block; padding: 12px 14px; color: #d7e4ef; text-decoration: none; border-radius: 6px; font-weight: 700; }
-        .nav a:hover, .nav a.active { color: #fff; background: rgba(255, 255, 255, 0.12); }
-        .main { padding: 32px; }
-        .topbar { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 26px; flex-wrap: wrap; }
-        .page-title h1 { margin: 0 0 6px; font-size: 30px; color: #111827; }
-        .page-title p { margin: 0; color: #64748b; }
-        .actions { display: flex; gap: 12px; flex-wrap: wrap; }
-        .button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid transparent; padding: 10px 14px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
-        .button-primary { background: #1d4ed8; color: #fff; }
-        .button-primary:hover { background: #1e40af; }
-        .button-secondary { background: #fff; color: #334155; border-color: #cbd5e1; }
-        .button-secondary:hover { background: #f8fafc; }
-        .hero { background: linear-gradient(135deg, #17324d 0%, #245b7f 100%); color: #fff; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
-        .hero h2 { margin: 0 0 8px; font-size: 30px; }
-        .hero p { margin: 0; color: #d7e4ef; line-height: 1.6; }
-        .hero-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
-        .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
-        .badge-local { color: #075985; background: #e0f2fe; }
-        .badge-import { color: #7c2d12; background: #ffedd5; }
-        .badge-active { color: #166534; background: #dcfce7; }
-        .badge-pending { color: #92400e; background: #fef3c7; }
-        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-        .card { background: #fff; border: 1px solid #d9e1ea; border-radius: 8px; padding: 22px; }
-        .card h3 { margin: 0 0 18px; font-size: 18px; color: #111827; }
-        .detail-list { display: grid; gap: 16px; }
-        .detail-item span { display: block; color: #64748b; font-size: 14px; margin-bottom: 6px; }
-        .detail-item strong, .detail-item p { margin: 0; color: #111827; line-height: 1.6; }
-        .stock-section { margin-top: 24px; }
-        .section-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #fff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px 18px; flex-wrap: wrap; }
-        .section-toolbar h3 { margin: 0; color: #111827; font-size: 18px; }
-        .section-toolbar p { margin: 4px 0 0; color: #64748b; font-size: 14px; }
-        .summary-inline { display: flex; gap: 12px; flex-wrap: wrap; }
-        .summary-pill { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 6px 10px; border-radius: 999px; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 14px; }
-        .summary-pill strong { color: #111827; }
-        .table-wrap { overflow-x: auto; background: #fff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 820px; }
-        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
-        th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; }
-        tbody tr:hover { background: #f8fafc; }
-        tbody tr:last-child td { border-bottom: 0; }
-        .stock-id { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #e0f2fe; color: #075985; }
-        .money { font-weight: 700; color: #111827; }
-        .muted { color: #64748b; }
-        .empty-row { text-align: center; padding: 22px; color: #64748b; }
-        @media (max-width: 860px) {
-            .layout { grid-template-columns: 1fr; }
-            .sidebar { padding: 18px; }
-            .brand { margin-bottom: 16px; }
-            .nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .main { padding: 24px 18px; }
-            .grid { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-    <div class="layout">
-        <aside class="sidebar">
-            <div class="brand">SIMS</div>
-            <nav class="nav" aria-label="Main navigation">
-                <a href="/dashboard">Dashboard</a>
-                <a href="/products">Products</a>
-                <a href="/suppliers" class="active">Suppliers</a>
-                <a href="/stockin">Stock In</a>
-                <a href="/stockout">Stock Out</a>
-                <a href="/alerts">Alerts</a>
-                <a href="/users">Users</a>
-            </nav>
-        </aside>
-        <main class="main">
-            <header class="topbar">
-                <div class="page-title">
-                    <h1>Supplier Profile</h1>
-                    <p>Review supplier information before placing orders or updating records.</p>
+<jsp:include page="/WEB-INF/views/layout/header.jsp">
+    <jsp:param name="pageTitle" value="Details | Supplier" />
+    <jsp:param name="activeMenu" value="suppliers" />
+</jsp:include>
+
+<style>
+    /* ── Page Header Override ── */
+    .supplier-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 28px;
+        margin-top: 20px;
+    }
+    .supplier-hero .hero-content {
+        display: flex;
+        flex-direction: column;
+    }
+    .supplier-hero h2 {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 6px;
+    }
+    .supplier-hero .hero-notes {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 14px;
+        max-width: 600px;
+    }
+    .supplier-hero .hero-meta {
+        display: flex;
+        gap: 10px;
+    }
+    .supplier-hero .actions {
+        display: flex;
+        gap: 12px;
+    }
+    .badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+    .badge-local { background: var(--info-bg); color: var(--info); }
+    .badge-import { background: #fef3c7; color: #b45309; }
+    .badge-active { background: var(--success-bg); color: var(--success); }
+    .badge-pending { background: var(--warning-bg); color: var(--warning); }
+
+    /* ── Info Cards Grid ── */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+    .info-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+    .info-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .info-card h3 i {
+        color: var(--primary);
+        font-size: 20px;
+    }
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        min-width: 120px;
+    }
+    .detail-value {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-main);
+        text-align: right;
+    }
+
+    /* ── Stock Records Section ── */
+    .stock-records-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+    .stock-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .stock-header-left h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+    .stock-header-left h3 i {
+        color: var(--success);
+        font-size: 22px;
+    }
+    .stock-header-left p {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+    .summary-chips {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .summary-chip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 12px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-color);
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+    .summary-chip strong {
+        font-weight: 700;
+        color: var(--text-main);
+        font-size: 15px;
+    }
+    .summary-chip i {
+        font-size: 18px;
+    }
+    .summary-chip.records i { color: var(--info); }
+    .summary-chip.quantity i { color: var(--success); }
+    .summary-chip.cost i { color: var(--warning); }
+
+    /* ── Stock Table ── */
+    .stock-table-wrap {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+    .stock-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+    .stock-table thead {
+        background: var(--bg-main);
+    }
+    .stock-table th {
+        padding: 14px 18px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border-color);
+    }
+    .stock-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-main);
+        vertical-align: middle;
+    }
+    .stock-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    .stock-table tbody tr {
+        transition: background 0.15s ease;
+    }
+    .stock-table tbody tr:hover {
+        background: rgba(99, 102, 241, 0.03);
+    }
+    .stock-id-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: var(--info-bg);
+        color: var(--info);
+        font-weight: 600;
+        font-size: 12px;
+    }
+    .product-cell strong {
+        display: block;
+        margin-bottom: 2px;
+    }
+    .product-cell .sub {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+    .money-cell {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+    .empty-row-cell {
+        text-align: center;
+        padding: 40px 18px !important;
+        color: var(--text-muted);
+        font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .info-grid { grid-template-columns: 1fr; }
+        .stock-header { flex-direction: column; }
+    }
+</style>
+
+            <!-- Supplier Hero -->
+            <div class="supplier-hero">
+                <div class="hero-content">
+                    <h2>${supplier.companyName}</h2>
+                    <p class="hero-notes">${supplier.notes}</p>
+                    <div class="hero-meta">
+                        <span class="badge-pill ${supplier.category eq 'IMPORT' ? 'badge-import' : 'badge-local'}">
+                            <i class="ph ph-tag"></i> ${supplier.category}
+                        </span>
+                        <span class="badge-pill ${supplier.status eq 'PENDING' ? 'badge-pending' : 'badge-active'}">
+                            <i class="ph ph-check-circle"></i> ${supplier.status}
+                        </span>
+                    </div>
                 </div>
                 <div class="actions">
                     <a class="button button-secondary" href="/suppliers">Back to suppliers</a>
                     <a class="button button-primary" href="/suppliers/edit/${supplier.id}">Edit supplier</a>
                 </div>
-            </header>
-            <section class="hero">
-                <h2>${supplier.companyName}</h2>
-                <p>${supplier.notes}</p>
-                <div class="hero-meta">
-                    <span class="badge ${supplier.category eq 'IMPORT' ? 'badge-import' : 'badge-local'}">${supplier.category}</span>
-                    <span class="badge ${supplier.status eq 'PENDING' ? 'badge-pending' : 'badge-active'}">${supplier.status}</span>
+            </div>
+
+            <!-- Info Grid -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3><i class="ph ph-address-book"></i> Contact Information</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Contact Person</span>
+                        <span class="detail-value">${supplier.contactPerson}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Email Address</span>
+                        <span class="detail-value">${supplier.email}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Phone Number</span>
+                        <span class="detail-value">${supplier.phone}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Address</span>
+                        <span class="detail-value">${supplier.address}</span>
+                    </div>
                 </div>
-            </section>
-            <section class="grid" aria-label="Supplier details">
-                <article class="card">
-                    <h3>Contact Information</h3>
-                    <div class="detail-list">
-                        <div class="detail-item"><span>Contact person</span><strong>${supplier.contactPerson}</strong></div>
-                        <div class="detail-item"><span>Email address</span><strong>${supplier.email}</strong></div>
-                        <div class="detail-item"><span>Phone number</span><strong>${supplier.phone}</strong></div>
-                        <div class="detail-item"><span>Address</span><p>${supplier.address}</p></div>
+                <div class="info-card">
+                    <h3><i class="ph ph-truck"></i> Supply Information</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">City</span>
+                        <span class="detail-value">${supplier.city}</span>
                     </div>
-                </article>
-                <article class="card">
-                    <h3>Supply Information</h3>
-                    <div class="detail-list">
-                        <div class="detail-item"><span>City</span><strong>${supplier.city}</strong></div>
-                        <div class="detail-item"><span>Lead time</span><strong>${supplier.leadTime}</strong></div>
-                        <div class="detail-item"><span>Category</span><strong>${supplier.category}</strong></div>
-                        <div class="detail-item"><span>Status</span><strong>${supplier.status}</strong></div>
+                    <div class="detail-row">
+                        <span class="detail-label">Lead Time</span>
+                        <span class="detail-value">${supplier.leadTime}</span>
                     </div>
-                </article>
-            </section>
+                    <div class="detail-row">
+                        <span class="detail-label">Category</span>
+                        <span class="detail-value">${supplier.category}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">${supplier.status}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock In Records -->
             <%
                 java.util.List<com.inventory.sims.stockin.StockIn> stockIns =
                         (java.util.List<com.inventory.sims.stockin.StockIn>) request.getAttribute("stockIns");
@@ -132,20 +313,29 @@
                     }
                 }
             %>
-            <section class="stock-section" aria-label="Supplier stock-in records">
-                <div class="section-toolbar">
-                    <div>
-                        <h3>Stock In Records</h3>
+            <div class="stock-records-card">
+                <div class="stock-header">
+                    <div class="stock-header-left">
+                        <h3><i class="ph ph-arrow-circle-down"></i> Stock In Records</h3>
                         <p>Incoming stock received from ${supplier.companyName}.</p>
                     </div>
-                    <div class="summary-inline" aria-label="Supplier stock-in summary">
-                        <span class="summary-pill">Records <strong><%= totalStockInRecords %></strong></span>
-                        <span class="summary-pill">Quantity <strong><%= totalStockInQuantity %></strong></span>
-                        <span class="summary-pill">Cost <strong>LKR <%= String.format("%.2f", totalStockInCost) %></strong></span>
+                    <div class="summary-chips">
+                        <div class="summary-chip records">
+                            <i class="ph ph-list-dashes"></i>
+                            Records <strong><%= totalStockInRecords %></strong>
+                        </div>
+                        <div class="summary-chip quantity">
+                            <i class="ph ph-cube"></i>
+                            Quantity <strong><%= totalStockInQuantity %></strong>
+                        </div>
+                        <div class="summary-chip cost">
+                            <i class="ph ph-currency-circle-dollar"></i>
+                            Cost <strong>LKR <%= String.format("%.2f", totalStockInCost) %></strong>
+                        </div>
                     </div>
                 </div>
-                <div class="table-wrap">
-                    <table>
+                <div class="stock-table-wrap">
+                    <table class="stock-table">
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -163,15 +353,15 @@
                                 for (com.inventory.sims.stockin.StockIn stockIn : stockIns) {
                         %>
                         <tr>
-                            <td><span class="stock-id"><%= stockIn.getId() %></span></td>
+                            <td><span class="stock-id-badge"><%= stockIn.getId() %></span></td>
                             <td><%= stockIn.getReceivedDate() %></td>
-                            <td>
-                                <strong><%= stockIn.getProductName() %></strong><br>
-                                <span class="muted"><%= stockIn.getProductId() %></span>
+                            <td class="product-cell">
+                                <strong><%= stockIn.getProductName() %></strong>
+                                <span class="sub"><%= stockIn.getProductId() %></span>
                             </td>
                             <td><%= stockIn.getQuantity() %></td>
-                            <td class="money">LKR <%= String.format("%.2f", stockIn.getUnitCost()) %></td>
-                            <td class="money">LKR <%= String.format("%.2f", stockIn.getTotalCost()) %></td>
+                            <td class="money-cell">LKR <%= String.format("%.2f", stockIn.getUnitCost()) %></td>
+                            <td class="money-cell">LKR <%= String.format("%.2f", stockIn.getTotalCost()) %></td>
                             <td><%= stockIn.getSpecialDetails() %></td>
                         </tr>
                         <%
@@ -179,14 +369,14 @@
                             } else {
                         %>
                         <tr>
-                            <td colspan="7" class="empty-row">No stock-in records found for this supplier.</td>
+                            <td colspan="7" class="empty-row-cell">
+                                <i class="ph ph-archive" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.3;"></i>
+                                No stock-in records found for this supplier.
+                            </td>
                         </tr>
                         <% } %>
                         </tbody>
                     </table>
                 </div>
-            </section>
-        </main>
-    </div>
-</body>
-</html>
+            </div>
+        <jsp:include page="/WEB-INF/views/layout/footer.jsp" />

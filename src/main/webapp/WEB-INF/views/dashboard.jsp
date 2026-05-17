@@ -1,188 +1,366 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | SIMS</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<jsp:include page="/WEB-INF/views/layout/header.jsp">
+    <jsp:param name="pageTitle" value="Dashboard" />
+    <jsp:param name="activeMenu" value="dashboard" />
+</jsp:include>
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, Helvetica, sans-serif;
-            color: #172033;
-            background: #eef2f6;
-        }
+<style>
+    .welcome-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+        padding: 32px 40px;
+        border-radius: 20px;
+        margin-bottom: 32px;
+        border: 1px solid var(--border-color);
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .welcome-text {
+        flex: 1;
+        min-width: 300px;
+    }
+    .welcome-text h1 {
+        font-size: 28px;
+        color: var(--text-main);
+        margin-bottom: 8px;
+    }
+    .welcome-text h1 span { color: var(--primary); }
+    .welcome-text p { color: var(--text-muted); font-size: 15px; }
 
-        .shell {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: 240px 1fr;
-        }
+    .welcome-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .btn-dashboard-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 20px;
+        color: white;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .btn-dashboard-action:hover {
+        transform: translateY(-2px);
+        filter: brightness(0.95);
+    }
+    .btn-dashboard-action.btn-purple {
+        background-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+    .btn-dashboard-action.btn-purple:hover {
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    }
+    .btn-dashboard-action.btn-cyan {
+        background-color: var(--secondary);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+    }
+    .btn-dashboard-action.btn-cyan:hover {
+        box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
+    }
+    .btn-dashboard-action.btn-orange {
+        background-color: var(--tertiary);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    }
+    .btn-dashboard-action.btn-orange:hover {
+        box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+    }
+    .btn-dashboard-action.btn-blue {
+        background-color: var(--info);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+    .btn-dashboard-action.btn-blue:hover {
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+    }
+    .btn-dashboard-action i {
+        font-size: 18px;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+    .metric-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+    }
+    .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+    .metric-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    .metric-icon.blue { background-color: var(--info-bg); color: var(--info); }
+    .metric-icon.red { background-color: var(--danger-bg); color: var(--danger); }
+    .metric-icon.green { background-color: var(--success-bg); color: var(--success); }
+    .metric-icon.orange { background-color: var(--warning-bg); color: var(--warning); }
+    
+    .metric-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .metric-badge.positive { background-color: var(--success-bg); color: var(--success); }
+    .metric-badge.negative { background-color: var(--danger-bg); color: var(--danger); }
+    .metric-badge.neutral { background-color: var(--bg-main); color: var(--text-muted); }
+    
+    .metric-card h3 {
+        font-size: 14px;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    .metric-card .value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
 
-        .sidebar {
-            background: #17324d;
-            color: #ffffff;
-            padding: 28px 22px;
-        }
+    /* Bottom Grid - Two equal cards */
+    .bottom-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .card-header h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+    }
 
-        .brand {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 34px;
-        }
+    /* Activity List */
+    .view-all {
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .view-all:hover { text-decoration: underline; }
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .activity-item {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-color);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .activity-item:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    .activity-icon.green { background-color: var(--success-bg); color: var(--success); }
+    .activity-icon.orange { background-color: var(--warning-bg); color: var(--warning); }
+    
+    .activity-details p {
+        font-size: 14px;
+        color: var(--text-main);
+        margin-bottom: 2px;
+    }
+    .activity-details span {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+    .empty-state {
+        text-align: center;
+        padding: 40px 16px;
+        color: var(--text-muted);
+        font-size: 14px;
+    }
+    .empty-state i {
+        font-size: 40px;
+        display: block;
+        margin-bottom: 12px;
+        opacity: 0.35;
+    }
+    @media (max-width: 1024px) {
+        .bottom-grid { grid-template-columns: 1fr; }
+        .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
 
-        .nav {
-            display: grid;
-            gap: 10px;
-        }
-
-        .nav a {
-            color: #d7e4ef;
-            text-decoration: none;
-            padding: 12px 14px;
-            border-radius: 6px;
-        }
-
-        .nav a.active,
-        .nav a:hover {
-            background: #244b70;
-            color: #ffffff;
-        }
-
-        .main {
-            padding: 34px;
-        }
-
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        h1 {
-            margin: 0 0 8px;
-            font-size: 30px;
-        }
-
-        p {
-            margin: 0;
-            color: #5e6b7d;
-            line-height: 1.6;
-        }
-
-        .button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 40px;
-            padding: 0 16px;
-            border-radius: 6px;
-            background: #17324d;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 700;
-            border: 0;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .card {
-            background: #ffffff;
-            border: 1px solid #d9e1ea;
-            border-radius: 8px;
-            padding: 22px;
-            min-height: 150px;
-            box-shadow: 0 12px 30px rgba(25, 40, 70, 0.08);
-        }
-
-        .card h2 {
-            margin: 0 0 10px;
-            font-size: 18px;
-        }
-
-        .card a {
-            display: inline-flex;
-            margin-top: 18px;
-            color: #0f5c9e;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        @media (max-width: 760px) {
-            .shell {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                padding: 20px;
-            }
-
-            .nav {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .main {
-                padding: 24px;
-            }
-
-            .topbar {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-<div class="shell">
-    <aside class="sidebar">
-        <div class="brand">SIMS</div>
-        <nav class="nav" aria-label="Main navigation">
-            <a href="/dashboard" class="active">Dashboard</a>
-            <a href="/users">Users</a>
-            <a href="/users/register">Register</a>
-            <a href="/users/login">Logout</a>
-        </nav>
-    </aside>
-
-    <main class="main">
-        <div class="topbar">
-            <div>
-                <h1>Dashboard</h1>
-                <p>Welcome to the Stock Inventory Management System.</p>
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h1>Welcome back, <span><c:out value="${sessionScope.loggedUser.firstName}" default="Admin"/>!</span> 👋</h1>
+                <p>Here's what's happening with your inventory today.</p>
             </div>
-            <a class="button" href="/users/login">Logout</a>
+            <div class="welcome-actions">
+                <a href="/users/register" class="btn-dashboard-action btn-purple">
+                    <i class="ph ph-user-plus"></i> Add User
+                </a>
+                <a href="/suppliers/register" class="btn-dashboard-action btn-cyan">
+                    <i class="ph ph-truck"></i> Add Supplier
+                </a>
+                <a href="/products/add" class="btn-dashboard-action btn-orange">
+                    <i class="ph ph-plus-circle"></i> Add Product
+                </a>
+                <a href="/customers/add" class="btn-dashboard-action btn-blue">
+                    <i class="ph ph-user-circle-plus"></i> Add Customer
+                </a>
+            </div>
         </div>
 
-        <section class="grid" aria-label="Dashboard modules">
-            <div class="card">
-                <h2>User Management</h2>
-                <p>Open user records and manage system accounts.</p>
-                <a href="/users">View users</a>
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon blue"><i class="ph ph-package"></i></div>
+                    <span class="metric-badge neutral">Live</span>
+                </div>
+                <h3>Total Products</h3>
+                <div class="value">${totalProducts}</div>
             </div>
-            <div class="card">
-                <h2>Products</h2>
-                <p>Product management module placeholder.</p>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon red"><i class="ph ph-warning-circle"></i></div>
+                    <span class="metric-badge negative">Threshold < 5</span>
+                </div>
+                <h3>Low Stock Alerts</h3>
+                <div class="value">${lowStockCount}</div>
             </div>
-            <div class="card">
-                <h2>Stock</h2>
-                <p>Stock movement module placeholder.</p>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon green"><i class="ph ph-arrow-circle-down"></i></div>
+                    <span class="metric-badge neutral">This Month</span>
+                </div>
+                <h3>Monthly Stock-in</h3>
+                <div class="value">${monthlyStockIn}</div>
             </div>
-        </section>
-    </main>
-</div>
-</body>
-</html>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon orange"><i class="ph ph-arrow-circle-up"></i></div>
+                    <span class="metric-badge neutral">This Month</span>
+                </div>
+                <h3>Monthly Stock-out</h3>
+                <div class="value">${monthlyStockOut}</div>
+            </div>
+        </div>
+
+        <!-- Bottom Grid: Recent Stock-in & Stock-out -->
+        <div class="bottom-grid">
+
+            <!-- Recent Stock-in Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph ph-arrow-circle-down" style="color:var(--success);margin-right:8px;"></i>Recent Stock-in</h2>
+                    <a href="/stockin" class="view-all">View All</a>
+                </div>
+                <div class="activity-list">
+                    <%@ page import="com.inventory.sims.stockin.StockIn" %>
+                    <%@ page import="java.util.List" %>
+                    <%
+                        List<StockIn> recentStockIn = (List<StockIn>) request.getAttribute("recentStockIn");
+                        if (recentStockIn != null && !recentStockIn.isEmpty()) {
+                            for (StockIn si : recentStockIn) {
+                    %>
+                    <div class="activity-item">
+                        <div class="activity-icon green"><i class="ph ph-arrow-square-in"></i></div>
+                        <div class="activity-details">
+                            <p>Stock in for <strong><%= si.getProductName() %></strong></p>
+                            <span><%= si.getReceivedDate() %> &bull; +<%= si.getQuantity() %> units &bull; from <%= si.getSupplierName() %></span>
+                        </div>
+                    </div>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <div class="empty-state">
+                        <i class="ph ph-archive"></i>
+                        No recent stock-in records found.
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Recent Stock-out Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph ph-arrow-circle-up" style="color:var(--warning);margin-right:8px;"></i>Recent Stock-out</h2>
+                    <a href="/stockout" class="view-all">View All</a>
+                </div>
+                <div class="activity-list">
+                    <%@ page import="com.inventory.sims.stockout.StockOut" %>
+                    <%
+                        List<StockOut> recentStockOut = (List<StockOut>) request.getAttribute("recentStockOut");
+                        if (recentStockOut != null && !recentStockOut.isEmpty()) {
+                            for (StockOut so : recentStockOut) {
+                    %>
+                    <div class="activity-item">
+                        <div class="activity-icon orange"><i class="ph ph-arrow-square-out"></i></div>
+                        <div class="activity-details">
+                            <p>Stock out for <strong><%= so.getProductName() %></strong></p>
+                            <span><%= so.getStockOutDate() %> &bull; -<%= so.getQuantity() %> units</span>
+                        </div>
+                    </div>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <div class="empty-state">
+                        <i class="ph ph-archive"></i>
+                        No recent stock-out records found.
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />

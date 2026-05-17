@@ -1,76 +1,10 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customers | SIMS</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; color: #172033; background: #eef2f6; }
-        .layout { min-height: 100vh; display: grid; grid-template-columns: 250px 1fr; }
-        .sidebar { background: #17324d; color: #ffffff; padding: 28px 22px; }
-        .brand { font-size: 18px; font-weight: 700; margin-bottom: 34px; }
-        .nav { display: grid; gap: 8px; }
-        .nav a { display: block; padding: 12px 14px; color: #d7e4ef; text-decoration: none; border-radius: 6px; font-weight: 700; }
-        .nav a:hover, .nav a.active { color: #ffffff; background: rgba(255, 255, 255, 0.12); }
-        .main { padding: 32px; }
-        .topbar { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 26px; }
-        .page-title h1 { margin: 0 0 6px; font-size: 30px; color: #111827; }
-        .page-title p { margin: 0; color: #64748b; }
-        .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid transparent; padding: 10px 14px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
-        .button-primary { background: #1d4ed8; color: #ffffff; }
-        .button-primary:hover { background: #1e40af; }
-        .button-secondary { background: #ffffff; color: #334155; border-color: #cbd5e1; }
-        .button-secondary:hover { background: #f8fafc; }
-        .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1px solid #d9e1ea; border-radius: 8px 8px 0 0; padding: 16px; }
-        .toolbar h3 { margin: 0; color: #111827; font-size: 16px; }
-        .table-wrap { overflow-x: auto; background: #ffffff; border: 1px solid #d9e1ea; border-top: 0; border-radius: 0 0 8px 8px; }
-        table { width: 100%; border-collapse: collapse; min-width: 760px; }
-        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
-        th { color: #475569; background: #f8fafc; font-size: 13px; text-transform: uppercase; }
-        tbody tr:hover { background: #f8fafc; }
-        tbody tr:last-child td { border-bottom: 0; }
-        .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #eef2f6; color: #475569; }
-        .empty { text-align: center; padding: 22px 16px; color: #64748b; }
-        .table-actions { display: flex; gap: 8px; }
-        .table-actions a { min-height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #334155; padding: 7px 10px; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; font-weight: 700; }
-        .table-actions a:hover { background: #f8fafc; }
-        .action-update { color: #1d4ed8 !important; border-color: #93c5fd !important; background: #eff6ff !important; }
-        .delete-form { margin: 0; }
-        .delete-button { min-height: 34px; border: 1px solid #fecaca; border-radius: 6px; background: #ffffff; color: #991b1b; padding: 7px 10px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
-        .delete-button:hover { background: #fee2e2; }
-        .message { margin-bottom: 18px; border-radius: 6px; padding: 12px 14px; font-weight: 700; }
-        .message-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .message-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        @media (max-width: 760px) {
-            .layout { grid-template-columns: 1fr; }
-            .sidebar { padding: 20px; }
-            .nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .main { padding: 24px; }
-            .topbar { align-items: flex-start; flex-direction: column; }
-        }
-    </style>
-</head>
-<body>
-<div class="layout">
-    <aside class="sidebar">
-        <div class="brand">SIMS</div>
-        <nav class="nav" aria-label="Main navigation">
-            <a href="/dashboard">Dashboard</a>
-            <a href="/products">Products</a>
-            <a href="/customers" class="active">Customers</a>
-            <a href="/suppliers">Suppliers</a>
-            <a href="/stockin">Stock In</a>
-            <a href="/stockout">Stock Out</a>
-            <a href="/alerts">Alerts</a>
-            <a href="/users">Users</a>
-        </nav>
-    </aside>
+<jsp:include page="/WEB-INF/views/layout/header.jsp">
+    <jsp:param name="pageTitle" value="Viewcustomers | Customer" />
+    <jsp:param name="activeMenu" value="customers" />
+</jsp:include>
 
-    <main class="main">
-        <header class="topbar">
+        <header class="page-header">
             <div class="page-title">
                 <h1>Customers</h1>
                 <p>View customer contact details saved in the system.</p>
@@ -119,10 +53,10 @@
                         <td><%= customer.getAddress() == null || customer.getAddress().isBlank() ? "-" : customer.getAddress() %></td>
                         <td>
                             <div class="table-actions">
-                                <a href="/customers/details/<%= customer.getId() %>">View</a>
-                                <a class="action-update" href="/customers/edit/<%= customer.getId() %>">Edit</a>
-                                <form class="delete-form" action="/customers/delete/<%= customer.getId() %>" method="post" onsubmit="return confirm('Delete customer <%= customer.getId() %>?');">
-                                    <button type="submit" class="delete-button">Delete</button>
+                                <a href="/customers/details/<%= customer.getId() %>" title="View"><i class="ph ph-eye"></i></a>
+                                <a class="action-update" href="/customers/edit/<%= customer.getId() %>" title="Edit"><i class="ph ph-pencil-simple"></i></a>
+                                <form class="delete-form" action="/customers/delete/<%= customer.getId() %>" method="post" onsubmit="return confirm('Delete customer <%= customer.getId() %>?');" style="margin:0;">
+                                    <button type="submit" class="delete-button" title="Delete"><i class="ph ph-trash"></i></button>
                                 </form>
                             </div>
                         </td>
@@ -139,7 +73,5 @@
                 </table>
             </div>
         </section>
-    </main>
-</div>
-</body>
-</html>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+

@@ -131,8 +131,8 @@ public class ProductController {
         }
     }
 
-    // 6. Handle the deletion of a product (URL: GET /products/delete/{id})
-    @GetMapping("/delete/{id}")
+    // 6. Handle the deletion of a product (URL: POST /products/delete/{id})
+    @PostMapping("/delete/{id}")
     public String deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
         return "redirect:/products";
