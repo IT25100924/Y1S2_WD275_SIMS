@@ -1,5 +1,7 @@
 package com.inventory.sims.product;
 
+import com.inventory.sims.stockin.StockInService;
+import com.inventory.sims.stockout.StockOutService;
 import com.inventory.sims.supplier.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,12 +15,17 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final SupplierService supplierService; // Integrated teammate's module!
+    private final SupplierService supplierService;
+    private final StockInService stockInService;
+    private final StockOutService stockOutService;
 
     @Autowired
-    public ProductController(ProductService productService, SupplierService supplierService) {
+    public ProductController(ProductService productService, SupplierService supplierService,
+                             StockInService stockInService, StockOutService stockOutService) {
         this.productService = productService;
         this.supplierService = supplierService;
+        this.stockInService = stockInService;
+        this.stockOutService = stockOutService;
     }
 
     // 1. Show all products (URL: GET /products)
@@ -75,26 +82,38 @@ public class ProductController {
         }
 
         // Set initial quantity to 0 if initialization checkbox wasn't checked
-        if (initializeStock == null) {
-            quantity = 0;
+        int initialQuantity = 0;
+        if (initializeStock != null) {
+            initialQuantity = quantity;
         }
 
         Product product;
         if ("Electronics".equals(type)) {
-            product = new ElectronicsProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, quantity, supplierId, warrantyMonths);
+            product = new ElectronicsProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, 0, supplierId, warrantyMonths);
         } else if ("Food".equals(type)) {
-            product = new FoodProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, quantity, supplierId, expirationDate);
+            product = new FoodProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, 0, supplierId, expirationDate);
         } else {
-            product = new Product(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, quantity, supplierId);
+            product = new Product(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, 0, supplierId);
         }
 
         try {
             productService.saveProduct(product);
 
-            // --- STUB: Cross-Module Sync for Initial Stock-In ---
-            if (initializeStock != null && quantity > 0) {
-                // TODO: Call Stock-In Service API here to automate transaction
-                // Example: stockInService.createInitialTransaction(id, quantity, defaultStockInPrice, warrantyMonths, expirationDate);
+            // Cross-Module Sync for Initial Stock-In
+            if (initializeStock != null && initialQuantity > 0) {
+                com.inventory.sims.supplier.Supplier supplier = supplierService.findById(supplierId).orElse(null);
+                String supplierName = supplier != null ? supplier.getCompanyName() : supplierId;
+                
+                stockInService.addStockIn(
+                        id, 
+                        supplierName, 
+                        initialQuantity, 
+                        defaultStockInPrice, 
+                        java.time.LocalDate.now().toString(), 
+                        expirationDate != null ? expirationDate : "", 
+                        String.valueOf(warrantyMonths), 
+                        "Initial stock initialization"
+                );
             }
 
             return "redirect:/products";
@@ -116,6 +135,26 @@ public class ProductController {
             model.addAttribute("product", product);
             model.addAttribute("suppliers", supplierService.getAllSuppliers());
             return "products/editProduct";
+        }
+        return "redirect:/products";
+    }
+
+    // Show detailed view of a product (URL: GET /products/details/{id})
+    @GetMapping("/details/{id}")
+    public String showProductDetails(@PathVariable String id, Model model) {
+        Product product = productService.getProductById(id);
+        if (product != null) {
+            model.addAttribute("product", product);
+
+            // Fetch and attach the supplier details
+            supplierService.findById(product.getSupplierId())
+                    .ifPresent(supplier -> model.addAttribute("supplier", supplier));
+
+            // Fetch and attach stock history
+            model.addAttribute("stockIns", stockInService.getStockInsByProductId(id));
+            model.addAttribute("stockOuts", stockOutService.getStockOutsByProductId(id));
+
+            return "products/details";
         }
         return "redirect:/products";
     }
