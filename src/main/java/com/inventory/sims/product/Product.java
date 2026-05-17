@@ -90,7 +90,6 @@ public class Product {
     }
 
     // Method to format the product for file storage
-    @Override
     public String toFileString() {
         return "General!" + id + "!" + supplierId + "!" + name + "!" + mrp + "!" + defaultStockInPrice + "!" + defaultStockOutPrice + "!" + quantity;
     }

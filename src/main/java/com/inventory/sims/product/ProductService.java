@@ -34,8 +34,8 @@ public class ProductService {
     // Save a new product or update an existing one
     public void saveProduct(Product product) {
         // 1. Standard Validations
-        if (product.getPrice() < 0) {
-            throw new IllegalArgumentException("Unit Price cannot be negative.");
+        if (product.getMrp() < 0 || product.getDefaultStockInPrice() < 0 || product.getDefaultStockOutPrice() < 0) {
+            throw new IllegalArgumentException("Prices cannot be negative.");
         }
         if (product.getQuantity() < 0) {
             throw new IllegalArgumentException("Initial Quantity cannot be negative.");

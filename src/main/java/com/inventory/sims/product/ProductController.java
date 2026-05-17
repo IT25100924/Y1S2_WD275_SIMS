@@ -68,9 +68,8 @@ public class ProductController {
             @RequestParam(required = false) String expirationDate,
             Model model) {
 
-        // Override prices to 0 if the configurePrices checkbox wasn't checked
+        // Override optional prices to 0 if the configurePrices checkbox wasn't checked
         if (configurePrices == null) {
-            mrp = 0;
             defaultStockInPrice = 0;
             defaultStockOutPrice = 0;
         }
