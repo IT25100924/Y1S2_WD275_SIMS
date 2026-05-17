@@ -406,6 +406,8 @@
         .badge-admin { background-color: var(--danger-bg); color: var(--danger); }
         .badge-staff { background-color: var(--info-bg); color: var(--info); }
         .badge-electronics { background-color: #f3e8ff; color: #7e22ce; }
+        .badge-food { background-color: #dcfce7; color: #166534; }
+        .badge-general { background-color: #e0f2fe; color: #0284c7; }
 
         /* Detail Cards & Grid */
         .grid {

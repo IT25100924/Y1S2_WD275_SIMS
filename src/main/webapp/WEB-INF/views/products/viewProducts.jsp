@@ -65,11 +65,12 @@
 
                                 if (product instanceof com.inventory.sims.product.ElectronicsProduct) {
                                     typeBadgeClass = "badge-electronics";
-                                    extraDetails = "Warranty: " + ((com.inventory.sims.product.ElectronicsProduct) product).getWarrantyMonths() + " months";
+                                    int wm = ((com.inventory.sims.product.ElectronicsProduct) product).getWarrantyMonths();
+                                    extraDetails = wm > 0 ? "Warranty: " + wm + " months" : "-";
                                 } else if (product instanceof com.inventory.sims.product.FoodProduct) {
                                     typeBadgeClass = "badge-food";
                                     String exp = ((com.inventory.sims.product.FoodProduct) product).getExpirationDate();
-                                    extraDetails = "Initial Expiry: " + (exp != null && !exp.isEmpty() ? exp : "N/A");
+                                    extraDetails = (exp != null && !exp.trim().isEmpty()) ? "Initial Expiry: " + exp : "-";
                                 }
 
                                 boolean isLowStock = product.getQuantity() <= 5;
