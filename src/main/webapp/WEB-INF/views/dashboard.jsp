@@ -1,5 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page import="com.inventory.sims.user.User" %>
+<%!
+    private String escapeHtml(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toString()
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+%>
+<%
+    User dashboardUser = (User) session.getAttribute("loggedUser");
+    String dashboardFirstName = dashboardUser == null || dashboardUser.getFirstName() == null
+            || dashboardUser.getFirstName().isBlank()
+            ? "Admin"
+            : dashboardUser.getFirstName();
+%>
 <jsp:include page="/WEB-INF/views/layout/header.jsp">
     <jsp:param name="pageTitle" value="Dashboard" />
     <jsp:param name="activeMenu" value="dashboard" />
@@ -237,7 +257,7 @@
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
-                <h1>Welcome back, <span><c:out value="${sessionScope.loggedUser.firstName}" default="Admin"/>!</span> 👋</h1>
+                <h1>Welcome back, <span><%= escapeHtml(dashboardFirstName) %>!</span> 👋</h1>
                 <p>Here's what's happening with your inventory today.</p>
             </div>
             <div class="welcome-actions">

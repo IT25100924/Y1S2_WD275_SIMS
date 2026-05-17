@@ -11,12 +11,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class DashboardController {
+    private static final int LOW_STOCK_THRESHOLD = 5;
+    private static final int RECENT_ACTIVITY_LIMIT = 5;
+
+    private static final Comparator<StockIn> RECENT_STOCK_IN_COMPARATOR = Comparator
+            .comparing(DashboardController::parseStockInDate, Comparator.nullsLast(Comparator.reverseOrder()))
+            .thenComparing(StockIn::getId, Comparator.nullsLast(Comparator.reverseOrder()));
+
+    private static final Comparator<StockOut> RECENT_STOCK_OUT_COMPARATOR = Comparator
+            .comparing(StockOut::getStockOutDate, Comparator.nullsLast(Comparator.reverseOrder()))
+            .thenComparing(StockOut::getId, Comparator.nullsLast(Comparator.reverseOrder()));
 
     private final ProductService productService;
     private final StockInService stockInService;
@@ -31,22 +42,24 @@ public class DashboardController {
 
     @GetMapping({"/", "/dashboard"})
     public String showDashboard(Model model) {
+        List<StockIn> stockIns = stockInService.getAllStockIns();
+        List<StockOut> stockOuts = stockOutService.getAllStockOuts();
+        YearMonth currentMonth = YearMonth.now();
+
         // 1. Total Products
         int totalProducts = productService.getAllProducts().size();
         
         // 2. Low Stock Alerts (Threshold 5)
-        int lowStockCount = productService.getLowStockProducts(5).size();
+        int lowStockCount = productService.getLowStockProducts(LOW_STOCK_THRESHOLD).size();
 
         // 3. Monthly Stock-in and Stock-out
-        String currentMonthYear = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        
-        int monthlyStockIn = stockInService.getAllStockIns().stream()
-                .filter(si -> si.getReceivedDate() != null && si.getReceivedDate().startsWith(currentMonthYear))
+        int monthlyStockIn = stockIns.stream()
+                .filter(stockIn -> isInMonth(parseStockInDate(stockIn), currentMonth))
                 .mapToInt(StockIn::getQuantity)
                 .sum();
 
-        int monthlyStockOut = stockOutService.getAllStockOuts().stream()
-                .filter(so -> so.getStockOutDate() != null && so.getStockOutDate().toString().startsWith(currentMonthYear))
+        int monthlyStockOut = stockOuts.stream()
+                .filter(stockOut -> isInMonth(stockOut.getStockOutDate(), currentMonth))
                 .mapToInt(StockOut::getQuantity)
                 .sum();
 
@@ -56,18 +69,39 @@ public class DashboardController {
         model.addAttribute("monthlyStockOut", monthlyStockOut);
 
         // Optional: Send recent stock movements (latest 5 each)
-        List<StockOut> recentStockOut = stockOutService.getAllStockOuts().stream()
-                .sorted((a, b) -> b.getId().compareTo(a.getId()))
-                .limit(5)
-                .collect(Collectors.toList());
+        List<StockOut> recentStockOut = stockOuts.stream()
+                .sorted(RECENT_STOCK_OUT_COMPARATOR)
+                .limit(RECENT_ACTIVITY_LIMIT)
+                .toList();
         model.addAttribute("recentStockOut", recentStockOut);
 
-        List<StockIn> recentStockIn = stockInService.getAllStockIns().stream()
-                .sorted((a, b) -> b.getId().compareTo(a.getId()))
-                .limit(5)
-                .collect(Collectors.toList());
+        List<StockIn> recentStockIn = stockIns.stream()
+                .sorted(RECENT_STOCK_IN_COMPARATOR)
+                .limit(RECENT_ACTIVITY_LIMIT)
+                .toList();
         model.addAttribute("recentStockIn", recentStockIn);
 
         return "dashboard";
+    }
+
+    private static boolean isInMonth(LocalDate date, YearMonth month) {
+        return date != null && YearMonth.from(date).equals(month);
+    }
+
+    private static LocalDate parseStockInDate(StockIn stockIn) {
+        if (stockIn == null) {
+            return null;
+        }
+
+        String receivedDate = stockIn.getReceivedDate();
+        if (receivedDate == null || receivedDate.isBlank()) {
+            return null;
+        }
+
+        try {
+            return LocalDate.parse(receivedDate.trim());
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
     }
 }

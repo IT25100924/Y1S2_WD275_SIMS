@@ -1,12 +1,33 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ page import="com.inventory.sims.user.User" %>
+<%!
+    private String escapeHtml(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toString()
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+
+    private String firstLetter(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        return escapeHtml(value.trim().substring(0, 1).toUpperCase());
+    }
+%>
 <%
     String pageTitle = request.getParameter("pageTitle");
     if (pageTitle == null || pageTitle.isEmpty()) pageTitle = "InventoryPro";
     
     String activeMenu = request.getParameter("activeMenu");
     if (activeMenu == null) activeMenu = "";
+
+    User loggedUser = (User) session.getAttribute("loggedUser");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -723,15 +744,15 @@
             <a href="/users/logout" class="nav-link">
                 <i class="ph ph-sign-out"></i> Logout
             </a>
-            <c:if test="${not empty sessionScope.loggedUser}">
+            <% if (loggedUser != null) { %>
             <div class="user-profile">
-                <div class="user-avatar">${fn:substring(sessionScope.loggedUser.firstName, 0, 1)}${fn:substring(sessionScope.loggedUser.lastName, 0, 1)}</div>
+                <div class="user-avatar"><%= firstLetter(loggedUser.getFirstName()) %><%= firstLetter(loggedUser.getLastName()) %></div>
                 <div class="user-info">
-                    <h4>${sessionScope.loggedUser.firstName} ${sessionScope.loggedUser.lastName}</h4>
-                    <p>${sessionScope.loggedUser.role}</p>
+                    <h4><%= escapeHtml(loggedUser.getFirstName()) %> <%= escapeHtml(loggedUser.getLastName()) %></h4>
+                    <p><%= escapeHtml(loggedUser.getRole()) %></p>
                 </div>
             </div>
-            </c:if>
+            <% } %>
         </div>
     </aside>
 
