@@ -100,7 +100,7 @@
                     <!-- Dynamic Field for Food -->
                     <div class="form-group hidden" id="expirationGroup">
                         <label for="expirationDate">Expiration Date</label>
-                        <input type="date" id="expirationDate" name="expirationDate" class="form-control">
+                        <input type="date" id="expirationDate" name="expirationDate" class="form-control" min="<%= java.time.LocalDate.now().toString() %>">
                     </div>
                 </div>
                 <script>

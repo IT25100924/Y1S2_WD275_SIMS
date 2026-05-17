@@ -5,7 +5,11 @@ SI004|p001|laptop webbb|Perera|5|25.0|2026-05-13|||0|
 SI005|P002|Laptop|Orange Cooperation|16|100.0|2026-05-16|||0|
 SI006|P002|Laptop|Jat holdings|14|200.0|2026-05-05|||0|
 SI007|P002|Laptop|Orange Cooperation|5|40.0|2026-05-16|||0|
-SI008|P004|chocolates|Orange Cooperation|25|1500.0|2026-05-16|Food|2026-10-24|0|
+SI008|P004|Biscuits|Orange Cooperation|25|1500.0|2026-05-18|Food|2026-10-24|0|
 SI009|P006|Mouse|Jat holdings|40|6000.0|2026-05-17|Electronics||12|Initial stock initialization
 SI010|P007|Oranges|Orange Cooperation|50|150.0|2026-05-17|Food|2026-08-17|0|Initial stock initialization
 SI011|P003|Display 32|Jat holdings|10|140000.0|2026-05-21|Electronics||12|
+SI012|P008|Pineapple|Orange Cooperation|30|190.0|2026-05-17|Food|2026-05-27|0|Initial stock initialization
+SI013|P006|Mouse|Jat holdings|20|4000.0|2026-05-18|Electronics||24|
+SI014|P007|Oranges|Jat holdings|20|240.0|2026-05-18|Food|2026-05-31|0|
+SI015|P001|Microfiber Cloth|Jat holdings|100|150.0|2026-05-18|General||0|

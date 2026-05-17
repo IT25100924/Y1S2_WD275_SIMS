@@ -372,6 +372,7 @@
                 <th>Quantity</th>
                 <th>Unit Cost (LKR)</th>
                 <th>Total Cost (LKR)</th>
+                <th>Details (Exp/Warranty)</th>
             </tr>
             </thead>
             <tbody>
@@ -384,10 +385,13 @@
                 <td><%= stockIn.getQuantity() %></td>
                 <td class="money-cell"><%= String.format("%.2f", stockIn.getUnitCost()) %></td>
                 <td class="money-cell"><%= String.format("%.2f", stockIn.getTotalCost()) %></td>
+                <td style="color: #64748b; font-size: 13px;">
+                    <%= "Food".equals(stockIn.getProductType()) ? "Exp: " + stockIn.getExpirationDate() : ("Electronics".equals(stockIn.getProductType()) ? "Warranty: " + stockIn.getWarrantyMonths() + "m" : "-") %>
+                </td>
             </tr>
             <% } } else { %>
             <tr>
-                <td colspan="6" class="empty-row-cell">
+                <td colspan="7" class="empty-row-cell">
                     <i class="ph ph-archive" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.3;"></i>
                     No stock-in history found for this product.
                 </td>

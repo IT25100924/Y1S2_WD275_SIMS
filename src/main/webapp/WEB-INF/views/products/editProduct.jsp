@@ -103,8 +103,29 @@
 
                 <div class="form-group hidden" id="expirationGroup">
                     <label for="expirationDate">Expiration Date</label>
-                    <input type="date" id="expirationDate" name="expirationDate" class="form-control" value="<%= expiration %>">
+                    <input type="date" id="expirationDate" name="expirationDate" class="form-control" value="<%= expiration %>" min="<%= java.time.LocalDate.now().toString() %>">
                 </div>
+
+                <script>
+                    function toggleFields() {
+                        var type = document.getElementById('type').value;
+                        var warrantyGroup = document.getElementById('warrantyGroup');
+                        var expirationGroup = document.getElementById('expirationGroup');
+
+                        if (warrantyGroup && expirationGroup) {
+                            warrantyGroup.classList.add('hidden');
+                            expirationGroup.classList.add('hidden');
+
+                            if (type === 'Electronics') {
+                                warrantyGroup.classList.remove('hidden');
+                            } else if (type === 'Food') {
+                                expirationGroup.classList.remove('hidden');
+                            }
+                        }
+                    }
+
+                    document.addEventListener("DOMContentLoaded", toggleFields);
+                </script>
 
                 <button type="submit" class="button button-primary">Update Product</button>
             </form>

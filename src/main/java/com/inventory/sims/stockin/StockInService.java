@@ -56,6 +56,14 @@ public class StockInService {
                 safeTrim(note));
 
         product.setQuantity(product.getQuantity() + quantity);
+
+        // Update product-specific traits based on the new stock-in
+        if (product instanceof FoodProduct && typeDetails.expirationDate != null && !typeDetails.expirationDate.isBlank()) {
+            ((FoodProduct) product).setExpirationDate(typeDetails.expirationDate);
+        } else if (product instanceof ElectronicsProduct && typeDetails.warrantyMonths > 0) {
+            ((ElectronicsProduct) product).setWarrantyMonths(typeDetails.warrantyMonths);
+        }
+
         productService.saveProduct(product);
         stockInFileHandler.saveStockIn(stockIn);
         return stockIn;
@@ -132,6 +140,14 @@ public class StockInService {
         StockInTypeDetails typeDetails = validateTypeDetails(selectedProduct, expirationDate, warrantyMonths, parsedReceivedDate);
 
         adjustProductQuantity(existing, selectedProduct, quantity);
+
+        if (selectedProduct instanceof FoodProduct && typeDetails.expirationDate != null && !typeDetails.expirationDate.isBlank()) {
+            ((FoodProduct) selectedProduct).setExpirationDate(typeDetails.expirationDate);
+            productService.saveProduct(selectedProduct);
+        } else if (selectedProduct instanceof ElectronicsProduct && typeDetails.warrantyMonths > 0) {
+            ((ElectronicsProduct) selectedProduct).setWarrantyMonths(typeDetails.warrantyMonths);
+            productService.saveProduct(selectedProduct);
+        }
 
         StockIn updated = new StockIn(
                 existing.getId(),

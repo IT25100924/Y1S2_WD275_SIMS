@@ -70,7 +70,7 @@
                                 } else if (product instanceof com.inventory.sims.product.FoodProduct) {
                                     typeBadgeClass = "badge-food";
                                     String exp = ((com.inventory.sims.product.FoodProduct) product).getExpirationDate();
-                                    extraDetails = (exp != null && !exp.trim().isEmpty()) ? "Initial Expiry: " + exp : "-";
+                                    extraDetails = (exp != null && !exp.trim().isEmpty()) ? "Latest Expiry: " + exp : "-";
                                 }
 
                                 boolean isLowStock = product.getQuantity() <= 5;
