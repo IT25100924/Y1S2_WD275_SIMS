@@ -106,6 +106,10 @@ public class StockOut {
         this.note = note;
     }
 
+    public double getTotalPrice() {
+        return quantity * unitPrice;
+    }
+
     public String toFileLine() {
         return String.join("|",
                 clean(id),

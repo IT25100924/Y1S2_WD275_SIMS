@@ -67,6 +67,15 @@ public class StockOutService {
                 .toList();
     }
 
+    public List<StockOut> getStockOutsByProductId(String productId) {
+        if (productId == null || productId.isBlank()) {
+            return List.of();
+        }
+        return stockOutFileHandler.readStockOuts().stream()
+                .filter(stockOut -> productId.equals(stockOut.getProductId()))
+                .toList();
+    }
+
     public StockOut getStockOutById(String id) {
         validateRequired(id, "Stockout ID");
 

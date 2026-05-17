@@ -74,6 +74,15 @@ public class StockInService {
                 .collect(Collectors.toList());
     }
 
+    public List<StockIn> getStockInsByProductId(String productId) {
+        if (productId == null || productId.isBlank()) {
+            return List.of();
+        }
+        return stockInFileHandler.readStockIns().stream()
+                .filter(stockIn -> productId.equals(stockIn.getProductId()))
+                .collect(Collectors.toList());
+    }
+
     public StockIn getStockInById(String id) {
         validateRequired(id, "Stock-in ID");
         for (StockIn stockIn : stockInFileHandler.readStockIns()) {
