@@ -32,20 +32,22 @@ public class ProductRepository {
                     String id = data[1];
                     String supplierId = data[2]; // New Field!
                     String name = data[3];
-                    double price = Double.parseDouble(data[4]);
-                    int quantity = Integer.parseInt(data[5]);
+                    double mrp = Double.parseDouble(data[4]);
+                    double stockInPrice = Double.parseDouble(data[5]);
+                    double stockOutPrice = Double.parseDouble(data[6]);
+                    int quantity = Integer.parseInt(data[7]);
 
                     Product product = null;
 
                     // Check the type and instantiate the correct subclass with supplierId
-                    if ("Electronics".equals(type) && data.length == 7) {
-                        int warrantyMonths = Integer.parseInt(data[6]);
-                        product = new ElectronicsProduct(id, name, price, quantity, supplierId, warrantyMonths);
-                    } else if ("Food".equals(type) && data.length == 7) {
-                        String expirationDate = data[6];
-                        product = new FoodProduct(id, name, price, quantity, supplierId, expirationDate);
+                    if ("Electronics".equals(type) && data.length == 9) {
+                        int warrantyMonths = Integer.parseInt(data[8]);
+                        product = new ElectronicsProduct(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId, warrantyMonths);
+                    } else if ("Food".equals(type) && data.length == 9) {
+                        String expirationDate = data[8];
+                        product = new FoodProduct(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId, expirationDate);
                     } else if ("General".equals(type)) {
-                        product = new Product(id, name, price, quantity, supplierId);
+                        product = new Product(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId);
                     }
 
                     if (product != null) {
