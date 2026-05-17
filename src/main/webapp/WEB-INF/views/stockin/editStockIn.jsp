@@ -37,7 +37,7 @@
 
                 <div class="form-group full-width">
                     <label for="productId">Product</label>
-                    <select id="productId" name="productId" class="form-control" required>
+                    <select id="productId" name="productId" class="form-control" required onchange="toggleProductFields()">
                         <option value="">Select product</option>
                         <%
                             if (products != null) {
@@ -120,6 +120,38 @@
                         <textarea id="note" name="note" class="form-control"><%= stockIn.getNote() == null ? "" : stockIn.getNote() %></textarea>
                     </div>
                 </div>
+
+                <script>
+                    function toggleProductFields() {
+                        var select = document.getElementById('productId');
+                        if (select.selectedIndex === -1) return;
+                        var option = select.options[select.selectedIndex];
+                        var productType = option.getAttribute('data-product-type');
+
+                        var expGroup = document.getElementById('expirationDateGroup');
+                        var expInput = document.getElementById('expirationDate');
+                        var warGroup = document.getElementById('warrantyMonthsGroup');
+                        var warInput = document.getElementById('warrantyMonths');
+
+                        if(expGroup && warGroup) {
+                            expGroup.classList.add('hidden');
+                            expInput.required = false;
+                            warGroup.classList.add('hidden');
+                            warInput.required = false;
+
+                            if (productType === 'Food') {
+                                expGroup.classList.remove('hidden');
+                                expInput.required = true;
+                            } else if (productType === 'Electronics') {
+                                warGroup.classList.remove('hidden');
+                                warInput.required = true;
+                            }
+                        }
+                    }
+
+                    // Run once on load to show correct fields for currently selected product
+                    document.addEventListener("DOMContentLoaded", toggleProductFields);
+                </script>
 
                 <button type="submit" class="button button-primary">Update Stock In</button>
             </form>

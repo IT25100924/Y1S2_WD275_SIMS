@@ -10,7 +10,7 @@
                 <p>Review incoming stock entries saved in the system.</p>
             </div>
             <div class="actions">
-                <a class="button button-primary" href="/stockin">Add Stock In</a>
+                <a class="button button-primary" href="/stockin/create">Add Stock In</a>
             </div>
         </header>
 
@@ -55,7 +55,7 @@
         <section aria-label="Stock in table">
             <div class="toolbar">
                 <h2>Stock In List</h2>
-                <a class="button button-secondary" href="/stockin/view">Refresh</a>
+                <a class="button button-secondary" href="/stockin">Refresh</a>
             </div>
 
             <div class="table-wrap">

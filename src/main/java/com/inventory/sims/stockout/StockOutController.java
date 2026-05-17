@@ -70,9 +70,10 @@ public class StockOutController {
             redirectAttributes.addFlashAttribute("message", "Stockout record created successfully.");
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            return "redirect:/stockout/create";
         }
 
-        return "redirect:/stockout/create";
+        return "redirect:/stockout";
     }
 
     @GetMapping("/stockout/update/{id}")

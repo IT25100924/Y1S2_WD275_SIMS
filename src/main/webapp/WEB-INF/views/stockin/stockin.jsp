@@ -10,7 +10,7 @@
                 <p>Record incoming stock and add it to product quantity.</p>
             </div>
             <div class="actions">
-                <a class="button button-secondary" href="/stockin/view">View Stock In</a>
+                <a class="button button-secondary" href="/stockin">View Stock In</a>
                 <a class="button button-secondary" href="/products">View Products</a>
             </div>
         </header>
@@ -34,10 +34,10 @@
 
         <div class="content-grid">
             <section class="form-card" aria-label="Stock in form">
-                <form action="/stockin" method="post">
+                <form action="/stockin/create" method="post">
                     <div class="form-group full-width">
                         <label for="productId">Product</label>
-                        <select id="productId" name="productId" class="form-control" required>
+                        <select id="productId" name="productId" class="form-control" required onchange="toggleProductFields()">
                             <option value="">Select product</option>
                             <%
                                 if (products != null) {
@@ -118,6 +118,32 @@
                             <textarea id="note" name="note" class="form-control" placeholder="Optional stock-in note"></textarea>
                         </div>
                     </div>
+
+                    <script>
+                        function toggleProductFields() {
+                            var select = document.getElementById('productId');
+                            var option = select.options[select.selectedIndex];
+                            var productType = option.getAttribute('data-product-type');
+
+                            var expGroup = document.getElementById('expirationDateGroup');
+                            var expInput = document.getElementById('expirationDate');
+                            var warGroup = document.getElementById('warrantyMonthsGroup');
+                            var warInput = document.getElementById('warrantyMonths');
+
+                            expGroup.classList.add('hidden');
+                            expInput.required = false;
+                            warGroup.classList.add('hidden');
+                            warInput.required = false;
+
+                            if (productType === 'Food') {
+                                expGroup.classList.remove('hidden');
+                                expInput.required = true;
+                            } else if (productType === 'Electronics') {
+                                warGroup.classList.remove('hidden');
+                                warInput.required = true;
+                            }
+                        }
+                    </script>
 
                     <button type="submit" class="button button-primary">Save Stock In</button>
                 </form>

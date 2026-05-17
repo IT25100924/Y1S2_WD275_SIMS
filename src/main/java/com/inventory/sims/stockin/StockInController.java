@@ -27,6 +27,12 @@ public class StockInController {
     }
 
     @GetMapping("/stockin")
+    public String viewStockInRecords(Model model) {
+        model.addAttribute("stockIns", stockInService.getAllStockIns());
+        return "stockin/viewStockIn";
+    }
+
+    @GetMapping("/stockin/create")
     public String showStockInPage(Model model) {
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
@@ -34,18 +40,12 @@ public class StockInController {
         return "stockin/stockin";
     }
 
-    @GetMapping("/stockin/view")
-    public String viewStockInRecords(Model model) {
-        model.addAttribute("stockIns", stockInService.getAllStockIns());
-        return "stockin/viewStockIn";
-    }
-
     @GetMapping("/stockin/details/{id}")
     public String showStockInDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         StockIn stockIn = stockInService.getStockInById(id);
         if (stockIn == null) {
             redirectAttributes.addFlashAttribute("error", "Stock-in record was not found.");
-            return "redirect:/stockin/view";
+            return "redirect:/stockin";
         }
 
         model.addAttribute("stockIn", stockIn);
@@ -57,7 +57,7 @@ public class StockInController {
         StockIn stockIn = stockInService.getStockInById(id);
         if (stockIn == null) {
             redirectAttributes.addFlashAttribute("error", "Stock-in record was not found.");
-            return "redirect:/stockin/view";
+            return "redirect:/stockin";
         }
 
         model.addAttribute("stockIn", stockIn);
@@ -67,7 +67,7 @@ public class StockInController {
         return "stockin/editStockIn";
     }
 
-    @PostMapping("/stockin")
+    @PostMapping("/stockin/create")
     public String addStockIn(@RequestParam String productId,
                              @RequestParam String supplierId,
                              @RequestParam int quantity,
@@ -85,6 +85,7 @@ public class StockInController {
                     "Stock in " + stockIn.getId() + " saved and product quantity updated.");
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/stockin/create";
         }
         return "redirect:/stockin";
     }
@@ -106,7 +107,7 @@ public class StockInController {
                     receivedDate, expirationDate, warrantyMonths, note);
             redirectAttributes.addFlashAttribute("success",
                     "Stock in " + stockIn.getId() + " updated and product quantity adjusted.");
-            return "redirect:/stockin/view";
+            return "redirect:/stockin";
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
             return "redirect:/stockin/edit/" + id;
@@ -122,7 +123,7 @@ public class StockInController {
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
         }
-        return "redirect:/stockin/view";
+        return "redirect:/stockin";
     }
 
     private String getSupplierName(String supplierId) {
