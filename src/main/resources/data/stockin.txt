@@ -6,3 +6,4 @@ SI005|P002|Laptop|Orange Cooperation|16|100.0|2026-05-16|
 SI006|P002|Laptop|Jat holdings|14|200.0|2026-05-05|
 SI007|P002|Laptop|Orange Cooperation|5|40.0|2026-05-16|
 SI008|P004|chocolates|Orange Cooperation|25|1500.0|2026-05-16|Food|2026-10-24|0|
+SI009|P001|Microfiber Cloth|XYZ Company|20|200.0|2026-05-17|General||0|

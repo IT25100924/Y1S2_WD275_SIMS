@@ -52,7 +52,9 @@ public class StockOutService {
     }
 
     public List<StockOut> getAllStockOuts() {
-        return stockOutFileHandler.readStockOuts();
+        List<StockOut> stockOuts = stockOutFileHandler.readStockOuts();
+        java.util.Collections.reverse(stockOuts);
+        return stockOuts;
     }
 
     public List<StockOut> getStockOutsByCustomer(Customer customer) {

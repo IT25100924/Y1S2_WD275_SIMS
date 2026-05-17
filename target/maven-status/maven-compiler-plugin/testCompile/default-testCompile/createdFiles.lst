@@ -1,1 +1,3 @@
+com\inventory\sims\dashboard\DashboardControllerTest.class
 com\inventory\sims\SimsApplicationTests.class
+com\inventory\sims\config\AuthInterceptorTest.class

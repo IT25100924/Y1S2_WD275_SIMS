@@ -104,7 +104,7 @@ public class UserService {
     public List<User> getUsersForView() {
         return userFileHandler.readUsers().stream()
                 .sorted(Comparator
-                        .comparing(User::getId, Comparator.nullsLast(String::compareToIgnoreCase))
+                        .comparing(User::getId, Comparator.nullsFirst(String::compareToIgnoreCase).reversed())
                         .thenComparing(User::getEmail, Comparator.nullsLast(String::compareToIgnoreCase)))
                 .toList();
     }

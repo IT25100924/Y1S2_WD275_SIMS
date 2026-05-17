@@ -111,12 +111,10 @@
         margin-bottom: 32px;
     }
     .metric-card {
-        background-color: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
+        border-radius: 20px;
         padding: 24px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: none;
     }
     .metric-card:hover {
         transform: translateY(-2px);
@@ -126,45 +124,54 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 16px;
+        margin-bottom: 24px;
     }
     .metric-icon {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 24px;
     }
-    .metric-icon.blue { background-color: var(--info-bg); color: var(--info); }
-    .metric-icon.red { background-color: var(--danger-bg); color: var(--danger); }
-    .metric-icon.green { background-color: var(--success-bg); color: var(--success); }
-    .metric-icon.orange { background-color: var(--warning-bg); color: var(--warning); }
     
+    .metric-card.card-purple { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); }
+    .metric-card.card-purple .metric-icon { background-color: #a5b4fc; color: #4338ca; }
+    .metric-card.card-purple .metric-badge { background-color: #bfdbfe; color: #1d4ed8; }
+
+    .metric-card.card-red { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); }
+    .metric-card.card-red .metric-icon { background-color: #fca5a5; color: #b91c1c; }
+    .metric-card.card-red .metric-badge { background-color: #fca5a5; color: #b91c1c; }
+
+    .metric-card.card-blue { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); }
+    .metric-card.card-blue .metric-icon { background-color: #7dd3fc; color: #0369a1; }
+    .metric-card.card-blue .metric-badge { background-color: transparent; color: #334155; padding: 0; }
+
+    .metric-card.card-orange { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%); }
+    .metric-card.card-orange .metric-icon { background-color: #fdba74; color: #c2410c; }
+    .metric-card.card-orange .metric-badge { background-color: transparent; color: #334155; padding: 0; }
+
     .metric-badge {
         padding: 4px 10px;
         border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         display: flex;
         align-items: center;
         gap: 4px;
     }
-    .metric-badge.positive { background-color: var(--success-bg); color: var(--success); }
-    .metric-badge.negative { background-color: var(--danger-bg); color: var(--danger); }
-    .metric-badge.neutral { background-color: var(--bg-main); color: var(--text-muted); }
     
     .metric-card h3 {
-        font-size: 14px;
-        color: var(--text-muted);
-        font-weight: 500;
+        font-size: 15px;
+        color: #475569;
+        font-weight: 600;
         margin-bottom: 8px;
     }
     .metric-card .value {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--text-main);
+        font-size: 36px;
+        font-weight: 800;
+        color: #0f172a;
     }
 
     /* Bottom Grid - Two equal cards */
@@ -200,6 +207,52 @@
         flex-direction: column;
         gap: 12px;
     }
+    .stockin-card {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border: none;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 30px rgba(16, 185, 129, 0.05);
+    }
+    .stockin-card .card-header h2 { color: #065f46; }
+    .stockin-card .view-all { color: #059669; }
+    .stockin-card .activity-item {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+    }
+    .stockin-card .activity-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);
+    }
+    .stockin-card .activity-icon.green {
+        background: linear-gradient(135deg, #a7f3d0 0%, #34d399 100%);
+        color: #064e3b;
+    }
+
+    .stockout-card {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        border: none;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 30px rgba(245, 158, 11, 0.05);
+    }
+    .stockout-card .card-header h2 { color: #92400e; }
+    .stockout-card .view-all { color: #d97706; }
+    .stockout-card .activity-item {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+    }
+    .stockout-card .activity-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 16px rgba(245, 158, 11, 0.1);
+    }
+    .stockout-card .activity-icon.orange {
+        background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+        color: #78350f;
+    }
+
     .activity-item {
         display: flex;
         gap: 14px;
@@ -208,21 +261,21 @@
         border-radius: 12px;
         background: var(--bg-main);
         border: 1px solid var(--border-color);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
     .activity-item:hover {
         transform: translateX(4px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
     }
     .activity-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
+        font-size: 22px;
         flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     .activity-icon.green { background-color: var(--success-bg); color: var(--success); }
     .activity-icon.orange { background-color: var(--warning-bg); color: var(--warning); }
@@ -261,9 +314,11 @@
                 <p>Here's what's happening with your inventory today.</p>
             </div>
             <div class="welcome-actions">
+                <% if (dashboardUser != null && dashboardUser.getRole() != null && "ADMIN".equals(dashboardUser.getRole().name())) { %>
                 <a href="/users/register" class="btn-dashboard-action btn-purple">
                     <i class="ph ph-user-plus"></i> Add User
                 </a>
+                <% } %>
                 <a href="/suppliers/register" class="btn-dashboard-action btn-cyan">
                     <i class="ph ph-truck"></i> Add Supplier
                 </a>
@@ -278,37 +333,37 @@
 
         <!-- Metrics Grid -->
         <div class="metrics-grid">
-            <div class="metric-card">
+            <div class="metric-card card-purple">
                 <div class="metric-header">
-                    <div class="metric-icon blue"><i class="ph ph-package"></i></div>
-                    <span class="metric-badge neutral">Live</span>
+                    <div class="metric-icon"><i class="ph ph-package"></i></div>
+                    <span class="metric-badge">+12%</span>
                 </div>
                 <h3>Total Products</h3>
                 <div class="value">${totalProducts}</div>
             </div>
             
-            <div class="metric-card">
+            <div class="metric-card card-red">
                 <div class="metric-header">
-                    <div class="metric-icon red"><i class="ph ph-warning-circle"></i></div>
-                    <span class="metric-badge negative">Threshold < 5</span>
+                    <div class="metric-icon"><i class="ph ph-warning"></i></div>
+                    <span class="metric-badge"><i class="ph ph-arrow-up"></i> 3</span>
                 </div>
                 <h3>Low Stock Alerts</h3>
                 <div class="value">${lowStockCount}</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card card-blue">
                 <div class="metric-header">
-                    <div class="metric-icon green"><i class="ph ph-arrow-circle-down"></i></div>
-                    <span class="metric-badge neutral">This Month</span>
+                    <div class="metric-icon"><i class="ph ph-arrow-down"></i></div>
+                    <span class="metric-badge">This Month</span>
                 </div>
                 <h3>Monthly Stock-in</h3>
                 <div class="value">${monthlyStockIn}</div>
             </div>
 
-            <div class="metric-card">
+            <div class="metric-card card-orange">
                 <div class="metric-header">
-                    <div class="metric-icon orange"><i class="ph ph-arrow-circle-up"></i></div>
-                    <span class="metric-badge neutral">This Month</span>
+                    <div class="metric-icon"><i class="ph ph-arrow-up"></i></div>
+                    <span class="metric-badge">This Month</span>
                 </div>
                 <h3>Monthly Stock-out</h3>
                 <div class="value">${monthlyStockOut}</div>
@@ -319,9 +374,9 @@
         <div class="bottom-grid">
 
             <!-- Recent Stock-in Card -->
-            <div class="card">
+            <div class="card stockin-card">
                 <div class="card-header">
-                    <h2><i class="ph ph-arrow-circle-down" style="color:var(--success);margin-right:8px;"></i>Recent Stock-in</h2>
+                    <h2><i class="ph ph-arrow-circle-down" style="margin-right:8px;"></i>Recent Stock-in</h2>
                     <a href="/stockin" class="view-all">View All</a>
                 </div>
                 <div class="activity-list">
@@ -352,9 +407,9 @@
             </div>
 
             <!-- Recent Stock-out Card -->
-            <div class="card">
+            <div class="card stockout-card">
                 <div class="card-header">
-                    <h2><i class="ph ph-arrow-circle-up" style="color:var(--warning);margin-right:8px;"></i>Recent Stock-out</h2>
+                    <h2><i class="ph ph-arrow-circle-up" style="margin-right:8px;"></i>Recent Stock-out</h2>
                     <a href="/stockout" class="view-all">View All</a>
                 </div>
                 <div class="activity-list">

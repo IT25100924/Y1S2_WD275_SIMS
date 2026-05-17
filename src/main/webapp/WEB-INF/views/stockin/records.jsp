@@ -10,7 +10,7 @@
                 <p>Review incoming stock entries saved in the system.</p>
             </div>
             <div class="actions">
-                <a class="button button-primary" href="/stockin">Add Stock In</a>
+                <a class="button button-primary" href="/stockin">Create Stockin</a>
             </div>
         </header>
 
@@ -80,8 +80,7 @@
                         <td><span class="badge"><%= stockIn.getId() %></span></td>
                         <td><%= stockIn.getReceivedDate() %></td>
                         <td>
-                            <strong><%= stockIn.getProductName() %></strong><br>
-                            <span class="muted"><%= stockIn.getProductId() %></span>
+                            <strong><%= stockIn.getProductName() %></strong>
                         </td>
                         <td><%= stockIn.getSupplierName() %></td>
                         <td><%= stockIn.getQuantity() %></td>

@@ -29,7 +29,9 @@ public class CustomerService {
     }
 
     public List<Customer> getAllCustomers() {
-        return customerFileHandler.readCustomers();
+        List<Customer> customers = customerFileHandler.readCustomers();
+        java.util.Collections.reverse(customers);
+        return customers;
     }
 
     public Customer getCustomerById(String id) {

@@ -1,4 +1,4 @@
-General!P001!S001!Microfiber Cloth!150.0!110
+General!P001!S001!Microfiber Cloth!150.0!130
 Electronics!P002!S001!Laptop!240000.0!47!24
 Food!P003!S001!Biscuits!100.0!50!2027-05-16
-Food!P004!S003!chocolates!1500.0!25!2026-05-16
+Electronics!P004!S003!Bulb!599.98!25!0

@@ -18,9 +18,10 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    // Get all products
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        java.util.Collections.reverse(products);
+        return products;
     }
 
     // Get a single product by ID

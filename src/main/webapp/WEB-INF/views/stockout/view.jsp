@@ -47,7 +47,7 @@
                     <tr>
                         <td><strong><%= stockOut.getId() %></strong></td>
                         <td><%= stockOut.getProductName() %></td>
-                        <td><span class="badge"><%= stockOut.getQuantity() %> out</span></td>
+                        <td><%= stockOut.getQuantity() %></td>
                         <td><%= stockOut.getStockOutDate() == null ? "-" : stockOut.getStockOutDate() %></td>
                         <td><%= stockOut.getReason() %></td>
                         <td>

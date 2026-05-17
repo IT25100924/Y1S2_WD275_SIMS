@@ -720,16 +720,18 @@
             <a href="/dashboard" class="nav-link <%= activeMenu.equals("dashboard") ? "active" : "" %>">
                 <i class="ph ph-squares-four"></i> Dashboard
             </a>
+            <% if (loggedUser != null && loggedUser.getRole() != null && "ADMIN".equals(loggedUser.getRole().name())) { %>
             <a href="/users" class="nav-link <%= activeMenu.equals("users") ? "active" : "" %>">
                 <i class="ph ph-users"></i> Users
             </a>
+            <% } %>
             <a href="/products" class="nav-link <%= activeMenu.equals("products") ? "active" : "" %>">
                 <i class="ph ph-package"></i> Products
             </a>
             <a href="/suppliers" class="nav-link <%= activeMenu.equals("suppliers") ? "active" : "" %>">
                 <i class="ph ph-truck"></i> Suppliers
             </a>
-            <a href="/stockin" class="nav-link <%= activeMenu.equals("stockin") ? "active" : "" %>">
+            <a href="/stockin/view" class="nav-link <%= activeMenu.equals("stockin") ? "active" : "" %>">
                 <i class="ph ph-arrow-square-in"></i> Stock-in
             </a>
             <a href="/stockout" class="nav-link <%= activeMenu.equals("stockout") ? "active" : "" %>">

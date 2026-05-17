@@ -2,6 +2,7 @@ com\inventory\sims\dashboard\DashboardController.class
 com\inventory\sims\stockout\StockOutService.class
 com\inventory\sims\config\AppConfig.class
 com\inventory\sims\stockout\StockOutController.class
+com\inventory\sims\config\AuthInterceptor.class
 com\inventory\sims\product\ProductController.class
 com\inventory\sims\user\AdminUser.class
 com\inventory\sims\product\ElectronicsProduct.class

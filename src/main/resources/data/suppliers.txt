@@ -3,3 +3,4 @@ S002|Jat holdings|LOCAL|Saman Samarasinghe|0771239874|jatholdings@yahoo.com|Colo
 S003|Orange Cooperation|LOCAL|Vimal Perera|0757364785|helloorange@gmail.com|Galle|7 days|78 B3, Galle||ACTIVE
 S004|MD Distributers|LOCAL|Kavishka Perera|0771239998|mdholdings@yahoo.com|Gampaha|3 to 6 days|55 A/2, Gampaha||ACTIVE
 S005|TLC Holdings|LOCAL|Namal Athukorala|0757364700|hellotlc@gmail.com|Kaluthara|7 days|78 C/4 Kaluthara||ACTIVE
+S006|Cascet Holdings|LOCAL|Nimal Perera|0712345678|cascet@yahoo.com|Kegalle|2-5 days|las vegas, No.32/100||ACTIVE

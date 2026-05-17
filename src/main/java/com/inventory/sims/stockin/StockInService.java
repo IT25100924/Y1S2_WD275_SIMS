@@ -62,7 +62,9 @@ public class StockInService {
     }
 
     public List<StockIn> getAllStockIns() {
-        return stockInFileHandler.readStockIns();
+        List<StockIn> stockIns = stockInFileHandler.readStockIns();
+        java.util.Collections.reverse(stockIns);
+        return stockIns;
     }
 
     public List<StockIn> getStockInsBySupplierName(String supplierName) {

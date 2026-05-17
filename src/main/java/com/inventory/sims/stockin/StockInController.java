@@ -31,13 +31,13 @@ public class StockInController {
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("today", LocalDate.now().toString());
-        return "stockin/stockin";
+        return "stockin/add";
     }
 
     @GetMapping("/stockin/view")
     public String viewStockInRecords(Model model) {
         model.addAttribute("stockIns", stockInService.getAllStockIns());
-        return "stockin/viewStockIn";
+        return "stockin/records";
     }
 
     @GetMapping("/stockin/details/{id}")
@@ -64,7 +64,7 @@ public class StockInController {
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("today", LocalDate.now().toString());
-        return "stockin/editStockIn";
+        return "stockin/edit";
     }
 
     @PostMapping("/stockin")
@@ -83,10 +83,11 @@ public class StockInController {
                     receivedDate, expirationDate, warrantyMonths, note);
             redirectAttributes.addFlashAttribute("success",
                     "Stock in " + stockIn.getId() + " saved and product quantity updated.");
+            return "redirect:/stockin/view";
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/stockin";
         }
-        return "redirect:/stockin";
     }
 
     @PostMapping("/stockin/edit/{id}")

@@ -30,14 +30,14 @@
 
             <form action="/stockout/update/<%= stockOut.getId() %>" method="post">
                 <div class="form-grid">
-                    <label>
-                        Stockout ID
-                        <input type="text" value="<%= stockOut.getId() %>" readonly>
-                    </label>
+                    <div class="form-group">
+                        <label>Stockout ID</label>
+                        <input type="text" class="form-control" value="<%= stockOut.getId() %>" readonly>
+                    </div>
 
-                    <label class="full-width">
-                        Product
-                        <select id="productId" name="productId" required>
+                    <div class="form-group full-width">
+                        <label>Product</label>
+                        <select id="productId" name="productId" class="form-control" required>
                             <option value="">Select product</option>
                             <%
                                 if (products != null) {
@@ -69,36 +69,36 @@
                                 }
                             %>
                         </select>
-                    </label>
+                    </div>
 
-                    <label id="expirationDateGroup" class="hidden">
-                        Expiration date
-                        <input type="text" id="expirationDateDisplay" readonly>
-                    </label>
+                    <div class="form-group hidden" id="expirationDateGroup">
+                        <label>Expiration date</label>
+                        <input type="text" id="expirationDateDisplay" class="form-control" readonly>
+                    </div>
 
-                    <label id="warrantyMonthsGroup" class="hidden">
-                        Warranty
-                        <input type="text" id="warrantyMonthsDisplay" readonly>
-                    </label>
+                    <div class="form-group hidden" id="warrantyMonthsGroup">
+                        <label>Warranty</label>
+                        <input type="text" id="warrantyMonthsDisplay" class="form-control" readonly>
+                    </div>
 
-                    <label>
-                        Quantity
-                        <input type="number" id="quantity" name="quantity" min="1" step="1" value="<%= stockOut.getQuantity() %>" required>
-                    </label>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="quantity" name="quantity" class="form-control" min="1" step="1" value="<%= stockOut.getQuantity() %>" required>
+                    </div>
 
-                    <label>
-                        Unit price (LKR)
-                        <input type="number" name="unitPrice" min="0" step="0.01" value="<%= stockOut.getUnitPrice() %>" required>
-                    </label>
+                    <div class="form-group">
+                        <label>Unit price (LKR)</label>
+                        <input type="number" name="unitPrice" class="form-control" min="0" step="0.01" value="<%= stockOut.getUnitPrice() %>" required>
+                    </div>
 
-                    <label>
-                        Stockout date
-                        <input type="date" name="stockOutDate" value="<%= stockOutDate %>" min="<%= today == null ? "" : today %>">
-                    </label>
+                    <div class="form-group">
+                        <label>Stockout date</label>
+                        <input type="date" name="stockOutDate" class="form-control" value="<%= stockOutDate %>" min="<%= today == null ? "" : today %>">
+                    </div>
 
-                    <label>
-                        Issued to
-                        <select name="issuedTo" required>
+                    <div class="form-group">
+                        <label>Issued to</label>
+                        <select name="issuedTo" class="form-control" required>
                             <option value="">Select customer</option>
                             <%
                                 if (customers != null) {
@@ -114,11 +114,11 @@
                                 }
                             %>
                         </select>
-                    </label>
+                    </div>
 
-                    <label>
-                        Reason
-                        <select name="reason" required>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <select name="reason" class="form-control" required>
                             <option value="">Select reason</option>
                             <option value="Sale" <%= "Sale".equals(stockOut.getReason()) ? "selected" : "" %>>Sale</option>
                             <option value="Internal use" <%= "Internal use".equals(stockOut.getReason()) ? "selected" : "" %>>Internal use</option>
@@ -126,16 +126,16 @@
                             <option value="Returned to supplier" <%= "Returned to supplier".equals(stockOut.getReason()) ? "selected" : "" %>>Returned to supplier</option>
                             <option value="Other" <%= "Other".equals(stockOut.getReason()) ? "selected" : "" %>>Other</option>
                         </select>
-                    </label>
+                    </div>
 
-                    <label class="full-width">
-                        Note
-                        <textarea name="note"><%= note %></textarea>
-                    </label>
+                    <div class="form-group full-width">
+                        <label>Note</label>
+                        <textarea name="note" class="form-control"><%= note %></textarea>
+                    </div>
                 </div>
 
-                <div class="actions">
-                    <button type="submit">Update stockout</button>
+                <div class="actions" style="margin-top: 24px; display: flex; gap: 12px;">
+                    <button type="submit" class="button button-primary">Update stockout</button>
                     <a class="button button-secondary" href="/stockout">Cancel</a>
                 </div>
             </form>
