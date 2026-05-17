@@ -88,7 +88,7 @@
 
                                         /* Table Section */
                                         section[aria-label="Users table"] {
-                                            margin-top: 16px;
+                                            margin-top: 0;
                                         }
 
                                         .search {
