@@ -130,4 +130,32 @@ public class ProductService {
         return String.format("P%03d", max + 1);
     }
 
+    // === Cross-Module Synchronization Hooks ===
+    public double getDefaultStockInPrice(String productId) {
+        Product p = getProductById(productId);
+        return p != null ? p.getDefaultStockInPrice() : 0.0;
+    }
+    public double getDefaultStockOutPrice(String productId) {
+        Product p = getProductById(productId);
+        return p != null ? p.getDefaultStockOutPrice() : 0.0;
+    }
+    public double getMRP(String productId) {
+        Product p = getProductById(productId);
+        return p != null ? p.getMrp() : 0.0;
+    }
+    public void updateDefaultStockInPrice(String productId, double newPrice) {
+        Product p = getProductById(productId);
+        if (p != null) {
+            p.setDefaultStockInPrice(newPrice);
+            saveProduct(p); // Use saveProduct to ensure data updates seamlessly
+        }
+    }
+    public void updateDefaultStockOutPrice(String productId, double newPrice) {
+        Product p = getProductById(productId);
+        if (p != null) {
+            p.setDefaultStockOutPrice(newPrice);
+            saveProduct(p);
+        }
+    }
+
 }

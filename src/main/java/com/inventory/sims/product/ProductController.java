@@ -57,24 +57,47 @@ public class ProductController {
             @RequestParam String type,
             @RequestParam String id,
             @RequestParam String name,
-            @RequestParam(required = false, defaultValue = "0") double price,
+            @RequestParam String supplierId,
+            @RequestParam(required = false) String configurePrices,
+            @RequestParam(required = false, defaultValue = "0") double mrp,
+            @RequestParam(required = false, defaultValue = "0") double defaultStockInPrice,
+            @RequestParam(required = false, defaultValue = "0") double defaultStockOutPrice,
+            @RequestParam(required = false) String initializeStock,
             @RequestParam(required = false, defaultValue = "0") int quantity,
-            @RequestParam(required = true) String supplierId,
             @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
             @RequestParam(required = false) String expirationDate,
-            Model model) { // Added Model to pass errors back
-        Product product;
+            Model model) {
 
+        // Override prices to 0 if the configurePrices checkbox wasn't checked
+        if (configurePrices == null) {
+            mrp = 0;
+            defaultStockInPrice = 0;
+            defaultStockOutPrice = 0;
+        }
+
+        // Set initial quantity to 0 if initialization checkbox wasn't checked
+        if (initializeStock == null) {
+            quantity = 0;
+        }
+
+        Product product;
         if ("Electronics".equals(type)) {
-            product = new ElectronicsProduct(id, name, price, quantity, supplierId, warrantyMonths);
+            product = new ElectronicsProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, quantity, supplierId, warrantyMonths);
         } else if ("Food".equals(type)) {
-            product = new FoodProduct(id, name, price, quantity, supplierId, expirationDate);
+            product = new FoodProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, quantity, supplierId, expirationDate);
         } else {
-            product = new Product(id, name, price, quantity, supplierId);
+            product = new Product(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, quantity, supplierId);
         }
 
         try {
             productService.saveProduct(product);
+
+            // --- STUB: Cross-Module Sync for Initial Stock-In ---
+            if (initializeStock != null && quantity > 0) {
+                // TODO: Call Stock-In Service API here to automate transaction
+                // Example: stockInService.createInitialTransaction(id, quantity, defaultStockInPrice, warrantyMonths, expirationDate);
+            }
+
             return "redirect:/products";
         } catch (IllegalArgumentException e) {
             // Validation failed! Pass data back to the UI.
@@ -104,20 +127,25 @@ public class ProductController {
             @PathVariable String id,
             @RequestParam String type,
             @RequestParam String name,
-            @RequestParam(required = false, defaultValue = "0") double price,
-            @RequestParam(required = false, defaultValue = "0") int quantity,
+            @RequestParam(required = false, defaultValue = "0") double mrp,
+            @RequestParam(required = false, defaultValue = "0") double defaultStockInPrice,
+            @RequestParam(required = false, defaultValue = "0") double defaultStockOutPrice,
             @RequestParam(required = true) String supplierId,
             @RequestParam(required = false, defaultValue = "0") int warrantyMonths,
             @RequestParam(required = false) String expirationDate,
             Model model) {
 
+        // Fetch existing product to preserve its current stock quantity!
+        Product existingProduct = productService.getProductById(id);
+        int currentQuantity = (existingProduct != null) ? existingProduct.getQuantity() : 0;
+
         Product product;
         if ("Electronics".equals(type)) {
-            product = new ElectronicsProduct(id, name, price, quantity, supplierId, warrantyMonths);
+            product = new ElectronicsProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, currentQuantity, supplierId, warrantyMonths);
         } else if ("Food".equals(type)) {
-            product = new FoodProduct(id, name, price, quantity, supplierId, expirationDate);
+            product = new FoodProduct(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, currentQuantity, supplierId, expirationDate);
         } else {
-            product = new Product(id, name, price, quantity, supplierId);
+            product = new Product(id, name, mrp, defaultStockInPrice, defaultStockOutPrice, currentQuantity, supplierId);
         }
 
         try {
