@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | InventoryPro</title>
+    <title>Register | SIMS</title>
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -252,7 +252,7 @@
     <main class="auth-shell">
         <section class="info-panel" aria-label="Registration information">
             <div>
-                <div class="brand"><i class="ph ph-squares-four"></i> InventoryPro</div>
+                <div class="brand"><i class="ph ph-squares-four"></i> SIMS</div>
                 <h1>Create a <span>system user</span></h1>
                 <p>Add a staff or admin account for the Stock Inventory Management System.</p>
                 <div class="role-note">Admin users can manage users and system records. Staff users can work with day-to-day inventory tasks.</div>
