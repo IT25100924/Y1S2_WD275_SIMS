@@ -21,7 +21,10 @@ public class UserController {
     }
 
     @GetMapping("/users/login")
-    public String showLoginPage() {
+    public String showLoginPage(HttpServletRequest request) {
+        if (request.getSession(false) != null && request.getSession(false).getAttribute("loggedUser") != null) {
+            return "redirect:/dashboard";
+        }
         return "users/login";
     }
 
