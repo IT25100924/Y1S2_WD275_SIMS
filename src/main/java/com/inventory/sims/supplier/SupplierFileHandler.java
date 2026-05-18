@@ -12,8 +12,10 @@ import java.util.List;
 
 @Component
 public class SupplierFileHandler {
+    // Supplier data is stored as pipe-separated text lines.
     private static final Path SUPPLIERS_FILE = Path.of("src/main/resources/data/suppliers.txt");
 
+    // Reads all valid supplier rows from the file.
     public List<Supplier> readSuppliers() {
         ensureFile();
 
@@ -34,6 +36,7 @@ public class SupplierFileHandler {
         return suppliers;
     }
 
+    // Appends one new supplier row to the file.
     public void saveSupplier(Supplier supplier) {
         ensureFile();
 
@@ -49,6 +52,7 @@ public class SupplierFileHandler {
         }
     }
 
+    // Rewrites the whole supplier file after update or delete.
     public void saveAllSuppliers(List<Supplier> suppliers) {
         ensureFile();
 
@@ -69,6 +73,7 @@ public class SupplierFileHandler {
         }
     }
 
+    // Creates the data folder and file when they do not exist yet.
     private void ensureFile() {
         try {
             Path parent = SUPPLIERS_FILE.getParent();
