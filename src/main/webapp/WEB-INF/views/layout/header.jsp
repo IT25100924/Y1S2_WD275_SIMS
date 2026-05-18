@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%
     String pageTitle = request.getParameter("pageTitle");
-    if (pageTitle == null || pageTitle.isEmpty()) pageTitle = "InventoryPro";
+    if (pageTitle == null || pageTitle.isEmpty()) pageTitle = "SIMS";
     
     String activeMenu = request.getParameter("activeMenu");
     if (activeMenu == null) activeMenu = "";
@@ -13,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= pageTitle %> | InventoryPro</title>
+    <title><%= pageTitle %> | SIMS</title>
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

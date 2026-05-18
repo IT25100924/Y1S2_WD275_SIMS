@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | InventoryPro</title>
+    <title>Login | SIMS</title>
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -266,7 +266,7 @@
     <main class="auth-shell">
         <section class="auth-panel" aria-label="System information">
             <div>
-                <div class="brand"><i class="ph ph-squares-four"></i> InventoryPro</div>
+                <div class="brand"><i class="ph ph-squares-four"></i> SIMS</div>
                 <h1>Inventory access for <span>your team</span></h1>
                 <p>Sign in to manage products, suppliers, stock movements, alerts, and user accounts from one vibrant system.</p>
             </div>
