@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,7 @@ public class StockInService {
     }
 
     public List<StockIn> getAllStockIns() {
-        return stockInFileHandler.readStockIns();
+        return sortedNewestFirst(stockInFileHandler.readStockIns());
     }
 
     public List<StockIn> getStockInsBySupplierName(String supplierName) {
@@ -79,6 +80,7 @@ public class StockInService {
         return stockInFileHandler.readStockIns().stream()
                 .filter(stockIn -> stockIn.getSupplierName() != null
                         && stockIn.getSupplierName().trim().equalsIgnoreCase(normalizedSupplierName))
+                .sorted(newestFirstComparator())
                 .collect(Collectors.toList());
     }
 
@@ -88,6 +90,7 @@ public class StockInService {
         }
         return stockInFileHandler.readStockIns().stream()
                 .filter(stockIn -> productId.equals(stockIn.getProductId()))
+                .sorted(newestFirstComparator())
                 .collect(Collectors.toList());
     }
 
@@ -241,6 +244,18 @@ public class StockInService {
             }
         }
         return String.format("SI%03d", max + 1);
+    }
+
+    private List<StockIn> sortedNewestFirst(List<StockIn> stockIns) {
+        return stockIns.stream()
+                .sorted(newestFirstComparator())
+                .toList();
+    }
+
+    private Comparator<StockIn> newestFirstComparator() {
+        return Comparator.comparing(
+                StockIn::getId,
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed()));
     }
 
     private LocalDate validateDate(String receivedDate) {

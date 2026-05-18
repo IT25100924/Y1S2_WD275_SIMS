@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import java.util.List;
@@ -20,7 +21,11 @@ public class ProductService {
 
     // Get all products
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productRepository.findAll().stream()
+                .sorted(Comparator.comparing(
+                        Product::getId,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed())))
+                .toList();
     }
 
     // Get a single product by ID

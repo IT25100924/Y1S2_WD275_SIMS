@@ -2,6 +2,7 @@ package com.inventory.sims.customer;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +30,11 @@ public class CustomerService {
     }
 
     public List<Customer> getAllCustomers() {
-        return customerFileHandler.readCustomers();
+        return customerFileHandler.readCustomers().stream()
+                .sorted(Comparator.comparing(
+                        Customer::getId,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed())))
+                .toList();
     }
 
     public Customer getCustomerById(String id) {

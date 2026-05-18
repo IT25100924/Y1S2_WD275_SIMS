@@ -108,10 +108,10 @@ public class UserService {
     }
 
     public List<User> getUsersForView() {
-        // Sort users by ID, then email, so the table has a predictable order.
+        // Newer generated IDs should appear first in the users table.
         return userFileHandler.readUsers().stream()
                 .sorted(Comparator
-                        .comparing(User::getId, Comparator.nullsLast(String::compareToIgnoreCase))
+                        .comparing(User::getId, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed()))
                         .thenComparing(User::getEmail, Comparator.nullsLast(String::compareToIgnoreCase)))
                 .toList();
     }

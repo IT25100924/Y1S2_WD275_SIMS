@@ -61,7 +61,11 @@ public class SupplierService {
     }
 
     public List<Supplier> getAllSuppliers() {
-        return supplierFileHandler.readSuppliers();
+        return supplierFileHandler.readSuppliers().stream()
+                .sorted(Comparator.comparing(
+                        Supplier::getId,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed())))
+                .toList();
     }
 
     public List<Supplier> searchSuppliers(String keyword) {
@@ -69,7 +73,9 @@ public class SupplierService {
 
         return supplierFileHandler.readSuppliers().stream()
                 .filter(supplier -> normalizedKeyword.isEmpty() || containsSupplierKeyword(supplier, normalizedKeyword))
-                .sorted(Comparator.comparing(Supplier::getCompanyName, String.CASE_INSENSITIVE_ORDER))
+                .sorted(Comparator.comparing(
+                        Supplier::getId,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed())))
                 .collect(Collectors.toList());
     }
 

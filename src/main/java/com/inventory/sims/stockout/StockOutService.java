@@ -6,6 +6,7 @@ import com.inventory.sims.product.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -52,7 +53,7 @@ public class StockOutService {
     }
 
     public List<StockOut> getAllStockOuts() {
-        return stockOutFileHandler.readStockOuts();
+        return sortedNewestFirst(stockOutFileHandler.readStockOuts());
     }
 
     public List<StockOut> getStockOutsByCustomer(Customer customer) {
@@ -64,6 +65,7 @@ public class StockOutService {
         return stockOutFileHandler.readStockOuts().stream()
                 .filter(stockOut -> stockOut.getIssuedTo() != null
                         && stockOut.getIssuedTo().trim().equalsIgnoreCase(customerName))
+                .sorted(newestFirstComparator())
                 .toList();
     }
 
@@ -73,6 +75,7 @@ public class StockOutService {
         }
         return stockOutFileHandler.readStockOuts().stream()
                 .filter(stockOut -> productId.equals(stockOut.getProductId()))
+                .sorted(newestFirstComparator())
                 .toList();
     }
 
@@ -157,6 +160,18 @@ public class StockOutService {
             }
         }
         return String.format("SO%03d", max + 1);
+    }
+
+    private List<StockOut> sortedNewestFirst(List<StockOut> stockOuts) {
+        return stockOuts.stream()
+                .sorted(newestFirstComparator())
+                .toList();
+    }
+
+    private Comparator<StockOut> newestFirstComparator() {
+        return Comparator.comparing(
+                StockOut::getId,
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed()));
     }
 
     private Product getExistingProduct(String productId) {
