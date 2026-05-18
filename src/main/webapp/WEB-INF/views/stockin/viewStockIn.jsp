@@ -80,8 +80,7 @@
                         <td><span class="badge"><%= stockIn.getId() %></span></td>
                         <td><%= stockIn.getReceivedDate() %></td>
                         <td>
-                            <strong><%= stockIn.getProductName() %></strong><br>
-                            <span class="muted"><%= stockIn.getProductId() %></span>
+                            <strong><%= stockIn.getProductName() %></strong>
                         </td>
                         <td><%= stockIn.getSupplierName() %></td>
                         <td><%= stockIn.getQuantity() %></td>

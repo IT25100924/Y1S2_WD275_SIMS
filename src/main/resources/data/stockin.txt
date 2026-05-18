@@ -13,3 +13,4 @@ SI012|P008|Pineapple|Orange Cooperation|30|190.0|2026-05-17|Food|2026-05-27|0|In
 SI013|P006|Mouse|Jat holdings|20|4000.0|2026-05-18|Electronics||24|
 SI014|P007|Oranges|Jat holdings|20|240.0|2026-05-18|Food|2026-05-31|0|
 SI015|P001|Microfiber Cloth|Jat holdings|100|150.0|2026-05-18|General||0|
+SI016|P003|Display 32|XYZ Company|20|2000.0|2026-05-18|Electronics||24|
