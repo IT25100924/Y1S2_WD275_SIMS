@@ -1,6 +1,9 @@
 package com.inventory.sims.supplier;
 
+// Model class for one supplier record.
+// The same object is used by controllers, JSP pages, and the text-file storage layer.
 public class Supplier {
+    // Basic supplier fields saved in suppliers.txt.
     private String id;
     private String companyName;
     private String category;
@@ -16,6 +19,7 @@ public class Supplier {
     public Supplier() {
     }
 
+    // Main constructor used when creating a supplier from form data or file data.
     public Supplier(String id, String companyName, String category, String contactPerson, String phone, String email,
                     String city, String leadTime, String address, String notes, String status) {
         this.id = id;
@@ -31,6 +35,7 @@ public class Supplier {
         this.status = status;
     }
 
+    // Getters are used by JSP EL expressions and other modules such as product and stock-in.
     public String getId() {
         return id;
     }
@@ -75,6 +80,7 @@ public class Supplier {
         return status;
     }
 
+    // Converts this supplier into one line for src/main/resources/data/suppliers.txt.
     public String toFileLine() {
         return String.join("|",
                 clean(id),
@@ -90,6 +96,8 @@ public class Supplier {
                 clean(status));
     }
 
+    // Builds a Supplier object from one saved file line.
+    // Returns null for old or broken rows so the app can keep running.
     public static Supplier fromFileLine(String line) {
         String[] parts = line.split("\\|", -1);
         if (parts.length < 11) {
@@ -110,6 +118,7 @@ public class Supplier {
                 parts[10]);
     }
 
+    // Keeps the pipe delimiter out of saved values and avoids null text in the file.
     private String clean(String value) {
         if (value == null) {
             return "";
