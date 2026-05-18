@@ -701,9 +701,11 @@
             <a href="/dashboard" class="nav-link <%= activeMenu.equals("dashboard") ? "active" : "" %>">
                 <i class="ph ph-squares-four"></i> Dashboard
             </a>
-            <a href="/users" class="nav-link <%= activeMenu.equals("users") ? "active" : "" %>">
-                <i class="ph ph-users"></i> Users
-            </a>
+            <c:if test="${sessionScope.loggedUser.role eq 'ADMIN'}">
+                <a href="/users" class="nav-link <%= activeMenu.equals("users") ? "active" : "" %>">
+                    <i class="ph ph-users"></i> Users
+                </a>
+            </c:if>
             <a href="/products" class="nav-link <%= activeMenu.equals("products") ? "active" : "" %>">
                 <i class="ph ph-package"></i> Products
             </a>

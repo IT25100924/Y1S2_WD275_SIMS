@@ -241,9 +241,11 @@
                 <p>Here's what's happening with your inventory today.</p>
             </div>
             <div class="welcome-actions">
-                <a href="/users/register" class="btn-dashboard-action btn-purple">
-                    <i class="ph ph-user-plus"></i> Add User
-                </a>
+                <c:if test="${sessionScope.loggedUser.role eq 'ADMIN'}">
+                    <a href="/users/register" class="btn-dashboard-action btn-purple">
+                        <i class="ph ph-user-plus"></i> Add User
+                    </a>
+                </c:if>
                 <a href="/suppliers/register" class="btn-dashboard-action btn-cyan">
                     <i class="ph ph-truck"></i> Add Supplier
                 </a>
