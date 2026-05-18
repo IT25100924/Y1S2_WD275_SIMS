@@ -31,7 +31,7 @@ public class StockOutService {
     // Creates a new stock-out record after checking product, quantity, price, date, and customer name.
     public StockOut createStockOut(String productId, int quantity, double unitPrice, LocalDate stockOutDate,
                                    String issuedTo, String reason, String note) {
-        Product product = validateAndGetProduct(productId, quantity, unitPrice, issuedTo, reason);
+        Product product = validateAndGetProduct(productId, quantity, unitPrice, issuedTo, reason, true);
         StockOut stockOut = buildStockOut(
                 nextStockOutId(),
                 product,
@@ -42,6 +42,8 @@ public class StockOutService {
                 reason,
                 note);
 
+        product.setQuantity(product.getQuantity() - quantity);
+        productService.saveProduct(product);
         stockOutFileHandler.saveStockOut(stockOut);
         return stockOut;
     }
@@ -94,13 +96,16 @@ public class StockOutService {
                                    LocalDate stockOutDate, String issuedTo, String reason, String note) {
         validateRequired(id, "Stockout ID");
         String stockOutId = id.trim();
-        Product product = validateAndGetProduct(productId, quantity, unitPrice, issuedTo, reason);
+        Product product = validateAndGetProduct(productId, quantity, unitPrice, issuedTo, reason, false);
         List<StockOut> stockOuts = stockOutFileHandler.readStockOuts();
         int recordIndex = findIndexById(stockOuts, stockOutId);
 
         if (recordIndex == -1) {
             throw new IllegalArgumentException("Stockout record not found.");
         }
+
+        StockOut existingStockOut = stockOuts.get(recordIndex);
+        adjustProductQuantity(existingStockOut, product, quantity);
 
         StockOut updatedStockOut = buildStockOut(
                 stockOutId,
@@ -123,12 +128,20 @@ public class StockOutService {
 
         String stockOutId = id.trim();
         List<StockOut> stockOuts = stockOutFileHandler.readStockOuts();
-        boolean removed = stockOuts.removeIf(stockOut -> stockOutId.equals(stockOut.getId()));
+        int deletedIndex = findIndexById(stockOuts, stockOutId);
 
-        if (!removed) {
+        if (deletedIndex == -1) {
             throw new IllegalArgumentException("Stockout record not found.");
         }
 
+        StockOut deletedStockOut = stockOuts.remove(deletedIndex);
+        Product product = productService.getProductById(deletedStockOut.getProductId());
+        if (product == null) {
+            throw new IllegalArgumentException("Product was not found, so quantity cannot be adjusted.");
+        }
+
+        product.setQuantity(product.getQuantity() + deletedStockOut.getQuantity());
+        productService.saveProduct(product);
         stockOutFileHandler.saveAllStockOuts(stockOuts);
     }
 
@@ -149,14 +162,17 @@ public class StockOutService {
     }
 
     // Shared validation used by both create and update.
-    private Product validateAndGetProduct(String productId, int quantity, double unitPrice, String issuedTo, String reason) {
+    private Product validateAndGetProduct(String productId, int quantity, double unitPrice, String issuedTo,
+                                          String reason, boolean enforceAvailableQuantity) {
         validateRequired(productId, "Product ID");
         validateRequired(issuedTo, "Issued to");
         validateRequired(reason, "Reason");
         validateQuantityAndPrice(quantity, unitPrice);
 
         Product product = getExistingProduct(productId);
-        validateAvailableQuantity(quantity, product);
+        if (enforceAvailableQuantity) {
+            validateAvailableQuantity(quantity, product);
+        }
         return product;
     }
 
@@ -230,6 +246,33 @@ public class StockOutService {
         if (quantity > product.getQuantity()) {
             throw new IllegalArgumentException("Stockout quantity cannot be greater than available product quantity.");
         }
+    }
+
+    // Reverses the old stock-out quantity and applies the updated stock-out quantity.
+    private void adjustProductQuantity(StockOut existingStockOut, Product selectedProduct, int updatedQuantity) {
+        if (existingStockOut.getProductId().equals(selectedProduct.getId())) {
+            int adjustedQuantity = selectedProduct.getQuantity() + existingStockOut.getQuantity() - updatedQuantity;
+            if (adjustedQuantity < 0) {
+                throw new IllegalArgumentException("Stockout quantity cannot be greater than available product quantity.");
+            }
+            selectedProduct.setQuantity(adjustedQuantity);
+            productService.saveProduct(selectedProduct);
+            return;
+        }
+
+        Product originalProduct = productService.getProductById(existingStockOut.getProductId());
+        if (originalProduct == null) {
+            throw new IllegalArgumentException("Original product was not found, so quantity cannot be adjusted.");
+        }
+
+        if (updatedQuantity > selectedProduct.getQuantity()) {
+            throw new IllegalArgumentException("Stockout quantity cannot be greater than available product quantity.");
+        }
+
+        originalProduct.setQuantity(originalProduct.getQuantity() + existingStockOut.getQuantity());
+        selectedProduct.setQuantity(selectedProduct.getQuantity() - updatedQuantity);
+        productService.saveProduct(originalProduct);
+        productService.saveProduct(selectedProduct);
     }
 
     // Common required-field check for text inputs.
