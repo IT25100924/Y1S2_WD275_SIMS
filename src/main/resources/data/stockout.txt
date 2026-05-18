@@ -3,3 +3,4 @@ SO003|P002|Laptop|7|250000.0|2026-05-21|Warnaka tharith|Sale|
 SO004|P004|Biscuits|14|1500.0|2026-05-22|Maleesha gunasekara|Sale|
 SO005|P002|Laptop|41|275000.0|2026-05-27|Aradhya Dayalan|Sale|
 SO007|P004|Biscuits|20|28.0|2026-05-17|Maleesha gunasekara|Sale|
+SO008|P008|Pineapple|20|350.0|2026-05-30|Warnaka tharith|Sale|
