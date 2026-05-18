@@ -34,13 +34,13 @@ public class DashboardController {
     public String showDashboard(Model model) {
         // 1. Total Products
         int totalProducts = productService.getAllProducts().size();
-        
+
         // 2. Low Stock Alerts (Threshold 5)
         int lowStockCount = productService.getLowStockProducts(5).size();
 
         // 3. Monthly Stock-in and Stock-out
         String currentMonthYear = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        
+
         int monthlyStockIn = stockInService.getAllStockIns().stream()
                 .filter(si -> si.getReceivedDate() != null && si.getReceivedDate().startsWith(currentMonthYear))
                 .mapToInt(StockIn::getQuantity)
@@ -76,3 +76,4 @@ public class DashboardController {
         return "dashboard";
     }
 }
+
