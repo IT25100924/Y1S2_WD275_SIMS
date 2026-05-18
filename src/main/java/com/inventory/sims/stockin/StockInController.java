@@ -14,11 +14,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 
 @Controller
+// MVC controller for Stock In pages.
+// It prepares page data, receives form submissions, and delegates rules to StockInService.
 public class StockInController {
+    // Services used by the Stock In screens and dropdown lists.
     private final StockInService stockInService;
     private final ProductService productService;
     private final SupplierService supplierService;
 
+    // Constructor injection makes all dependencies explicit.
     public StockInController(StockInService stockInService, ProductService productService,
                              SupplierService supplierService) {
         this.stockInService = stockInService;
@@ -26,12 +30,14 @@ public class StockInController {
         this.supplierService = supplierService;
     }
 
+    // Shows the Stock In list page.
     @GetMapping("/stockin")
     public String viewStockInRecords(Model model) {
         model.addAttribute("stockIns", stockInService.getAllStockIns());
         return "stockin/viewStockIn";
     }
 
+    // Shows the create form with product/supplier dropdowns and today's date.
     @GetMapping("/stockin/create")
     public String showStockInPage(Model model) {
         model.addAttribute("products", productService.getAllProducts());
@@ -40,6 +46,7 @@ public class StockInController {
         return "stockin/stockin";
     }
 
+    // Shows details for one stock-in record, or redirects if the ID is invalid.
     @GetMapping("/stockin/details/{id}")
     public String showStockInDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         StockIn stockIn = stockInService.getStockInById(id);
@@ -52,6 +59,7 @@ public class StockInController {
         return "stockin/details";
     }
 
+    // Shows the edit form with the current record and dropdown values.
     @GetMapping("/stockin/edit/{id}")
     public String showEditStockInPage(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         StockIn stockIn = stockInService.getStockInById(id);
@@ -67,6 +75,7 @@ public class StockInController {
         return "stockin/editStockIn";
     }
 
+    // Creates a new stock-in record and increases product quantity.
     @PostMapping("/stockin/create")
     public String addStockIn(@RequestParam String productId,
                              @RequestParam String supplierId,
@@ -90,6 +99,7 @@ public class StockInController {
         return "redirect:/stockin";
     }
 
+    // Updates an existing stock-in record and adjusts affected product quantities.
     @PostMapping("/stockin/edit/{id}")
     public String updateStockIn(@PathVariable String id,
                                 @RequestParam String productId,
@@ -114,6 +124,7 @@ public class StockInController {
         }
     }
 
+    // Deletes a stock-in record and subtracts its quantity from the product.
     @PostMapping("/stockin/delete/{id}")
     public String deleteStockIn(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
@@ -126,6 +137,7 @@ public class StockInController {
         return "redirect:/stockin";
     }
 
+    // Converts the selected supplier ID from the form into the supplier company name stored in stockin.txt.
     private String getSupplierName(String supplierId) {
         Supplier supplier = supplierService.findById(supplierId)
                 .orElseThrow(() -> new IllegalArgumentException("Selected supplier was not found."));

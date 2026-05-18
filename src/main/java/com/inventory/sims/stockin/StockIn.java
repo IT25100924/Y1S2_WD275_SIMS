@@ -1,6 +1,9 @@
 package com.inventory.sims.stockin;
 
+// Model class for one stock-in record.
+// It stores the record details and knows how to convert itself to/from stockin.txt.
 public class StockIn {
+    // Main record fields shown in the Stock In screens.
     private String id;
     private String productId;
     private String productName;
@@ -8,19 +11,24 @@ public class StockIn {
     private int quantity;
     private double unitCost;
     private String receivedDate;
+
+    // Extra product-type fields used only for Food or Electronics products.
     private String productType;
     private String expirationDate;
     private int warrantyMonths;
     private String note;
 
+    // Empty constructor is required by Spring/JSP binding tools when needed.
     public StockIn() {
     }
 
+    // Short constructor keeps old 8-column file rows compatible.
     public StockIn(String id, String productId, String productName, String supplierName,
                    int quantity, double unitCost, String receivedDate, String note) {
         this(id, productId, productName, supplierName, quantity, unitCost, receivedDate, "", "", 0, note);
     }
 
+    // Full constructor used by the current Stock In form and file format.
     public StockIn(String id, String productId, String productName, String supplierName,
                    int quantity, double unitCost, String receivedDate, String productType,
                    String expirationDate, int warrantyMonths, String note) {
@@ -37,6 +45,7 @@ public class StockIn {
         this.note = note;
     }
 
+    // Standard getters and setters are used by controllers, services, and JSP pages.
     public String getId() {
         return id;
     }
@@ -125,10 +134,12 @@ public class StockIn {
         this.note = note;
     }
 
+    // Total stock-in cost is calculated when requested, not stored separately in the file.
     public double getTotalCost() {
         return quantity * unitCost;
     }
 
+    // Gives JSP pages a simple display value for product-type-specific details.
     public String getSpecialDetails() {
         if ("Food".equalsIgnoreCase(productType) && expirationDate != null && !expirationDate.isBlank()) {
             return "Expiry: " + expirationDate;
@@ -139,6 +150,7 @@ public class StockIn {
         return "-";
     }
 
+    // Converts this object into one pipe-separated row for stockin.txt.
     public String toFileLine() {
         return String.join("|",
                 clean(id),
@@ -154,6 +166,8 @@ public class StockIn {
                 clean(note));
     }
 
+    // Builds a StockIn object from one row in stockin.txt.
+    // Bad old rows are skipped by returning null instead of breaking the whole list.
     public static StockIn fromFileLine(String line) {
         String[] parts = line.split("\\|", -1);
         if (parts.length < 8) {
@@ -190,6 +204,7 @@ public class StockIn {
         }
     }
 
+    // Keeps the pipe delimiter out of stored text fields and avoids null values in files.
     private String clean(String value) {
         if (value == null) {
             return "";

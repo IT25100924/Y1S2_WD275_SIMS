@@ -11,9 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+// File handler for stockin.txt.
+// This class only reads/writes records; business rules stay in StockInService.
 public class StockInFileHandler {
+    // Stock-in records are stored as pipe-separated text rows in this file.
     private static final Path STOCK_IN_FILE = Path.of("src/main/resources/data/stockin.txt");
 
+    // Reads all valid stock-in rows from the text file.
     public List<StockIn> readStockIns() {
         ensureFile();
 
@@ -34,6 +38,7 @@ public class StockInFileHandler {
         return stockIns;
     }
 
+    // Appends one new stock-in record without rewriting the whole file.
     public void saveStockIn(StockIn stockIn) {
         ensureFile();
 
@@ -49,6 +54,7 @@ public class StockInFileHandler {
         }
     }
 
+    // Rewrites the whole file after update/delete operations.
     public void saveAllStockIns(List<StockIn> stockIns) {
         ensureFile();
 
@@ -69,6 +75,7 @@ public class StockInFileHandler {
         }
     }
 
+    // Creates the data folder/file when the application starts with missing files.
     private void ensureFile() {
         try {
             Path parent = STOCK_IN_FILE.getParent();
