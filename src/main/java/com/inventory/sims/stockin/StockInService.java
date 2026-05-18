@@ -10,70 +10,52 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class StockInService {
+    // File handler stores stock-in records; product service keeps quantities synchronized.
     private final StockInFileHandler stockInFileHandler;
     private final ProductService productService;
 
+    // Constructor injection keeps dependencies clear.
     public StockInService(StockInFileHandler stockInFileHandler, ProductService productService) {
         this.stockInFileHandler = stockInFileHandler;
         this.productService = productService;
     }
 
+    // Creates a stock-in record and increases the selected product quantity.
     public StockIn addStockIn(String productId, String supplierName, int quantity,
                               double unitCost, String receivedDate, String expirationDate,
                               String warrantyMonths, String note) {
-        validateRequired(productId, "Product");
-        validateRequired(supplierName, "Supplier name");
-        validateRequired(receivedDate, "Received date");
-
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than zero.");
-        }
-        if (unitCost < 0) {
-            throw new IllegalArgumentException("Unit cost cannot be negative.");
-        }
-        LocalDate parsedReceivedDate = validateDate(receivedDate);
-
-        Product product = productService.getProductById(productId);
-        if (product == null) {
-            throw new IllegalArgumentException("Selected product was not found.");
-        }
-        StockInTypeDetails typeDetails = validateTypeDetails(product, expirationDate, warrantyMonths, parsedReceivedDate);
+        StockInInput input = validateInput(productId, supplierName, quantity, unitCost,
+                receivedDate, expirationDate, warrantyMonths);
 
         StockIn stockIn = new StockIn(
                 nextStockInId(),
-                product.getId(),
-                product.getName(),
-                supplierName.trim(),
+                input.product.getId(),
+                input.product.getName(),
+                input.supplierName,
                 quantity,
                 unitCost,
-                receivedDate.trim(),
-                typeDetails.productType,
-                typeDetails.expirationDate,
-                typeDetails.warrantyMonths,
+                input.receivedDate,
+                input.typeDetails.productType,
+                input.typeDetails.expirationDate,
+                input.typeDetails.warrantyMonths,
                 safeTrim(note));
 
-        product.setQuantity(product.getQuantity() + quantity);
-
-        // Update product-specific traits based on the new stock-in
-        if (product instanceof FoodProduct && typeDetails.expirationDate != null && !typeDetails.expirationDate.isBlank()) {
-            ((FoodProduct) product).setExpirationDate(typeDetails.expirationDate);
-        } else if (product instanceof ElectronicsProduct && typeDetails.warrantyMonths > 0) {
-            ((ElectronicsProduct) product).setWarrantyMonths(typeDetails.warrantyMonths);
-        }
-
-        productService.saveProduct(product);
+        input.product.setQuantity(input.product.getQuantity() + quantity);
+        applyTypeDetails(input.product, input.typeDetails);
+        productService.saveProduct(input.product);
         stockInFileHandler.saveStockIn(stockIn);
         return stockIn;
     }
 
+    // Returns all stock-in records in newest-ID-first order.
     public List<StockIn> getAllStockIns() {
         return sortedNewestFirst(stockInFileHandler.readStockIns());
     }
 
+    // Returns stock-in records that match one supplier name.
     public List<StockIn> getStockInsBySupplierName(String supplierName) {
         validateRequired(supplierName, "Supplier name");
         String normalizedSupplierName = supplierName.trim();
@@ -81,9 +63,10 @@ public class StockInService {
                 .filter(stockIn -> stockIn.getSupplierName() != null
                         && stockIn.getSupplierName().trim().equalsIgnoreCase(normalizedSupplierName))
                 .sorted(newestFirstComparator())
-                .collect(Collectors.toList());
+                .toList();
     }
 
+    // Returns stock-in records for one product ID.
     public List<StockIn> getStockInsByProductId(String productId) {
         if (productId == null || productId.isBlank()) {
             return List.of();
@@ -91,9 +74,10 @@ public class StockInService {
         return stockInFileHandler.readStockIns().stream()
                 .filter(stockIn -> productId.equals(stockIn.getProductId()))
                 .sorted(newestFirstComparator())
-                .collect(Collectors.toList());
+                .toList();
     }
 
+    // Finds one stock-in record by ID.
     public StockIn getStockInById(String id) {
         validateRequired(id, "Stock-in ID");
         for (StockIn stockIn : stockInFileHandler.readStockIns()) {
@@ -104,65 +88,38 @@ public class StockInService {
         return null;
     }
 
+    // Updates a stock-in record and adjusts product quantity changes.
     public StockIn updateStockIn(String id, String productId, String supplierName, int quantity,
                                  double unitCost, String receivedDate, String expirationDate,
                                  String warrantyMonths, String note) {
         validateRequired(id, "Stock-in ID");
-        validateRequired(productId, "Product");
-        validateRequired(supplierName, "Supplier name");
-        validateRequired(receivedDate, "Received date");
-
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than zero.");
-        }
-        if (unitCost < 0) {
-            throw new IllegalArgumentException("Unit cost cannot be negative.");
-        }
-        LocalDate parsedReceivedDate = validateDate(receivedDate);
 
         List<StockIn> stockIns = stockInFileHandler.readStockIns();
-        StockIn existing = null;
-        int existingIndex = -1;
-        for (int i = 0; i < stockIns.size(); i++) {
-            StockIn stockIn = stockIns.get(i);
-            if (id.trim().equals(stockIn.getId())) {
-                existing = stockIn;
-                existingIndex = i;
-                break;
-            }
-        }
-
-        if (existing == null) {
+        int existingIndex = findStockInIndex(stockIns, id);
+        if (existingIndex == -1) {
             throw new IllegalArgumentException("Stock-in record was not found.");
         }
 
-        Product selectedProduct = productService.getProductById(productId);
-        if (selectedProduct == null) {
-            throw new IllegalArgumentException("Selected product was not found.");
-        }
-        StockInTypeDetails typeDetails = validateTypeDetails(selectedProduct, expirationDate, warrantyMonths, parsedReceivedDate);
+        StockIn existing = stockIns.get(existingIndex);
+        StockInInput input = validateInput(productId, supplierName, quantity, unitCost,
+                receivedDate, expirationDate, warrantyMonths);
 
-        adjustProductQuantity(existing, selectedProduct, quantity);
-
-        if (selectedProduct instanceof FoodProduct && typeDetails.expirationDate != null && !typeDetails.expirationDate.isBlank()) {
-            ((FoodProduct) selectedProduct).setExpirationDate(typeDetails.expirationDate);
-            productService.saveProduct(selectedProduct);
-        } else if (selectedProduct instanceof ElectronicsProduct && typeDetails.warrantyMonths > 0) {
-            ((ElectronicsProduct) selectedProduct).setWarrantyMonths(typeDetails.warrantyMonths);
-            productService.saveProduct(selectedProduct);
+        adjustProductQuantity(existing, input.product, quantity);
+        if (applyTypeDetails(input.product, input.typeDetails)) {
+            productService.saveProduct(input.product);
         }
 
         StockIn updated = new StockIn(
                 existing.getId(),
-                selectedProduct.getId(),
-                selectedProduct.getName(),
-                supplierName.trim(),
+                input.product.getId(),
+                input.product.getName(),
+                input.supplierName,
                 quantity,
                 unitCost,
-                receivedDate.trim(),
-                typeDetails.productType,
-                typeDetails.expirationDate,
-                typeDetails.warrantyMonths,
+                input.receivedDate,
+                input.typeDetails.productType,
+                input.typeDetails.expirationDate,
+                input.typeDetails.warrantyMonths,
                 safeTrim(note));
 
         stockIns.set(existingIndex, updated);
@@ -170,24 +127,17 @@ public class StockInService {
         return updated;
     }
 
+    // Deletes a stock-in record and subtracts its quantity from the product.
     public StockIn deleteStockIn(String id) {
         validateRequired(id, "Stock-in ID");
 
         List<StockIn> stockIns = stockInFileHandler.readStockIns();
-        StockIn deleted = null;
-
-        for (int i = 0; i < stockIns.size(); i++) {
-            StockIn stockIn = stockIns.get(i);
-            if (id.trim().equals(stockIn.getId())) {
-                deleted = stockIns.remove(i);
-                break;
-            }
-        }
-
-        if (deleted == null) {
+        int deletedIndex = findStockInIndex(stockIns, id);
+        if (deletedIndex == -1) {
             throw new IllegalArgumentException("Stock-in record was not found.");
         }
 
+        StockIn deleted = stockIns.remove(deletedIndex);
         Product product = productService.getProductById(deleted.getProductId());
         if (product == null) {
             throw new IllegalArgumentException("Product was not found, so quantity cannot be adjusted.");
@@ -204,6 +154,66 @@ public class StockInService {
         return deleted;
     }
 
+    // Validates common form fields, loads the product, and validates type-specific fields.
+    private StockInInput validateInput(String productId, String supplierName, int quantity,
+                                       double unitCost, String receivedDate, String expirationDate,
+                                       String warrantyMonths) {
+        validateRequired(productId, "Product");
+        validateRequired(supplierName, "Supplier name");
+        validateRequired(receivedDate, "Received date");
+        validateQuantityAndCost(quantity, unitCost);
+
+        LocalDate parsedReceivedDate = validateDate(receivedDate);
+        Product product = getRequiredProduct(productId);
+        StockInTypeDetails typeDetails = validateTypeDetails(product, expirationDate, warrantyMonths, parsedReceivedDate);
+
+        return new StockInInput(product, supplierName.trim(), receivedDate.trim(), typeDetails);
+    }
+
+    // Keeps quantity and cost rules in one place.
+    private void validateQuantityAndCost(int quantity, double unitCost) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
+        if (unitCost < 0) {
+            throw new IllegalArgumentException("Unit cost cannot be negative.");
+        }
+    }
+
+    // Loads the selected product or returns the same user-facing error as before.
+    private Product getRequiredProduct(String productId) {
+        Product product = productService.getProductById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("Selected product was not found.");
+        }
+        return product;
+    }
+
+    // Finds the position of a stock-in record in a list.
+    private int findStockInIndex(List<StockIn> stockIns, String id) {
+        String trimmedId = id.trim();
+        for (int i = 0; i < stockIns.size(); i++) {
+            if (trimmedId.equals(stockIns.get(i).getId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Copies food/electronics details onto the product record.
+    private boolean applyTypeDetails(Product product, StockInTypeDetails typeDetails) {
+        if (product instanceof FoodProduct && typeDetails.expirationDate != null && !typeDetails.expirationDate.isBlank()) {
+            ((FoodProduct) product).setExpirationDate(typeDetails.expirationDate);
+            return true;
+        }
+        if (product instanceof ElectronicsProduct && typeDetails.warrantyMonths > 0) {
+            ((ElectronicsProduct) product).setWarrantyMonths(typeDetails.warrantyMonths);
+            return true;
+        }
+        return false;
+    }
+
+    // Reverses the old stock-in quantity and applies the updated quantity.
     private void adjustProductQuantity(StockIn existing, Product selectedProduct, int updatedQuantity) {
         if (existing.getProductId().equals(selectedProduct.getId())) {
             int adjustedQuantity = selectedProduct.getQuantity() - existing.getQuantity() + updatedQuantity;
@@ -231,6 +241,7 @@ public class StockInService {
         productService.saveProduct(selectedProduct);
     }
 
+    // Generates the next ID, such as SI001 then SI002.
     private String nextStockInId() {
         int max = 0;
         for (StockIn stockIn : stockInFileHandler.readStockIns()) {
@@ -246,18 +257,21 @@ public class StockInService {
         return String.format("SI%03d", max + 1);
     }
 
+    // Shared sort helper used by list and filter methods.
     private List<StockIn> sortedNewestFirst(List<StockIn> stockIns) {
         return stockIns.stream()
                 .sorted(newestFirstComparator())
                 .toList();
     }
 
+    // Larger SI numbers are newer, so reverse ID order is used.
     private Comparator<StockIn> newestFirstComparator() {
         return Comparator.comparing(
                 StockIn::getId,
                 Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed()));
     }
 
+    // Validates received date format and blocks dates before today.
     private LocalDate validateDate(String receivedDate) {
         try {
             LocalDate selectedDate = LocalDate.parse(receivedDate.trim());
@@ -270,6 +284,7 @@ public class StockInService {
         }
     }
 
+    // Validates Food expiry dates and Electronics warranty months.
     private StockInTypeDetails validateTypeDetails(Product product, String expirationDate,
                                                    String warrantyMonths, LocalDate receivedDate) {
         if (product instanceof FoodProduct) {
@@ -298,6 +313,7 @@ public class StockInService {
         return new StockInTypeDetails("General", "", 0);
     }
 
+    // Parses a date field and reports the field name in the error.
     private LocalDate parseDate(String value, String fieldName) {
         try {
             return LocalDate.parse(value.trim());
@@ -306,16 +322,35 @@ public class StockInService {
         }
     }
 
+    // Shared required-text validation.
     private void validateRequired(String value, String fieldName) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(fieldName + " is required.");
         }
     }
 
+    // Trims optional text and stores null as an empty string.
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
     }
 
+    // Small holder for already-validated form values.
+    private static class StockInInput {
+        private final Product product;
+        private final String supplierName;
+        private final String receivedDate;
+        private final StockInTypeDetails typeDetails;
+
+        private StockInInput(Product product, String supplierName, String receivedDate,
+                             StockInTypeDetails typeDetails) {
+            this.product = product;
+            this.supplierName = supplierName;
+            this.receivedDate = receivedDate;
+            this.typeDetails = typeDetails;
+        }
+    }
+
+    // Small holder for product-type-specific values.
     private static class StockInTypeDetails {
         private final String productType;
         private final String expirationDate;
