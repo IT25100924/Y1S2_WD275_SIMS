@@ -1,6 +1,9 @@
 package com.inventory.sims.user;
 
+// User is the main model class for the user module.
+// It holds the data that moves between the file, service, controller, and JSP pages.
 public class User {
+    // These fields match the order stored in users.txt.
     private String id;
     private String firstName;
     private String lastName;
@@ -13,6 +16,7 @@ public class User {
     public User() {
     }
 
+    // Full constructor used when creating User objects from code or from the text file.
     public User(String id, String firstName, String lastName, String email, String phone, UserType role, String password, boolean active) {
         this.id = id;
         this.firstName = firstName;
@@ -89,6 +93,8 @@ public class User {
     }
 
     public String toFileLine() {
+        // Convert a User object into one text-file line.
+        // The pipe symbol is the separator: id|firstName|lastName|email|phone|role|password|active
         return String.join("|",
                 clean(id),
                 clean(firstName),
@@ -101,8 +107,10 @@ public class User {
     }
 
     public static User fromFileLine(String line) {
+        // Convert one users.txt line back into a User object.
         String[] parts = line.split("\\|", -1);
         if (parts.length < 8) {
+            // Invalid old or broken records are ignored by returning null.
             return null;
         }
 
@@ -110,6 +118,7 @@ public class User {
         try {
             parsedRole = UserType.valueOf(parts[5]);
         } catch (IllegalArgumentException ex) {
+            // If the role text is invalid, default to STAFF because it has less access than ADMIN.
             parsedRole = UserType.STAFF;
         }
 
@@ -125,6 +134,7 @@ public class User {
     }
 
     private String clean(String value) {
+        // Prevent the separator character from breaking the users.txt format.
         if (value == null) {
             return "";
         }
