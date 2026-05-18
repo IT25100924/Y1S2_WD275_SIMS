@@ -20,6 +20,7 @@ com\inventory\sims\stockout\StockOutFileHandler.class
 com\inventory\sims\product\ProductRepository.class
 com\inventory\sims\user\UserType.class
 com\inventory\sims\supplier\SupplierController.class
+com\inventory\sims\supplier\LocalSupplier.class
 com\inventory\sims\customer\CustomerFileHandler.class
 com\inventory\sims\supplier\SupplierService.class
 com\inventory\sims\user\User.class

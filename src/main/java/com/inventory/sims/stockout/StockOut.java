@@ -166,6 +166,35 @@ public class StockOut {
             // A broken old/manual line should not crash dashboard or stock-out pages.
             return null;
         }
+<<<<<<< Updated upstream
+=======
+
+        try {
+            boolean hasUnitPrice = parts.length >= 9;
+            int dateIndex = hasUnitPrice ? 5 : 4;
+            int issuedToIndex = hasUnitPrice ? 6 : 5;
+            int reasonIndex = hasUnitPrice ? 7 : 6;
+            int noteIndex = hasUnitPrice ? 8 : 7;
+
+            LocalDate parsedDate = null;
+            if (!parts[dateIndex].isBlank()) {
+                parsedDate = LocalDate.parse(parts[dateIndex]);
+            }
+
+            return new StockOut(
+                    parts[0],
+                    parts[1],
+                    parts[2],
+                    Integer.parseInt(parts[3]),
+                    hasUnitPrice ? Double.parseDouble(parts[4]) : 0,
+                    parsedDate,
+                    parts[issuedToIndex],
+                    parts[reasonIndex],
+                    parts[noteIndex]);
+        } catch (RuntimeException ex) {
+            return null;
+        }
+>>>>>>> Stashed changes
     }
 
     // Keeps user-entered text from breaking the pipe-separated file format.
