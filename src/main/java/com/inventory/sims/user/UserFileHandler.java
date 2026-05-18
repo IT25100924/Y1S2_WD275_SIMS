@@ -12,17 +12,22 @@ import java.util.List;
 
 @Component
 public class UserFileHandler {
+    // This project stores user data in a text file instead of a database.
+    // Each line in users.txt represents one user.
     private static final Path USERS_FILE = Path.of("src/main/resources/data/users.txt");
 
     public List<User> readUsers() {
+        // Always make sure the file exists before trying to read from it.
         ensureFile();
 
         List<User> users = new ArrayList<>();
         try {
             for (String line : Files.readAllLines(USERS_FILE, StandardCharsets.UTF_8)) {
+                // Skip empty lines so they do not create invalid users.
                 if (line == null || line.isBlank()) {
                     continue;
                 }
+                // Convert one text-file line into a User object.
                 User user = User.fromFileLine(line);
                 if (user != null) {
                     users.add(user);
@@ -35,6 +40,7 @@ public class UserFileHandler {
     }
 
     public void saveUser(User user) {
+        // Used when registering a new user. It appends one new line to the file.
         ensureFile();
 
         try {
@@ -50,6 +56,8 @@ public class UserFileHandler {
     }
 
     public void saveAllUsers(List<User> users) {
+        // Used when updating, deleting, or toggling status.
+        // Those actions modify existing records, so the whole file is rewritten.
         ensureFile();
 
         StringBuilder content = new StringBuilder();
@@ -71,10 +79,12 @@ public class UserFileHandler {
 
     private void ensureFile() {
         try {
+            // Create the data folder if it is missing.
             Path parent = USERS_FILE.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
             }
+            // Create users.txt if it has not been created yet.
             if (Files.notExists(USERS_FILE)) {
                 Files.createFile(USERS_FILE);
             }
