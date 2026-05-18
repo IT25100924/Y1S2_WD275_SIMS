@@ -23,11 +23,15 @@
             <% } %>
 
             <div class="toolbar">
-                <h3>Customer List</h3>
+                <div class="search">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="search" id="customerSearchInput" placeholder="Search by id, name, email, phone, or address..." onkeyup="filterCustomerTable()">
+                </div>
+                <span id="customerCount" style="font-size: 14px; color: var(--text-muted); font-weight: 500;"></span>
             </div>
 
             <div class="table-wrap">
-                <table>
+                <table id="customerTable">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -73,5 +77,31 @@
                 </table>
             </div>
         </section>
-    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
+        <script>
+            function filterCustomerTable() {
+                var input = document.getElementById("customerSearchInput");
+                var filter = input.value.toUpperCase();
+                var table = document.getElementById("customerTable");
+                var tbody = table.getElementsByTagName("tbody")[0];
+                var rows = tbody.getElementsByTagName("tr");
+                var visibleCount = 0;
+
+                for (var i = 0; i < rows.length; i++) {
+                    if (rows[i].getElementsByTagName("td").length === 1) continue;
+
+                    var textContent = rows[i].textContent || rows[i].innerText;
+                    if (textContent.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                        visibleCount++;
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+
+                document.getElementById("customerCount").innerText = visibleCount + " customer" + (visibleCount === 1 ? "" : "s") + " found";
+            }
+
+            filterCustomerTable();
+        </script>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />

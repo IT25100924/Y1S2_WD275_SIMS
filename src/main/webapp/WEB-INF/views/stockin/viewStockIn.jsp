@@ -54,12 +54,15 @@
 
         <section aria-label="Stock in table">
             <div class="toolbar">
-                <h2>Stock In List</h2>
-                <a class="button button-secondary" href="/stockin">Refresh</a>
+                <div class="search">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="search" id="stockInSearchInput" placeholder="Search by id, date, product, supplier, or quantity..." onkeyup="filterStockInTable()">
+                </div>
+                <span id="stockInCount" style="font-size: 14px; color: var(--text-muted); font-weight: 500;"></span>
             </div>
 
             <div class="table-wrap">
-                <table>
+                <table id="stockInTable">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -108,5 +111,31 @@
                 </table>
             </div>
         </section>
-    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
+        <script>
+            function filterStockInTable() {
+                var input = document.getElementById("stockInSearchInput");
+                var filter = input.value.toUpperCase();
+                var table = document.getElementById("stockInTable");
+                var tbody = table.getElementsByTagName("tbody")[0];
+                var rows = tbody.getElementsByTagName("tr");
+                var visibleCount = 0;
+
+                for (var i = 0; i < rows.length; i++) {
+                    if (rows[i].getElementsByTagName("td").length === 1) continue;
+
+                    var textContent = rows[i].textContent || rows[i].innerText;
+                    if (textContent.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                        visibleCount++;
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+
+                document.getElementById("stockInCount").innerText = visibleCount + " stock-in record" + (visibleCount === 1 ? "" : "s") + " found";
+            }
+
+            filterStockInTable();
+        </script>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />

@@ -23,12 +23,15 @@
                 int stockOutCount = stockOutRecords == null ? 0 : stockOutRecords.size();
             %>
             <div class="toolbar">
-                <h2>Record List</h2>
-                <span class="record-count"><%= stockOutCount %> record<%= stockOutCount == 1 ? "" : "s" %></span>
+                <div class="search">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="search" id="stockOutSearchInput" placeholder="Search by id, product, quantity, date, or reason..." onkeyup="filterStockOutTable()">
+                </div>
+                <span id="stockOutCount" class="record-count"><%= stockOutCount %> record<%= stockOutCount == 1 ? "" : "s" %> found</span>
             </div>
 
             <div class="table-wrap">
-                <table>
+                <table id="stockOutTable">
                     <thead>
                     <tr>
                         <th>Stockout ID</th>
@@ -73,5 +76,31 @@
                 </table>
             </div>
         </section>
-    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
+        <script>
+            function filterStockOutTable() {
+                var input = document.getElementById("stockOutSearchInput");
+                var filter = input.value.toUpperCase();
+                var table = document.getElementById("stockOutTable");
+                var tbody = table.getElementsByTagName("tbody")[0];
+                var rows = tbody.getElementsByTagName("tr");
+                var visibleCount = 0;
+
+                for (var i = 0; i < rows.length; i++) {
+                    if (rows[i].getElementsByTagName("td").length === 1) continue;
+
+                    var textContent = rows[i].textContent || rows[i].innerText;
+                    if (textContent.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                        visibleCount++;
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+
+                document.getElementById("stockOutCount").innerText = visibleCount + " record" + (visibleCount === 1 ? "" : "s") + " found";
+            }
+
+            filterStockOutTable();
+        </script>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
