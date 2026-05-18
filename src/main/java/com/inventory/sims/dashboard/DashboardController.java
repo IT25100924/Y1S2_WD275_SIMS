@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,13 +58,17 @@ public class DashboardController {
 
         // Optional: Send recent stock movements (latest 5 each)
         List<StockOut> recentStockOut = stockOutService.getAllStockOuts().stream()
-                .sorted((a, b) -> b.getId().compareTo(a.getId()))
+                .sorted(Comparator.comparing(
+                        StockOut::getId,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed())))
                 .limit(5)
                 .collect(Collectors.toList());
         model.addAttribute("recentStockOut", recentStockOut);
 
         List<StockIn> recentStockIn = stockInService.getAllStockIns().stream()
-                .sorted((a, b) -> b.getId().compareTo(a.getId()))
+                .sorted(Comparator.comparing(
+                        StockIn::getId,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER.reversed())))
                 .limit(5)
                 .collect(Collectors.toList());
         model.addAttribute("recentStockIn", recentStockIn);

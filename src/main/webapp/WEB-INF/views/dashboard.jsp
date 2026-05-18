@@ -272,7 +272,7 @@
             <div class="metric-card">
                 <div class="metric-header">
                     <div class="metric-icon red"><i class="ph ph-warning-circle"></i></div>
-                    <span class="metric-badge negative">Threshold < 5</span>
+                    <span class="metric-badge negative">Threshold &lt; 5</span>
                 </div>
                 <h3>Low Stock Alerts</h3>
                 <div class="value">${lowStockCount}</div>

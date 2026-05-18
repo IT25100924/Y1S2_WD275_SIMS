@@ -24,41 +24,50 @@ public class ProductRepository {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split(DELIMITER, -1);
-
-                // Our format now has at least 6 parts: Type!ID!SupplierID!Name!Price!Quantity
-                if (data.length >= 6) {
-                    String type = data[0];
-                    String id = data[1];
-                    String supplierId = data[2]; // New Field!
-                    String name = data[3];
-                    double mrp = Double.parseDouble(data[4]);
-                    double stockInPrice = Double.parseDouble(data[5]);
-                    double stockOutPrice = Double.parseDouble(data[6]);
-                    int quantity = Integer.parseInt(data[7]);
-
-                    Product product = null;
-
-                    // Check the type and instantiate the correct subclass with supplierId
-                    if ("Electronics".equals(type) && data.length == 9) {
-                        int warrantyMonths = Integer.parseInt(data[8]);
-                        product = new ElectronicsProduct(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId, warrantyMonths);
-                    } else if ("Food".equals(type) && data.length == 9) {
-                        String expirationDate = data[8];
-                        product = new FoodProduct(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId, expirationDate);
-                    } else if ("General".equals(type)) {
-                        product = new Product(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId);
-                    }
-
-                    if (product != null) {
-                        products.add(product);
-                    }
+                Product product = parseProduct(line);
+                if (product != null) {
+                    products.add(product);
                 }
             }
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return products;
+    }
+
+    private Product parseProduct(String line) {
+        String[] data = line.split(DELIMITER, -1);
+
+        if (data.length < 8) {
+            return null;
+        }
+
+        try {
+            String type = data[0];
+            String id = data[1];
+            String supplierId = data[2];
+            String name = data[3];
+            double mrp = Double.parseDouble(data[4]);
+            double stockInPrice = Double.parseDouble(data[5]);
+            double stockOutPrice = Double.parseDouble(data[6]);
+            int quantity = Integer.parseInt(data[7]);
+
+            if ("Electronics".equals(type) && data.length >= 9) {
+                int warrantyMonths = Integer.parseInt(data[8]);
+                return new ElectronicsProduct(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId, warrantyMonths);
+            }
+            if ("Food".equals(type) && data.length >= 9) {
+                String expirationDate = data[8];
+                return new FoodProduct(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId, expirationDate);
+            }
+            if ("General".equals(type)) {
+                return new Product(id, name, mrp, stockInPrice, stockOutPrice, quantity, supplierId);
+            }
+        } catch (RuntimeException ex) {
+            return null;
+        }
+
+        return null;
     }
 
     // Save or Update a product
