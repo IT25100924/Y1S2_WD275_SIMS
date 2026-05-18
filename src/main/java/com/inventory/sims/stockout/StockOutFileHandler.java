@@ -11,9 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+// Reads and writes stock-out records from the plain text data file.
+// The service layer uses this class instead of doing file operations directly.
 public class StockOutFileHandler {
+    // Central file location for all stock-out records.
     private static final Path STOCK_OUT_FILE = Path.of("src/main/resources/data/stockout.txt");
 
+    // Loads all valid stock-out records from stockout.txt.
     public List<StockOut> readStockOuts() {
         ensureFile();
 
@@ -34,6 +38,7 @@ public class StockOutFileHandler {
         return stockOuts;
     }
 
+    // Appends one new stock-out record without rewriting the whole file.
     public void saveStockOut(StockOut stockOut) {
         ensureFile();
 
@@ -49,6 +54,7 @@ public class StockOutFileHandler {
         }
     }
 
+    // Rewrites the full file after update or delete operations.
     public void saveAllStockOuts(List<StockOut> stockOuts) {
         ensureFile();
 
@@ -69,6 +75,7 @@ public class StockOutFileHandler {
         }
     }
 
+    // Creates the data folder/file if they are missing.
     private void ensureFile() {
         try {
             Path parent = STOCK_OUT_FILE.getParent();
