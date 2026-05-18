@@ -9,27 +9,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+// Handles all browser requests related to customer pages.
 @Controller
 public class CustomerController {
+    // CustomerService contains the main customer business logic.
     private final CustomerService customerService;
+
+    // StockOutService is used only for showing a customer's stock-out history.
     private final StockOutService stockOutService;
 
+    // Spring injects the required services through this constructor.
     public CustomerController(CustomerService customerService, StockOutService stockOutService) {
         this.customerService = customerService;
         this.stockOutService = stockOutService;
     }
 
+    // Show the page that lists all customers.
     @GetMapping("/customers")
     public String viewCustomers(Model model) {
         model.addAttribute("customers", customerService.getAllCustomers());
         return "customer/viewCustomers";
     }
 
+    // Show the add customer form.
     @GetMapping("/customers/add")
     public String showAddCustomerForm() {
         return "customer/addCustomer";
     }
 
+    // Show full customer details and related stock-out records.
     @GetMapping("/customers/details/{id}")
     public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         Customer customer = customerService.getCustomerById(id);
@@ -42,6 +50,7 @@ public class CustomerController {
         return "customer/details";
     }
 
+    // Show the edit form for one selected customer.
     @GetMapping("/customers/edit/{id}")
     public String showEditCustomerForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         Customer customer = customerService.getCustomerById(id);
@@ -53,6 +62,7 @@ public class CustomerController {
         return "customer/editCustomer";
     }
 
+    // Save edited customer details.
     @PostMapping("/customers/edit/{id}")
     public String updateCustomer(@PathVariable String id,
                                  @RequestParam String name,
@@ -70,6 +80,7 @@ public class CustomerController {
         }
     }
 
+    // Delete one customer and return to the customer list.
     @PostMapping("/customers/delete/{id}")
     public String deleteCustomer(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
@@ -81,6 +92,7 @@ public class CustomerController {
         return "redirect:/customers";
     }
 
+    // Create a new customer from the add form.
     @PostMapping("/customers/add")
     public String addCustomer(@RequestParam String name,
                               @RequestParam String email,
