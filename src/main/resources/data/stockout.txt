@@ -3,3 +3,4 @@ SO003|P002|Laptop|7|250000.0|2026-05-21|Warnaka tharith|Sale|
 SO004|P004|chocolates|14|1500.0|2026-05-22|Maleesha gunasekara|Sale|
 SO005|P002|Laptop|41|275000.0|2026-05-27|Aradhya Dayalan|Sale|
 SO006|P003|Biscuits|36|450.0|2026-05-28|Dhruv Karthick|Sale|
+SO007|P004|chocolates|16|1450.0|2026-05-27|Dhruv Karthick|Sale|

@@ -1,5 +1,6 @@
 package com.inventory.sims.stockout;
 
+import com.inventory.sims.customer.Customer;
 import com.inventory.sims.product.Product;
 import com.inventory.sims.product.ProductService;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,18 @@ public class StockOutService {
 
     public List<StockOut> getAllStockOuts() {
         return stockOutFileHandler.readStockOuts();
+    }
+
+    public List<StockOut> getStockOutsByCustomer(Customer customer) {
+        if (customer == null || customer.getName() == null) {
+            return List.of();
+        }
+
+        String customerName = customer.getName().trim();
+        return stockOutFileHandler.readStockOuts().stream()
+                .filter(stockOut -> stockOut.getIssuedTo() != null
+                        && stockOut.getIssuedTo().trim().equalsIgnoreCase(customerName))
+                .toList();
     }
 
     public StockOut getStockOutById(String id) {
